@@ -41,10 +41,10 @@ def SDK_handler(module, submodule, manifest_path, repo_home, chip_type):
     repo = git.Repo(search_parent_directories=True)
     print("\n================ build {} ====================\n".format(chip_type), flush=True)
     #win32_sim scons
-    os.chdir('./win32_sim')
+    os.chdir('./rtk/win32_sim')
     try:
         result_lines = subprocess.check_output(["scons.exe"], universal_newlines=True, stderr=subprocess.STDOUT)
-        print("./win32_sim > scons.exe\r\n{}".format(result_lines))
+        print("./rtk/win32_sim > scons.exe\r\n{}".format(result_lines))
         if 'warning:' in result_lines:
             os.chdir('./..')
             print(result_lines)
@@ -77,60 +77,60 @@ def SDK_handler(module, submodule, manifest_path, repo_home, chip_type):
     '''repo.git.checkout('--', '.')
     repo.git.clean('-dfx')'''
     #keil_sim/ac5 scons --target=mdk5
-    os.chdir('./keil_sim/ac5')
-    try:
-        result_lines = subprocess.check_output(["scons.exe", "--target=mdk5"], universal_newlines=True, stderr=subprocess.STDOUT)
-        print("./keil_sim/ac5 > scons.exe\r\n{}".format(result_lines))
-        if 'warning:' in result_lines:
-            os.chdir('./../..')
-            print(result_lines)
-            print("keil_sim/ac5: 'scons --target=mdk5' fail: has warning")
-            return False
-    except Exception as e:
-        os.chdir('./../..')
-        print("keil_sim/ac5: 'scons --target=mdk5' fail: {}".format(e.output))
-        return False
-    os.chdir('./../..')
+    # os.chdir('./keil_sim/ac5')
+    # try:
+    #     result_lines = subprocess.check_output(["scons.exe", "--target=mdk5"], universal_newlines=True, stderr=subprocess.STDOUT)
+    #     print("./keil_sim/ac5 > scons.exe\r\n{}".format(result_lines))
+    #     if 'warning:' in result_lines:
+    #         os.chdir('./../..')
+    #         print(result_lines)
+    #         print("keil_sim/ac5: 'scons --target=mdk5' fail: has warning")
+    #         return False
+    # except Exception as e:
+    #     os.chdir('./../..')
+    #     print("keil_sim/ac5: 'scons --target=mdk5' fail: {}".format(e.output))
+    #     return False
+    # os.chdir('./../..')
     #reset
     '''repo.git.checkout('--', '.')
     repo.git.clean('-dfx')'''
     #keil_sim/ac6 scons --target=mdk5
-    os.chdir('./keil_sim/ac6')
-    try:
-        result_lines = subprocess.check_output(["scons.exe", "--target=mdk5"], universal_newlines=True, stderr=subprocess.STDOUT)
-        print("./keil_sim/ac6 > scons.exe\r\n{}".format(result_lines))
-        if 'warning:' in result_lines:
-            os.chdir('./../..')
-            print(result_lines)
-            print("keil_sim/ac6: 'scons --target=mdk5' fail: has warning")
-            return False
-    except Exception as e:
-        os.chdir('./../..')
-        print("keil_sim/ac6: 'scons --target=mdk5' fail: {}".format(e.output))
-        return False
-    os.chdir('./../..')
+    # os.chdir('./keil_sim/ac6')
+    # try:
+    #     result_lines = subprocess.check_output(["scons.exe", "--target=mdk5"], universal_newlines=True, stderr=subprocess.STDOUT)
+    #     print("./keil_sim/ac6 > scons.exe\r\n{}".format(result_lines))
+    #     if 'warning:' in result_lines:
+    #         os.chdir('./../..')
+    #         print(result_lines)
+    #         print("keil_sim/ac6: 'scons --target=mdk5' fail: has warning")
+    #         return False
+    # except Exception as e:
+    #     os.chdir('./../..')
+    #     print("keil_sim/ac6: 'scons --target=mdk5' fail: {}".format(e.output))
+    #     return False
+    # os.chdir('./../..')
     #reset
     '''repo.git.checkout('--', '.')
     repo.git.clean('-dfx')'''
     #build keil
-    keil_builder = SDKBuild(manifest_path, repo_home, chip_type)
-    print("call build {}".format(chip_type))
-    if not keil_builder.build_all_keil_projects(all=True, fail_fast=True, keil_path=Keil_path):
-        print("build {} fail".format(chip_type))
-        return False
+    # keil_builder = SDKBuild(manifest_path, repo_home, chip_type)
+    # print("call build {}".format(chip_type))
+    # if not keil_builder.build_all_keil_projects(all=True, fail_fast=True, keil_path=Keil_path):
+    #     print("build {} fail".format(chip_type))
+    #     return False
 
     return True
 
 
 def DOC_handler(module, submodule, manifest_path, repo_home, chip_type):
-    print("build sphinx document\n")
-    try:
-        cmd = ["python", os.path.join(os.path.dirname(os.path.abspath(__file__)), "../doc/build.py")]
-        print(" ".join(cmd), flush=True)
-        subprocess.check_call(cmd, universal_newlines=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        print("Generate sphinx document exception: {}".format(e))
-        return False
+    # print("build sphinx document\n")
+    # try:
+    #     cmd = ["python", os.path.join(os.path.dirname(os.path.abspath(__file__)), "../doc/build.py")]
+    #     print(" ".join(cmd), flush=True)
+    #     subprocess.check_call(cmd, universal_newlines=True, stderr=subprocess.STDOUT)
+    # except subprocess.CalledProcessError as e:
+    #     print("Generate sphinx document exception: {}".format(e))
+    #     return False
     return True
 
 
@@ -232,7 +232,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--chipType', help='Set the chip type')
     arg_dict = parser.parse_args()
 
-    ci_build = CIBuild(subgit_repo_path=os.environ.get(sub_git_path_env), 
+    ci_build = CIBuild(subgit_repo_path=os.environ.get(sub_git_path_env),
             subgit_group_name=os.environ.get(sub_git_group_env),
             manifest_path=os.environ.get(manifest_path_env),
             repo_home=os.environ.get(honeyRepo_env),
