@@ -4,6 +4,8 @@
 #include "stdbool.h"
 #include <stdio.h>
 
+#include "lvgl.h"
+
 #ifndef DRV_LCD_WIDTH
 #define DRV_LCD_WIDTH   480
 #endif
@@ -31,6 +33,14 @@ static pthread_mutex_t sdl_ok_mutex;
 static pthread_cond_t sdl_ok_event;
 
 
+
+extern int32_t mouse_x;
+extern int32_t mouse_y;
+extern bool mouse_left_pressed;
+extern uint32_t key_value;
+extern pthread_mutex_t input_mutex;
+extern int32_t encoder_diff;
+extern bool encoder_state;
 
 
 int sim_screen_width = DRV_LCD_WIDTH;
@@ -144,35 +154,79 @@ void *rtk_gui_sdl(void *arg)
         case SDL_MOUSEMOTION:
             {
                 /* save to (x,y) in the motion */
-                //gui_log("line = %d \n",__LINE__);
-                //gui_log("mouse motion:(%d,%d)\n",event.button.x,event.button.y);
+                pthread_mutex_lock(&input_mutex);
+                mouse_x = event.motion.x;
+                mouse_y = event.motion.y;
+                pthread_mutex_unlock(&input_mutex);
             }
             break;
 
         case SDL_MOUSEBUTTONDOWN:
             {
-                //gui_log("mouse down:(%d,%d)\n", event.button.x, event.button.y);
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    pthread_mutex_lock(&input_mutex);
+                    mouse_left_pressed = true;
+                    pthread_mutex_unlock(&input_mutex);
+                }
             }
             break;
 
         case SDL_MOUSEBUTTONUP:
             {
-                //gui_log("mouse up:(%d,%d)\n", event.button.x, event.button.y);
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    pthread_mutex_lock(&input_mutex);
+                    mouse_left_pressed = false;
+                    pthread_mutex_unlock(&input_mutex);
+                }
             }
             break;
         case SDL_MOUSEWHEEL:
             {
-
+                pthread_mutex_lock(&input_mutex);
+                if (event.wheel.y > 0)
+                {
+                    encoder_diff--;
+                }
+                else if (event.wheel.y < 0)
+                {
+                    encoder_diff++;
+                }
+                encoder_state = 1;
+                pthread_mutex_unlock(&input_mutex);
+                usleep(10000);
+                pthread_mutex_lock(&input_mutex);
+                encoder_state = 0;
+                pthread_mutex_unlock(&input_mutex);
             }
             break;
         case SDL_KEYDOWN:
             {
-                // gui_log("[SDL_KEYDOWN]key %s down!\n", SDL_GetKeyName(event.key.keysym.sym));
+                pthread_mutex_lock(&input_mutex);
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_UP:        key_value = LV_KEY_UP; break;
+                case SDLK_DOWN:      key_value = LV_KEY_DOWN; break;
+                case SDLK_RIGHT:     key_value = LV_KEY_RIGHT; break;
+                case SDLK_LEFT:      key_value = LV_KEY_LEFT; break;
+                case SDLK_RETURN:    key_value = LV_KEY_ENTER; break;
+                case SDLK_ESCAPE:    key_value = LV_KEY_ESC; break;
+                case SDLK_DELETE:    key_value = LV_KEY_DEL; break;
+                case SDLK_BACKSPACE: key_value = LV_KEY_BACKSPACE; break;
+                case SDLK_TAB:       key_value = LV_KEY_NEXT; break;
+                case SDLK_HOME:      key_value = (event.key.keysym.mod & KMOD_CTRL) ? LV_KEY_HOME : 0; break;
+                case SDLK_END:       key_value = (event.key.keysym.mod & KMOD_CTRL) ? LV_KEY_END : 0; break;
+                default:             key_value = 0; break;
+                }
+                pthread_mutex_unlock(&input_mutex);
             }
             break;
         case SDL_KEYUP:
             {
-                // gui_log("[SDL_KEYUP]key %s up!\n", SDL_GetKeyName(event.key.keysym.sym));
+                pthread_mutex_lock(&input_mutex);
+                key_value = 0;
+                pthread_mutex_unlock(&input_mutex);
             }
             break;
         case SDL_QUIT:
