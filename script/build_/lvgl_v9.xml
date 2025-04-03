@@ -9,8 +9,9 @@
           review="https://cn4soc.rtkbf.com/gerrit"
 />
   <default remote="origin"   rebase="false"/>
-  <project name="HoneyGUI"  path="gui-engine-dev"  revision="gui-engine-dev" dest-branch="gui-engine-dev" groups="sdk"/>
-  <project name="HoneyRepo/build"  path="build"   revision="v1" dest-branch="v1" groups="script" remote="origin_slave">
+  <project name="HoneyRepo/lvgl"  path="lvgl_v9"  revision="lvgl_v9" dest-branch="lvgl_v9" groups="sdk"/>
+  <project name="Tool/IntegrationTester"  path="IntegrationTester" revision="master" dest-branch="master" groups="Integration" remote="origin"></project>
+  <project name="HoneyRepo/build"  path="build"   revision="v2" dest-branch="v2" groups="script" remote="origin">
     <copyfile src="build.py" dest="build.py" />
   </project>
 </manifest>
