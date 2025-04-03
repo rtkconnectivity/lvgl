@@ -1,6 +1,6 @@
 ci_check_config = {
     "commit_labels":{
-        'GUI': {
+        'LVGL': {
             "check_handler": "default_handler", # will call default_handler to check this commit, not used currently
             "build_handler": None
         },

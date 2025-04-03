@@ -180,7 +180,7 @@ def Keyword_handler(module, submodule, manifest_path, repo_home, chip_type):
 
 # module tuple table: module, submodule, handler
 module_table =  (
-                    ['sdk', 'GUI',          '',         GUI_handler ],
+                    ['sdk', 'LVGL',          '',         GUI_handler ],
                     ['sdk', 'Doc',          '',         DOC_handler ],
 
                     ['sdk', 'Script',       'CI',            SDK_handler ],
