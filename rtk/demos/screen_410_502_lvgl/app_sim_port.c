@@ -12,6 +12,13 @@
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
 
+#define LV_USE_PSRAM 2
+#if LV_USE_PSRAM == 1
+#define LV_USE_PSRAM_POOL
+#elif LV_USE_PSRAM == 2
+#define LV_USE_PSRAM_DRAW_BUF
+#endif
+
 static void port_log(lv_log_level_t level, const char *buf)
 {
     printf("%s", buf);
@@ -32,7 +39,55 @@ static void load_ui_source(void)
         printf("open root.bin Fail!\n");
     }
 }
+#if LV_USE_PSRAM
+#define PSRAM_BUF_SIZE (1024*1024*4)
+uint8_t PSRAM_BUF[PSRAM_BUF_SIZE];
 
+#ifdef LV_USE_PSRAM_DRAW_BUF
+#include "lv_tlsf.h"
+#include "lv_types.h"
+#include "lv_draw_buf_private.h"
+lv_tlsf_t draw_buf_tlfs;
+void *tlfs_buf_malloc(size_t size_bytes, lv_color_format_t color_format)
+{
+    return lv_tlsf_malloc(draw_buf_tlfs, size_bytes);
+}
+void tlfs_buf_free(void *p)
+{
+    lv_tlsf_free(draw_buf_tlfs, p);
+}
+void lv_psram_draw_buf(void *buf, size_t size)
+{
+    lv_draw_buf_handlers_t *handlers = lv_draw_buf_get_handlers();
+    lv_draw_buf_handlers_t *font_handlers = lv_draw_buf_get_font_handlers();
+    lv_draw_buf_handlers_t *image_handlers = lv_draw_buf_get_image_handlers();
+
+    draw_buf_tlfs = lv_tlsf_create_with_pool(buf, size);
+    handlers->buf_malloc_cb = tlfs_buf_malloc;
+    handlers->buf_free_cb = tlfs_buf_free;
+    font_handlers->buf_malloc_cb = tlfs_buf_malloc;
+    font_handlers->buf_free_cb = tlfs_buf_free;
+    image_handlers->buf_malloc_cb = tlfs_buf_malloc;
+    image_handlers->buf_free_cb = tlfs_buf_free;
+}
+#endif
+#ifdef LV_USE_PSRAM_POOL
+void lv_psram_add_pool(void *buf, size_t size)
+{
+    lv_mem_add_pool(buf, size);
+}
+#endif
+
+void lv_psram_init(void *buf, size_t size)
+{
+#ifdef LV_USE_PSRAM_POOL
+    lv_psram_add_pool(buf, size);
+#endif
+#ifdef LV_USE_PSRAM_DRAW_BUF
+    lv_psram_draw_buf(buf, size);
+#endif
+}
+#endif
 static void *lvgl_demo_run(void *arg)
 {
     if (lv_is_initialized() == true)
@@ -40,6 +95,10 @@ static void *lvgl_demo_run(void *arg)
         return 0;
     }
     lv_init();
+#if LV_USE_PSRAM
+    lv_psram_init(PSRAM_BUF, PSRAM_BUF_SIZE);
+#endif
+
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
     lv_port_disp_init();
     lv_port_indev_init();

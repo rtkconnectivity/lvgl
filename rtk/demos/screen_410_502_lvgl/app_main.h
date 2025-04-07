@@ -33,13 +33,13 @@ extern "C" {
 #if WATCH_DEMO_USE_SNAPSHOT
 #if !LV_USE_DRAW_PPE_RTL8773E && \
             !LV_USE_DRAW_PPE_RTL872xG && \
-            LV_MEM_SIZE < 3 * 1024 * 1024
+            LV_MEM_SIZE + LV_MEM_POOL_EXPAND_SIZE < 3 * 1024 * 1024
 #warning "It's recommended to have at least 3MB RAM for the snapshot tileview watch demo on SW"
 #endif
 #else
 #if !LV_USE_DRAW_PPE_RTL8773E && \
             !LV_USE_DRAW_PPE_RTL872xG && \
-            LV_MEM_SIZE < 1024 * 1024
+            LV_MEM_SIZE + LV_MEM_POOL_EXPAND_SIZE < 1024 * 1024
 #warning "It's recommended to have at least 1MB RAM for the tileview watch demo on SW"
 #endif
 #endif
