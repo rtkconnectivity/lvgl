@@ -43,6 +43,8 @@ static void apply_box_effect(lv_obj_t *obj);
 static void reset_box_effect(lv_obj_t *obj);
 static void apply_spiral_notebook_effect(lv_obj_t *obj);
 static void reset_spiral_notebook_effect(lv_obj_t *obj);
+static void apply_rotate_effect(lv_obj_t *obj);
+static void reset_rotate_effect(lv_obj_t *obj);
 #endif
 /**********************
  *  STATIC VARIABLES
@@ -363,8 +365,8 @@ static void apply_cube_effect(lv_obj_t *obj)
     };
 
     /*cube 3d matrix*/
-    float w = obj_coords.x2 - obj_coords.x1;
-    float h = obj_coords.y2 - obj_coords.y1;
+    float w = obj_coords.x2 - obj_coords.x1 + 1;
+    float h = obj_coords.y2 - obj_coords.y1 + 1;
     float d = (w + h) / 2;
     float xoff = (float)lv_display_get_horizontal_resolution(NULL) / 2;
     float yoff = (float)lv_display_get_vertical_resolution(NULL) / 2 ;
@@ -414,6 +416,36 @@ static void apply_cube_effect(lv_obj_t *obj)
 
     lv_matrix_transfrom_blit(w, h, &p, &rv0, &rv1, &rv2, &rv3, &temp);
     lv_matrix_translate(&temp, - release_x, - release_y);
+
+    if (LV_ABS(rotate_degree) > 70)
+    {
+        lv_matrix_translate(&temp, 2 * w, 2 * h);
+    }
+    else
+    {
+        // Offset tile shift
+        lv_matrix_t matrix_trans;
+        lv_matrix_identity(&matrix_trans);
+        matrix_trans.m[0][2] = - release_x;
+        matrix_trans.m[1][2] = - release_y;
+        lv_matrix_multiply(&temp, &matrix_trans);
+
+        // Offset matrix transformation center shift
+        {
+            matrix_trans.m[0][2] = - release_x;
+            matrix_trans.m[1][2] = - release_y;
+            lv_matrix_t matrix_inv;
+            lv_matrix_inverse(&matrix_inv, &matrix_trans);
+            lv_matrix_multiply(&temp, &matrix_inv);
+
+            matrix_trans.m[0][2] = release_x;
+            matrix_trans.m[1][2] = release_y;
+            lv_matrix_inverse(&matrix_inv, &matrix_trans);
+            lv_matrix_multiply(&matrix_inv, &temp);
+
+            memcpy(&temp, &matrix_inv, sizeof(lv_matrix_t));
+        }
+    }
 
     lv_obj_set_transform(obj, &temp);
 }
@@ -541,6 +573,104 @@ static void reset_spiral_notebook_effect(lv_obj_t *obj)
     lv_matrix_identity(&matrix);
     lv_obj_set_transform(obj, &matrix);
 }
+
+static void apply_rotate_effect(lv_obj_t *obj)
+{
+    lv_point_t screen_center =
+    {
+        .x = lv_display_get_horizontal_resolution(NULL) / 2,
+        .y = lv_display_get_vertical_resolution(NULL) / 2
+    };
+
+    lv_area_t obj_coords;
+    lv_obj_get_coords(obj, &obj_coords);
+    lv_point_t obj_center =
+    {
+        .x = (obj_coords.x1 + obj_coords.x2) / 2,
+        .y = (obj_coords.y1 + obj_coords.y2) / 2
+    };
+
+    /*box 3d matrix*/
+    float w = obj_coords.x2 - obj_coords.x1 + 1;
+    float h = obj_coords.y2 - obj_coords.y1 + 1;
+    float xoff = (float)lv_display_get_horizontal_resolution(NULL) / 2;
+    float yoff = (float)lv_display_get_vertical_resolution(NULL) / 2 ;
+    float zoff = -(xoff + yoff);
+
+    lv_vertex_t v0 = {-w, -h, 0};
+    lv_vertex_t v1 = {w,  -h, 0};
+    lv_vertex_t v2 = {w,  h,  0};
+    lv_vertex_t v3 = {-w, h,  0};
+
+    lv_vertex_t tv0, tv1, tv2, tv3;
+    lv_vertex_t rv0, rv1, rv2, rv3;
+
+    lv_matrix_t temp;
+    lv_matrix_t rotate_3D;
+
+    float release_x = obj_center.x - screen_center.x + 1;
+    float release_y = obj_center.y - screen_center.y + 1;
+    float rotate_degree_x, rotate_degree_y;
+
+    rotate_degree_y = 90.0 * (release_x) / screen_center.x;
+    rotate_degree_x = -90.0 * (release_y) / screen_center.y;
+    lv_matrix_compute_rotate(rotate_degree_x, rotate_degree_y, 0, &rotate_3D);
+
+    // LV_LOG("release_x: %f, release_y: %f\n", release_x, release_y);
+    lv_matrix_transfrom_rotate(&rotate_3D, &v0, &tv0, 0, 0, 0);
+    lv_matrix_transfrom_rotate(&rotate_3D, &v1, &tv1, 0, 0, 0);
+    lv_matrix_transfrom_rotate(&rotate_3D, &v2, &tv2, 0, 0, 0);
+    lv_matrix_transfrom_rotate(&rotate_3D, &v3, &tv3, 0, 0, 0);
+
+    lv_matrix_compute_rotate(0, 0, 0, &rotate_3D);
+
+    lv_matrix_transfrom_rotate(&rotate_3D, &tv0, &rv0, xoff, yoff, zoff);
+    lv_matrix_transfrom_rotate(&rotate_3D, &tv1, &rv1, xoff, yoff, zoff);
+    lv_matrix_transfrom_rotate(&rotate_3D, &tv2, &rv2, xoff, yoff, zoff);
+    lv_matrix_transfrom_rotate(&rotate_3D, &tv3, &rv3, xoff, yoff, zoff);
+
+    lv_vertex_t p = {screen_center.x, screen_center.y, -zoff};
+
+    lv_matrix_transfrom_blit(w, h, &p, &rv0, &rv1, &rv2, &rv3, &temp);
+
+    if (LV_ABS(release_x) > w / 2 || LV_ABS(release_y) > h / 2)
+    {
+        lv_matrix_translate(&temp, 2 * w, 2 * h);
+    }
+    else
+    {
+        lv_matrix_t matrix_trans;
+        lv_matrix_identity(&matrix_trans);
+        matrix_trans.m[0][2] = - release_x;
+        matrix_trans.m[1][2] = - release_y;
+        lv_matrix_multiply(&temp, &matrix_trans);
+        // LV_LOG("temp %f %f %f \n%f %f %f \n%f %f %f \n", temp.m[0][0], temp.m[0][1], temp.m[0][2], temp.m[1][0], temp.m[1][1], temp.m[1][2], temp.m[2][0], temp.m[2][1], temp.m[2][2]);
+
+        // Offset matrix transformation center shift
+        {
+            matrix_trans.m[0][2] = - release_x;
+            matrix_trans.m[1][2] = - release_y;
+            lv_matrix_t matrix_inv;
+            lv_matrix_inverse(&matrix_inv, &matrix_trans);
+            lv_matrix_multiply(&temp, &matrix_inv);
+
+            matrix_trans.m[0][2] = release_x;
+            matrix_trans.m[1][2] = release_y;
+            lv_matrix_inverse(&matrix_inv, &matrix_trans);
+            lv_matrix_multiply(&matrix_inv, &temp);
+
+            memcpy(&temp, &matrix_inv, sizeof(lv_matrix_t));
+        }
+    }
+    lv_obj_set_transform(obj, &temp);
+}
+
+static void reset_rotate_effect(lv_obj_t *obj)
+{
+    lv_matrix_t matrix;
+    lv_matrix_identity(&matrix);
+    lv_obj_set_transform(obj, &matrix);
+}
 #endif
 static void apply_slide_effect(lv_obj_t *obj, SLIDE_EFFECT effect)
 {
@@ -566,6 +696,9 @@ static void apply_slide_effect(lv_obj_t *obj, SLIDE_EFFECT effect)
         break;
     case SPIRAL_NOTEBOOK:
         apply_spiral_notebook_effect(obj);
+        break;
+    case ROTATION:
+        apply_rotate_effect(obj);
         break;
 #endif
     default:
@@ -597,6 +730,9 @@ static void reset_slide_effect(lv_obj_t *obj, SLIDE_EFFECT effect)
         break;
     case SPIRAL_NOTEBOOK:
         reset_spiral_notebook_effect(obj);
+        break;
+    case ROTATION:
+        reset_rotate_effect(obj);
         break;
 #endif
     default:

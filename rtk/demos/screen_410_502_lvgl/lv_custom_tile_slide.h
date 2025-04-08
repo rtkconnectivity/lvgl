@@ -46,6 +46,7 @@ typedef enum
     BOX,            /**< 3D box rotation effect */
     CUBE_ROTATION,  /**< 3D cube rotation transition */
     SPIRAL_NOTEBOOK,/**< Spiral notebook flip effect */
+    ROTATION,       /**< 3D rotation effect */
 
     EFFECT_COUNT,   /**< Total number of effects */
 } SLIDE_EFFECT;

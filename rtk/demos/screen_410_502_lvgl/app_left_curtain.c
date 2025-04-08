@@ -3,7 +3,7 @@
 #include "lv_custom_tile_slide.h"
 
 
-#define EFFECT_NUM 7
+#define EFFECT_NUM 8
 static lv_style_t style_effect;
 static lv_style_t style_effect_chk;
 static lv_style_t style_font;
@@ -17,6 +17,7 @@ static const char *effet_name_list[EFFECT_NUM] =
     "BOX",
     "CUBE_ROTATION",
     "SPIRAL_NOTEBOOK",
+    "ROTATION",
 };
 
 static SLIDE_EFFECT effect_list[EFFECT_NUM] =
@@ -27,7 +28,8 @@ static SLIDE_EFFECT effect_list[EFFECT_NUM] =
     SCALE_FADE,
     BOX,
     CUBE_ROTATION,
-    SPIRAL_NOTEBOOK
+    SPIRAL_NOTEBOOK,
+    ROTATION
 };
 extern SLIDE_EFFECT global_slide;
 static void effect_event_handler(lv_event_t *e)
