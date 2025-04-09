@@ -385,18 +385,18 @@ static void apply_cube_effect(lv_obj_t *obj)
     lv_matrix_identity(&temp);
     lv_matrix_identity(&rotate_3D);
 
-    float release_x = (obj_center.x - screen_center.x) / 2;
-    float release_y = (obj_center.y - screen_center.y) / 2;
+    float release_x = obj_center.x - screen_center.x;
+    float release_y = obj_center.y - screen_center.y;
     float rotate_degree;
 
     if (LV_ABS(release_x) > LV_ABS(release_y))
     {
-        rotate_degree = 90.0 * (release_x) / screen_center.x;
+        rotate_degree = 90.0 * (release_x) / (screen_center.x * 2);
         lv_matrix_compute_rotate(0, rotate_degree, 0, &rotate_3D);
     }
     else
     {
-        rotate_degree = -90.0 * (release_y) / screen_center.y;
+        rotate_degree = -90.0 * (release_y) / (screen_center.y * 2);
         lv_matrix_compute_rotate(rotate_degree, 0, 0, &rotate_3D);
     }
 
@@ -415,7 +415,6 @@ static void apply_cube_effect(lv_obj_t *obj)
     lv_vertex_t p = {screen_center.x, screen_center.y, screen_center.x + screen_center.y};
 
     lv_matrix_transfrom_blit(w, h, &p, &rv0, &rv1, &rv2, &rv3, &temp);
-    lv_matrix_translate(&temp, - release_x, - release_y);
 
     if (LV_ABS(rotate_degree) > 70)
     {
