@@ -1,35 +1,34 @@
 # Changelog
 
-### Date: YYYY-MM-DD
+#### Date: 2025-04-10
 
-#### Author: [Author's Name]
+#### Author: [luke_sun]
 
-- **Commit ID**: `abc1234`
-- **Change Reason**: Briefly describe the reason for the change.
+- **Change Reason**: fix image draw wtih matrix by ppe.
 - **Modified Files**:
-  - `path/to/modified_file_1.c`
-  - `path/to/modified_file_2.h`
+  - `src\misc\lv_matrix.c`
 - **Modified APIs**:
-  - `void some_function(int arg1, float arg2)`
-  - `int another_function(char *arg)`
+  - `lv_point_precise_t lv_matrix_transform_precise_point(const lv_matrix_t * matrix, const lv_point_precise_t * point)`
 
-#### Description:
-A detailed description of the changes made, potential impacts on the system, and any other relevant information.
+#### Description
+
+Use homogeneous coordinates to transform point.
+PR: <https://github.com/lvgl/lvgl/pull/7960>
 
 ---
 
-### Date: YYYY-MM-DD
+#### Date: YYYY-MM-DD
 
 #### Author: [Author's Name]
 
-- **Commit ID**: `def5678`
 - **Change Reason**: Briefly describe the reason for the change.
 - **Modified Files**:
   - `path/to/another_modified_file.c`
 - **Modified APIs**:
   - `int yet_another_function(double arg)`
 
-#### Description:
+#### Description
+
 A detailed description of the changes made, potential impacts on the system, and any other relevant information.
 
 ---
