@@ -1,3 +1,11 @@
+/**
+ * @file app_rtk_port.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -13,8 +21,125 @@
 
 #include "app_main.h"
 
+/*********************
+ *      DEFINES
+ *********************/
 #define APP_TASK_PRIORITY               1   /* Task priorities. */
 #define APP_TASK_STACK_SIZE             (512 * 16)
+
+#ifdef TARGET_RTL8773E
+#define LV_USE_PSRAM         1
+#define PSRAM_BUF_SIZE       (2*1024*1024)
+#define PSRAM_BUF_ADDR       0x4200000
+#else
+#define LV_USE_PSRAM         0
+#define PSRAM_BUF_SIZE       0
+#define PSRAM_BUF_ADDR       0
+#endif
+
+#if LV_USE_PSRAM == 1
+#define LV_USE_PSRAM_POOL
+#elif LV_USE_PSRAM == 2
+#define LV_USE_PSRAM_DRAW_BUF
+#endif
+
+#ifdef LV_USE_PSRAM_DRAW_BUF
+#include "lv_tlsf.h"
+#include "lv_types.h"
+#include "lv_draw_buf_private.h"
+#endif
+
+/**********************
+ *      TYPEDEFS
+ **********************/
+
+/**********************
+ *  STATIC PROTOTYPES
+ **********************/
+#ifdef LV_USE_PSRAM_DRAW_BUF
+static void *tlfs_buf_malloc(size_t size_bytes, lv_color_format_t color_format);
+static void tlfs_buf_free(void *p);
+static void lv_psram_draw_buf(void *buf, size_t size);
+#endif
+static void lv_psram_init(void *buf, size_t size);
+static void port_log(lv_log_level_t level, const char *buf);
+static void lv_tick(void *pxTimer);
+static void lvgl_demo_run(void *p);
+
+/*for 8773E*/
+static uint32_t sys_tick_get(void);
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
+uint32_t PSRAM_BUF = PSRAM_BUF_ADDR;
+
+#ifdef LV_USE_PSRAM_DRAW_BUF
+lv_tlsf_t draw_buf_tlfs;
+#endif
+
+void *lvgl_task_handle;
+static void *gui_timer0 = NULL;
+
+/**********************
+ *      MACROS
+ **********************/
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
+
+void rt_lvgl_demo_init(void)
+{
+    /* littleGL demo gui thread */
+    os_task_create(&lvgl_task_handle, "lvgl", lvgl_demo_run, 0, APP_TASK_STACK_SIZE,
+                   APP_TASK_PRIORITY);
+}
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+#ifdef LV_USE_PSRAM_DRAW_BUF
+static void *tlfs_buf_malloc(size_t size_bytes, lv_color_format_t color_format)
+{
+    return lv_tlsf_malloc(draw_buf_tlfs, size_bytes);
+}
+static void tlfs_buf_free(void *p)
+{
+    lv_tlsf_free(draw_buf_tlfs, p);
+}
+static void lv_psram_draw_buf(void *buf, size_t size)
+{
+    lv_draw_buf_handlers_t *handlers = lv_draw_buf_get_handlers();
+    lv_draw_buf_handlers_t *font_handlers = lv_draw_buf_get_font_handlers();
+    lv_draw_buf_handlers_t *image_handlers = lv_draw_buf_get_image_handlers();
+
+    draw_buf_tlfs = lv_tlsf_create_with_pool(buf, size);
+    handlers->buf_malloc_cb = tlfs_buf_malloc;
+    handlers->buf_free_cb = tlfs_buf_free;
+    font_handlers->buf_malloc_cb = tlfs_buf_malloc;
+    font_handlers->buf_free_cb = tlfs_buf_free;
+    image_handlers->buf_malloc_cb = tlfs_buf_malloc;
+    image_handlers->buf_free_cb = tlfs_buf_free;
+}
+#endif
+
+#ifdef LV_USE_PSRAM_POOL
+static void lv_psram_add_pool(void *buf, size_t size)
+{
+    lv_mem_add_pool(buf, size);
+}
+#endif
+
+static void lv_psram_init(void *buf, size_t size)
+{
+#ifdef LV_USE_PSRAM_POOL
+    lv_psram_add_pool(buf, size);
+#endif
+#ifdef LV_USE_PSRAM_DRAW_BUF
+    lv_psram_draw_buf(buf, size);
+#endif
+}
 
 static void port_log(lv_log_level_t level, const char *buf)
 {
@@ -24,23 +149,22 @@ static void port_log(lv_log_level_t level, const char *buf)
     }
 }
 
-void *lvgl_task_handle;
-
-static void *gui_timer0 = NULL;
 static void lv_tick(void *pxTimer)
 {
     lv_tick_inc(10);
 }
 
-uint32_t sys_tick_get(void)
+static uint32_t sys_tick_get(void)
 {
     return sys_timestamp_get_us() / 1000;
 }
+
 static void lvgl_demo_run(void *p)
 {
     os_timer_create(&gui_timer0, "lvgl tick", 1, 10, true, lv_tick);
     os_timer_start(&gui_timer0);
     lv_init();
+    lv_psram_init((void *)PSRAM_BUF, PSRAM_BUF_SIZE);
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
     lv_tick_set_cb(sys_tick_get);
     lv_port_disp_init();
@@ -56,9 +180,3 @@ static void lvgl_demo_run(void *p)
     }
 }
 
-void rt_lvgl_demo_init(void)
-{
-    /* littleGL demo gui thread */
-    os_task_create(&lvgl_task_handle, "lvgl", lvgl_demo_run, 0, APP_TASK_STACK_SIZE,
-                   APP_TASK_PRIORITY);
-}
