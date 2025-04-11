@@ -73,9 +73,18 @@ extern lv_obj_t *scr_down_curtain;
 extern lv_obj_t *scr_left_curtain;
 extern lv_obj_t *scr_right_curtain;
 extern lv_obj_t *scr_right_curtain_2;
+extern lv_obj_t *scr_app_control_board;
 extern lv_obj_t *scr_app_menu;
 extern lv_obj_t *scr_app_calendar;
+extern lv_obj_t *scr_app_activity;
+extern lv_obj_t *scr_app_music;
 
+extern lv_image_dsc_t const *text_num_array[11];
+extern char *day[7];
+extern char *month[12];
+extern struct tm watch_time;
+
+extern bool enter_menu_flag;
 
 void lv_watchface_init(void);
 void lv_up_curtain_init(void);
@@ -83,8 +92,12 @@ void lv_down_curtain_init(void);
 void lv_left_curtain_init(void);
 void lv_right_curtain_init(void);
 void lv_right_curtain_2_init(void);
+
+void lv_app_control_board_init(void);
 void lv_app_menu_init(void);
 void lv_app_calendar_init(void);
+void lv_app_activity_init(void);
+void lv_app_music_init(void);
 
 
 // FONTS

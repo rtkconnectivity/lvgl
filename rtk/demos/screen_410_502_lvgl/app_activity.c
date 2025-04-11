@@ -5,18 +5,17 @@
 #include "cJSON.h"
 #endif
 
-static lv_obj_t *arc_container, *label_move, *label_ex, *label_stand;
-
 static void arc_anim_cb(void *obj, int32_t value)
 {
     lv_arc_set_end_angle((lv_obj_t *)obj, value);
 }
 
-void update_arc_activity(void)
+void update_arc_activity(lv_obj_t *parent)
 {
     const uint16_t start_angle = 270;
     lv_anim_t a;
 
+    lv_obj_t *arc_container = lv_obj_get_child(parent, 0);
     lv_obj_t *arc_move = lv_obj_get_child(arc_container, 0);
     lv_obj_t *arc_ex = lv_obj_get_child(arc_container, 1);
     lv_obj_t *arc_stand = lv_obj_get_child(arc_container, 2);
@@ -71,6 +70,9 @@ void update_arc_activity(void)
     lv_anim_set_delay(&a, 0);
     lv_anim_start(&a);
 
+    lv_obj_t *label_move = lv_obj_get_child(parent, 1);
+    lv_obj_t *label_ex = lv_obj_get_child(parent, 2);
+    lv_obj_t *label_stand = lv_obj_get_child(parent, 3);
     char content[30];
     sprintf(content, "Move: %d/20000steps", move_value);
     lv_label_set_text(label_move, content);
@@ -85,7 +87,7 @@ void app_activity(lv_obj_t *parent)
     const uint16_t start_angle = 90;
     const uint16_t arc_x = 130, arc_y = 150, width = 16;
 
-    arc_container = lv_obj_create(parent);
+    lv_obj_t *arc_container = lv_obj_create(parent);
     lv_obj_remove_style_all(arc_container);
     lv_obj_set_pos(arc_container, 0, 0);
     lv_obj_set_size(arc_container, 300, 300);
@@ -136,7 +138,7 @@ void app_activity(lv_obj_t *parent)
     // lv_arc_set_end_angle(arc_3, start_angle + (uint16_t)(360 * 15 / 30)); // cap 30 times
 
     // text
-    label_move = lv_label_create(parent);
+    lv_obj_t *label_move = lv_label_create(parent);
     lv_obj_remove_style_all(label_move);
     lv_obj_set_pos(label_move, 130, 300);
     lv_label_set_text(label_move, "Move: 0/20000steps");
@@ -146,7 +148,7 @@ void app_activity(lv_obj_t *parent)
     lv_obj_set_style_text_font(label_move, &SourceHanSansSC_size24_bits1_font,
                                LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    label_ex = lv_label_create(parent);
+    lv_obj_t *label_ex = lv_label_create(parent);
     lv_obj_remove_style_all(label_ex);
     lv_obj_set_pos(label_ex, 130, 350);
     lv_label_set_text(label_ex, "Exercise: 0/60min");
@@ -155,7 +157,7 @@ void app_activity(lv_obj_t *parent)
     lv_obj_set_style_text_font(label_ex, &SourceHanSansSC_size24_bits1_font,
                                LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    label_stand = lv_label_create(parent);
+    lv_obj_t *label_stand = lv_label_create(parent);
     lv_obj_remove_style_all(label_stand);
     lv_obj_set_pos(label_stand, 130, 400);
     lv_label_set_text(label_stand, "Stand: 0/30times");
@@ -172,7 +174,7 @@ static void tileview_event_cb(lv_event_t *e)
     static bool flag = false; //prevent enter animate twice
     if (act_tile == tile_right_2 && !flag)
     {
-        update_arc_activity();
+        update_arc_activity(scr_right_curtain_2);
         flag = true;
     }
     else
@@ -185,5 +187,30 @@ void lv_right_curtain_2_init(void)
 {
     app_activity(scr_right_curtain_2);
     lv_obj_add_event_cb(tileview, tileview_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+}
+
+void exit_app_activity(void)
+{
+    if (enter_menu_flag)
+    {
+        _ui_screen_change(&scr_app_menu, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_menu_init, true);
+    }
+    else
+    {
+        _ui_screen_change(&tileview, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          NULL, true);
+    }
+}
+
+void lv_app_activity_init(void)
+{
+    scr_app_activity = lv_obj_create(NULL);
+    lv_obj_set_style_bg_color(scr_app_activity, lv_color_hex(0x0), 0);
+    lv_obj_set_style_bg_opa(scr_app_activity, LV_OPA_COVER, 0);
+    app_activity(scr_app_activity);
+    update_arc_activity(scr_app_activity);
+
+    return_create(scr_app_activity, exit_app_activity);
 }
 

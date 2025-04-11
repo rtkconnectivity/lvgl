@@ -888,24 +888,13 @@ const lv_image_dsc_t ui_bg_icon =
     .header.magic = LV_IMAGE_HEADER_MAGIC,
     .header.w = 100,
     .header.h = 100,
-    .header.stride = 400,
-    .data_size = 40000,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .header.stride = 200,
+    .data_size = 20000,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
     .data = UI_BG_ICON_BIN + 8
 };
 
 const lv_image_dsc_t ui_card_activity =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 392,
-    .header.h = 157,
-    .header.stride = 1568,
-    .data_size = 246176,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CARD_ACTIVITY_BIN + 8
-};
-
-const lv_image_dsc_t ui_card_app =
 {
     .header.magic = LV_IMAGE_HEADER_MAGIC,
     .header.w = 352,
@@ -913,7 +902,7 @@ const lv_image_dsc_t ui_card_app =
     .header.stride = 1408,
     .data_size = 221056,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CARD_APP_BIN + 8
+    .data = UI_CARD_ACTIVITY_BIN + 8
 };
 
 const lv_image_dsc_t ui_card_appview =
@@ -921,10 +910,21 @@ const lv_image_dsc_t ui_card_appview =
     .header.magic = LV_IMAGE_HEADER_MAGIC,
     .header.w = 296,
     .header.h = 76,
-    .header.stride = 1184,
-    .data_size = 89984,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .header.stride = 592,
+    .data_size = 44992,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
     .data = UI_CARD_APPVIEW_BIN + 8
+};
+
+const lv_image_dsc_t ui_card_bg =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 352,
+    .header.h = 157,
+    .header.stride = 704,
+    .data_size = 110528,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
+    .data = UI_CARD_BG_BIN + 8
 };
 
 const lv_image_dsc_t ui_card_calendar =
@@ -932,9 +932,9 @@ const lv_image_dsc_t ui_card_calendar =
     .header.magic = LV_IMAGE_HEADER_MAGIC,
     .header.w = 352,
     .header.h = 157,
-    .header.stride = 1408,
-    .data_size = 221056,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .header.stride = 704,
+    .data_size = 110528,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
     .data = UI_CARD_CALENDAR_BIN + 8
 };
 
@@ -943,9 +943,9 @@ const lv_image_dsc_t ui_card_clockcircle =
     .header.magic = LV_IMAGE_HEADER_MAGIC,
     .header.w = 334,
     .header.h = 177,
-    .header.stride = 1336,
-    .data_size = 236472,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .header.stride = 668,
+    .data_size = 118236,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
     .data = UI_CARD_CLOCKCIRCLE_BIN + 8
 };
 

@@ -1,189 +1,244 @@
 #include "lvgl.h"
 #include "app_main.h"
+#include "lv_card.h"
+#include <time.h>
 
-#define SCREEN_WIDTH 410
-#define SCREEN_HEIGHT 502
+lv_obj_t *clock_big, *clock_small;
 
-typedef struct switch_state
+static void timer_cb(lv_timer_t *timer)
 {
-    uint8_t sw_1 : 1;
-    uint8_t sw_2 : 1;
-    uint8_t sw_3 : 1;
-    uint8_t sw_4 : 1;
-    uint8_t sw_5 : 1;
-} switch_state_t;
-
-static switch_state_t sw_state = {0};
-static lv_obj_t *img_phone, *img_nobother, *img_mute;
-// void tile_down_cb(lv_event_t *e)
-// {
-//     lv_event_code_t event_code = lv_event_get_code(e);
-
-//     if (event_code == LV_EVENT_SCREEN_LOAD_START)
-//     {
-//         // left_Animation(ui_hour_group, 0);
-//         // right_Animation(ui_label_min, 0);
-//         // opa_on_Animation(ui_weather_group_1, 300);
-//         // opa_on_Animation(ui_date_group, 500);
-//         // opa_on_Animation(ui_weather_title_group_1, 400);
-//     }
-//     if (event_code == LV_EVENT_GESTURE &&
-//         lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM)
-//     {
-//         lv_indev_wait_release(lv_indev_get_act());
-//         _ui_screen_change(&scr_watchface, &scr_down_curtain, LV_SCR_LOAD_ANIM_OUT_BOTTOM, 500, 0,
-//                           &lv_watchface_init, 1);
-//     }
-// }
-
-void button_lte_event_cb(lv_event_t *e)
-{
-    lv_obj_t *img = lv_event_get_target(e);
-    sw_state.sw_1 ^= 1;
-    // Toggle between checked and default state
-    if (sw_state.sw_1)
     {
-        lv_image_set_src(img, &control_lte_on);
+        lv_obj_t *hour_decimal = lv_obj_get_child(clock_big, 0);
+        lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
+        lv_obj_t *hour_singel = lv_obj_get_child(clock_big, 1);
+        lv_image_set_src(hour_singel, text_num_array[watch_time.tm_hour % 10]);
+        lv_obj_t *minute_decimal = lv_obj_get_child(clock_big, 2);
+        lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
+        lv_obj_t *minute_singel = lv_obj_get_child(clock_big, 3);
+        lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
+        lv_obj_t *date_label = lv_obj_get_child(clock_big, -1);
+        char content[10];
+        sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
+                day[watch_time.tm_wday]);
+        lv_label_set_text(date_label, content);
     }
-    else
     {
-        lv_image_set_src(img, &control_lte_off);
+        lv_obj_t *date_label = lv_obj_get_child(clock_small, 0);
+        char date_content[10];
+        sprintf(date_content, "%s %d\n", day[watch_time.tm_wday], watch_time.tm_mday);
+        lv_label_set_text(date_label, date_content);
+
+        lv_obj_t *time_label = lv_obj_get_child(clock_small, 1);
+        char time_content[10];
+        sprintf(time_content, "%02d:%02d", watch_time.tm_hour, watch_time.tm_min);
+        lv_label_set_text(time_label, time_content);
     }
+
 }
 
-void button_wifi_event_cb(lv_event_t *e)
+static bool is_top_start(lv_point_t *point)
 {
-    lv_obj_t *img = lv_event_get_target(e);
-    sw_state.sw_2 ^= 1;
-    // Toggle between checked and default state
-    if (sw_state.sw_2)
-    {
-        lv_image_set_src(img, &control_wifi_on);
-    }
-    else
-    {
-        lv_image_set_src(img, &control_wifi_off);
-    }
+    lv_coord_t height = lv_disp_get_ver_res(NULL); // Get screen height
+    lv_coord_t threshold = height * 1 / 6; // Define bottom area as the lower 1/6
+    return (point->y < threshold);
 }
 
-void button_phone_event_cb(lv_event_t *e)
+static void scr_down_curtain_event_cb(lv_event_t *e)
 {
-    lv_obj_t *img = lv_event_get_target(e);
-    sw_state.sw_3 ^= 1;
-    // Toggle between checked and default state
-    if (sw_state.sw_3)
+    lv_obj_t *cardview = lv_event_get_user_data(e);
+    CardViewData *view_data = lv_obj_get_user_data(cardview);
+    lv_event_code_t code = lv_event_get_code(e);
+
+    lv_indev_t *indev = lv_indev_get_act();  // Get the current input device
+
+    if (code == LV_EVENT_PRESSING && indev && lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER)
     {
-        lv_image_set_src(img, &control_phone_on);
-        lv_image_set_src(img_phone, &capsule_phone_on);
+        lv_obj_add_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
+        lv_point_t point;
+        lv_indev_get_point(indev, &point); // Get touch point coordinates
+        // Check if the slide starts from the bottom
+        if (!(is_top_start(&point) || view_data->offset_y == 0))
+        {
+            lv_obj_clear_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
+        }
     }
-    else
+    else if (code == LV_EVENT_PRESS_LOST || code == LV_EVENT_RELEASED)
     {
-        lv_image_set_src(img, &control_phone_off);
-        lv_image_set_src(img_phone, &capsule_phone_off);
+        lv_obj_add_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
     }
+
+    if (clock_big && clock_small)
+    {
+        if (view_data->offset_y < -150)
+        {
+            lv_obj_add_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+            lv_obj_clear_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+
 }
 
-void button_mute_event_cb(lv_event_t *e)
+static void enter_music_cb(lv_event_t *e)
 {
-    lv_obj_t *img = lv_event_get_target(e);
-    sw_state.sw_4 ^= 1;
-    // Toggle between checked and default state
-    if (sw_state.sw_4)
-    {
-        lv_image_set_src(img, &control_mute_on);
-        lv_image_set_src(img_mute, &capsule_mute_on);
-    }
-    else
-    {
-        lv_image_set_src(img, &control_mute_off);
-        lv_image_set_src(img_mute, &capsule_mute_off);
-    }
+    lv_tileview_set_tile_by_index(tileview, 2, 1, LV_ANIM_OFF);
+    _ui_screen_change(&tileview, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      NULL, false);
 }
 
-void button_nobother_event_cb(lv_event_t *e)
+static void enter_calendar_cb(lv_event_t *e)
 {
-    lv_obj_t *img = lv_event_get_target(e);
-    sw_state.sw_5 ^= 1;
-    // Toggle between checked and default state
-    if (sw_state.sw_5)
-    {
-        lv_image_set_src(img, &control_nobother_on);
-        lv_image_set_src(img_nobother, &capsule_nobother_on);
-    }
-    else
-    {
-        lv_image_set_src(img, &control_nobother_off);
-        lv_image_set_src(img_nobother, &capsule_nobother_off);
-    }
+    _ui_screen_change(&scr_app_calendar, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_calendar_init, false);
+}
+
+static void enter_activity_cb(lv_event_t *e)
+{
+    _ui_screen_change(&scr_app_activity, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_activity_init, false);
+}
+
+static void enter_app_menu_cb(lv_event_t *e)
+{
+    _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_menu_init, false);
 }
 
 void lv_down_curtain_init(void)
 {
-    // scr_down_curtain = lv_obj_create(NULL);
-    // lv_obj_add_event_cb(scr_down_curtain, (lv_event_cb_t)tile_down_cb, LV_EVENT_ALL, NULL);
+    // date & time big one
+    {
+        clock_big = lv_image_create(scr_down_curtain);
+        lv_image_set_src(clock_big, &ui_card_clockcircle);
+        lv_obj_set_pos(clock_big, 38, 30);
 
-    lv_obj_set_scrollbar_mode(scr_down_curtain, LV_SCROLLBAR_MODE_OFF);
+        uint16_t x = 185;
+        uint16_t y = 60;
+        uint16_t interval = 26;
+        lv_obj_t *hour_decimal = lv_image_create(clock_big);
+        lv_image_set_src(hour_decimal, text_num_array[0]);
+        lv_obj_set_pos(hour_decimal, x, y);
+        lv_image_set_scale(hour_decimal, 0.7 * LV_SCALE_NONE);
 
-    // capsule on top
-    lv_obj_t *capsule = lv_image_create(scr_down_curtain);
-    lv_image_set_src(capsule, &control_capsule);
-    lv_obj_set_pos(capsule, 136, 20);
+        lv_obj_t *hour_single = lv_image_create(clock_big);
+        lv_image_set_src(hour_single, text_num_array[0]);
+        lv_obj_set_pos(hour_single, x + interval, y);
+        lv_image_set_scale(hour_single, 0.7 * LV_SCALE_NONE);
 
-    img_phone = lv_image_create(capsule);
-    lv_image_set_src(img_phone, &capsule_phone_off);
-    lv_obj_set_pos(img_phone, 15, 9);
-    img_nobother = lv_image_create(capsule);
-    lv_image_set_src(img_nobother, &capsule_nobother_off);
-    lv_obj_set_pos(img_nobother, 56, 9);
-    img_mute = lv_image_create(capsule);
-    lv_image_set_src(img_mute, &capsule_mute_off);
-    lv_obj_set_pos(img_mute, 98, 9);
+        lv_obj_t *minute_decimal = lv_image_create(clock_big);
+        lv_image_set_src(minute_decimal, text_num_array[0]);
+        lv_obj_set_pos(minute_decimal, x + interval * 2 + 17, y);
+        lv_image_set_scale(minute_decimal, 0.7 * LV_SCALE_NONE);
 
-    // button
-    lv_obj_t *button_lte = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_lte, &control_lte_off);
-    lv_obj_set_pos(button_lte, 20, 100);
-    lv_obj_add_flag(button_lte, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(button_lte, button_lte_event_cb, LV_EVENT_CLICKED, NULL);
+        lv_obj_t *minute_singel = lv_image_create(clock_big);
+        lv_image_set_src(minute_singel, text_num_array[0]);
+        lv_obj_set_pos(minute_singel, x + interval * 3 + 17, y);
+        lv_image_set_scale(minute_singel, 0.7 * LV_SCALE_NONE);
 
-    lv_obj_t *button_wifi = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_wifi, &control_wifi_off);
-    lv_obj_set_pos(button_wifi, 207, 100);
-    lv_obj_add_flag(button_wifi, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(button_wifi, button_wifi_event_cb, LV_EVENT_CLICKED, NULL);
+        lv_obj_t *colon = lv_image_create(clock_big);
+        lv_image_set_src(colon, text_num_array[10]);
+        lv_obj_set_pos(colon, x + interval * 2 + 5, y + 5);
+        lv_image_set_scale(colon, 0.7 * LV_SCALE_NONE);
 
-    lv_obj_t *button_phone = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_phone, &control_phone_off);
-    lv_obj_set_pos(button_phone, 20, 100 + 125 * 1);
-    lv_obj_add_flag(button_phone, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(button_phone, button_phone_event_cb, LV_EVENT_CLICKED, NULL);
+        lv_obj_t *date_label = lv_label_create(clock_big);
+        lv_label_set_text(date_label, "January0\nSUN");
+        lv_obj_set_pos(date_label, 0, 42);
+        lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_opa(date_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size24_bits1_font,
+                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
 
-    lv_obj_t *button_mute = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_mute, &control_mute_off);
-    lv_obj_set_pos(button_mute, 20, 100 + 125 * 2);
-    lv_obj_add_flag(button_mute, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(button_mute, button_mute_event_cb, LV_EVENT_CLICKED, NULL);
+    //card
+    {
+        lv_coord_t card_width = 400;
+        lv_coord_t card_height = 167;
+        lv_obj_t *card_view = lv_create_card_view(scr_down_curtain, REDUCTION, 300, card_height);
 
-    lv_obj_t *button_nobother = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_nobother, &control_nobother_off);
-    lv_obj_set_pos(button_nobother, 207, 100 + 125 * 2);
-    lv_obj_add_flag(button_nobother, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(button_nobother, button_nobother_event_cb, LV_EVENT_CLICKED, NULL);
+        // Add cards
+        {
+            lv_obj_t *card = lv_create_card(card_view, 3, card_width, card_height);
+            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+            lv_obj_set_style_border_width(card, 0, 0);
+            lv_obj_set_style_pad_all(card, 0, 0);
+            lv_obj_t *img = lv_image_create(card);
+            lv_image_set_src(img, &ui_card_appview);
+            lv_obj_align(img, LV_ALIGN_TOP_MID, 0, 5);
+            lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(img, (lv_event_cb_t)enter_app_menu_cb, LV_EVENT_CLICKED, NULL);
+        }
+        {
+            lv_obj_t *card = lv_create_card(card_view, 2, card_width, card_height);
+            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+            lv_obj_set_style_border_width(card, 0, 0);
+            lv_obj_set_style_pad_all(card, 0, 0);
+            lv_obj_t *img = lv_image_create(card);
+            lv_image_set_src(img, &ui_card_bg);
+            lv_obj_set_align(img, LV_ALIGN_CENTER);
 
-    lv_obj_t *button_charge = lv_image_create(scr_down_curtain);
-    lv_image_set_src(button_charge, &control_pad);
-    lv_obj_set_pos(button_charge, 207, 100 + 125 * 1);
-    lv_obj_t *charge_num = lv_image_create(button_charge);
-    lv_image_set_src(charge_num, &ui_text_9);
-    lv_obj_set_pos(charge_num, 35, 40);
-    lv_obj_set_style_transform_scale(charge_num, 256 * 0.8f, 256 * 0.8f);
-    charge_num = lv_image_create(button_charge);
-    lv_image_set_src(charge_num, &ui_text_6);
-    lv_obj_set_pos(charge_num, 65, 40);
-    lv_obj_set_style_transform_scale(charge_num, 256 * 0.8f, 256 * 0.8f);
-    charge_num = lv_image_create(button_charge);
-    lv_image_set_src(charge_num, &ui_text_percent);
-    lv_obj_set_pos(charge_num, 95, 40);
-    lv_obj_set_style_transform_scale(charge_num, 256 * 0.8f, 256 * 0.8f);
+            lv_obj_t *img_app = lv_image_create(img);
+            lv_image_set_src(img_app, &ui_clock_music_icon);
+            lv_obj_set_pos(img_app, 17, 28);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_music_cb, LV_EVENT_CLICKED, NULL);
+            img_app = lv_image_create(img);
+            lv_image_set_src(img_app, &ui_clock_calendar_icon);
+            lv_obj_set_pos(img_app, 17 + 109, 28);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_calendar_cb, LV_EVENT_CLICKED, NULL);
+            img_app = lv_image_create(img);
+            lv_image_set_src(img_app, &ui_clock_activity_icon);
+            lv_obj_set_pos(img_app, 17 + 109 * 2, 28);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_activity_cb, LV_EVENT_CLICKED, NULL);
+        }
+        {
+            lv_obj_t *card = lv_create_card(card_view, 1, card_width, card_height);
+            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+            lv_obj_set_style_border_width(card, 0, 0);
+            lv_obj_set_style_pad_all(card, 0, 0);
+            lv_obj_t *img = lv_image_create(card);
+            lv_image_set_src(img, &ui_card_weather);
+            lv_obj_set_align(img, LV_ALIGN_CENTER);
+        }
+        {
+            lv_obj_t *card = lv_create_card(card_view, 0, card_width, card_height);
+            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+            lv_obj_set_style_border_width(card, 0, 0);
+            lv_obj_set_style_pad_all(card, 0, 0);
+            lv_obj_t *img = lv_image_create(card);
+            lv_image_set_src(img, &ui_card_calendar);
+            lv_obj_set_align(img, LV_ALIGN_CENTER);
+        }
+        lv_obj_add_event_cb(scr_down_curtain, scr_down_curtain_event_cb, LV_EVENT_ALL, card_view);
+    }
+
+    // date & time small one
+    {
+        clock_small = lv_image_create(scr_down_curtain);
+        lv_image_set_src(clock_small, &option_bar_bg);
+        lv_obj_set_align(clock_small, LV_ALIGN_TOP_MID);
+
+        lv_obj_t *date_label = lv_label_create(clock_small);
+        lv_label_set_text(date_label, "SUN 0");
+        lv_obj_set_pos(date_label, 15, 30);
+        lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_opa(date_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size24_bits1_font,
+                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+
+        lv_obj_t *time_label = lv_label_create(clock_small);
+        lv_label_set_text(time_label, "00:00");
+        lv_obj_set_pos(time_label, 280, 30);
+        lv_obj_set_style_text_color(time_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_opa(time_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(time_label, &SourceHanSansSC_size24_bits1_font,
+                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_watchface);
+    lv_timer_set_repeat_count(timer, -1);
 }
-

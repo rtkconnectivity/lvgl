@@ -20,13 +20,12 @@ static lv_obj_t *temperature_container;
 static lv_obj_t *compass_dial;
 static lv_obj_t *weather_current, *weather_range;
 
-static lv_timer_t *timer = NULL;
 
 #ifndef M_PI
 #define M_PI    ((float)3.14159265358979323846)
 #endif
 
-lv_image_dsc_t const *text_num_array[] =
+lv_image_dsc_t const *text_num_array[11] =
 {
     &ui_text_0,
     &ui_text_1,
@@ -52,25 +51,37 @@ char *day[7] =
     "SAT"
 };
 
+char *month[12] =
+{
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+};
+
 void time_update_cb(void)
 {
-    time_t rawtime;
-    time(&rawtime);
-    struct tm *timeinfo = localtime(&rawtime);
-
     lv_obj_t *parent = time_img_container;
 
     lv_obj_t *hour_decimal = lv_obj_get_child(parent, 0);
-    lv_image_set_src(hour_decimal, text_num_array[timeinfo->tm_hour / 10]);
+    lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
     lv_obj_t *hour_singel = lv_obj_get_sibling(hour_decimal, 1);
-    lv_image_set_src(hour_singel, text_num_array[timeinfo->tm_hour % 10]);
+    lv_image_set_src(hour_singel, text_num_array[watch_time.tm_hour % 10]);
     lv_obj_t *minute_decimal = lv_obj_get_sibling(hour_singel, 1);
-    lv_image_set_src(minute_decimal, text_num_array[timeinfo->tm_min / 10]);
+    lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
     lv_obj_t *minute_singel = lv_obj_get_sibling(minute_decimal, 1);
-    lv_image_set_src(minute_singel, text_num_array[timeinfo->tm_min % 10]);
+    lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
 
     char date_text_content[10];
-    sprintf(date_text_content, "%s %d", day[timeinfo->tm_wday], timeinfo->tm_mday);
+    sprintf(date_text_content, "%s %d", day[watch_time.tm_wday], watch_time.tm_mday);
     lv_label_set_text(date_label, date_text_content);
 }
 #if LVGL_USE_CJSON
@@ -145,7 +156,7 @@ static void weather_update_cb(void)
     time(&rawtime);
     struct tm *timeinfo = localtime(&rawtime);
     char weather_date_content[5];
-    uint8_t index = timeinfo->tm_wday;
+    uint8_t index = watch_time.tm_wday;
     for (uint8_t i = 0; i < 4; i++)
     {
         lv_obj_t *obj = lv_obj_get_child(parent, i + 6);
@@ -283,10 +294,6 @@ static void compass_update_cb()
 #endif
 static void timer_cb(lv_timer_t *timer)
 {
-    if (!scr_watchface)
-    {
-        return;
-    }
     time_update_cb();
 #if LVGL_USE_CJSON
     if (!cjson_content)
@@ -608,9 +615,7 @@ void lv_watchface_init(void)
         lv_obj_add_event_cb(heartrate, (lv_event_cb_t)heartrate_cb, LV_EVENT_CLICKED, NULL);
     }
     // lv_obj_add_event_cb(scr_watchface, (lv_event_cb_t)tile_center_cb, LV_EVENT_ALL, NULL);
-#if defined __WIN32
-    timer = lv_timer_create(timer_cb, 2000, scr_watchface);
+    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_watchface);
     lv_timer_set_repeat_count(timer, -1);
-#endif
 }
 

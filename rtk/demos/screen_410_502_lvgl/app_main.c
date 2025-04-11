@@ -44,13 +44,16 @@ typedef struct information
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static void time_update_cb(lv_timer_t *timer);
 static void enter_menu_cb(lv_event_t *event);
-static void inform_generate_task_entry();
+static void inform_generate_task_entry(lv_timer_t *timer);
+static void enter_control_board(lv_event_t *event);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
 static char *content = NULL;
+struct tm watch_time = {0};
 
 lv_obj_t *tileview;
 bool tileview_scrolling = false;
@@ -67,8 +70,12 @@ lv_obj_t *scr_down_curtain;
 lv_obj_t *scr_left_curtain;
 lv_obj_t *scr_right_curtain;
 lv_obj_t *scr_right_curtain_2;
+
+lv_obj_t *scr_app_control_board;
 lv_obj_t *scr_app_menu;
 lv_obj_t *scr_app_calendar;
+lv_obj_t *scr_app_activity;
+lv_obj_t *scr_app_music;
 
 uint32_t event_snapshot_creat;
 uint32_t event_snapshot_delete;
@@ -91,6 +98,11 @@ void watch_demo_init(void)
 #endif
     {
         lv_timer_t *timer = lv_timer_create(inform_generate_task_entry, 3000, NULL);
+        lv_timer_set_repeat_count(timer, -1);
+        lv_timer_ready(timer);
+    }
+    {
+        lv_timer_t *timer = lv_timer_create(time_update_cb, 30000, NULL);
         lv_timer_set_repeat_count(timer, -1);
         lv_timer_ready(timer);
     }
@@ -284,7 +296,18 @@ void read_json_cb(lv_timer_t *timer)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static void inform_generate_task_entry()
+static void time_update_cb(lv_timer_t *timer)
+{
+#ifdef __WIN32
+    time_t rawtime;
+    time(&rawtime);
+    struct tm *timeinfo = localtime(&rawtime);
+    watch_time = *timeinfo;
+#endif
+}
+
+
+static void inform_generate_task_entry(lv_timer_t *timer)
 {
     if (!content)
     {
@@ -292,18 +315,8 @@ static void inform_generate_task_entry()
         sprintf(content,
                 "Never gonna give you up. Never gonna let you down. Never gonna run around and desert you. Never gonna give you up. Never gonna let you down. Never gonna run around and desert you.");
     }
-    struct tm watch_time = {0};
-    struct tm *timeinfo = &watch_time;
-#ifdef __WIN32
-    time_t rawtime;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-#endif
     char time_str[10];
-    if (timeinfo)
-    {
-        sprintf(time_str, "%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min);
-    }
+    sprintf(time_str, "%02d:%02d", watch_time.tm_hour, watch_time.tm_min);
 
     information_t payload =
     {
@@ -318,17 +331,27 @@ static void inform_generate_task_entry()
 
 static void enter_menu_cb(lv_event_t *event)
 {
-    lv_indev_t *indev = lv_indev_get_next(NULL);
-    while (indev)
+    lv_event_code_t code = lv_event_get_code(event);
+    if (code < LV_EVENT_COVER_CHECK || code > LV_EVENT_DRAW_TASK_ADDED)
     {
-        if (lv_indev_get_type(indev) == LV_INDEV_TYPE_KEYPAD &&
-            lv_indev_get_state(indev) == LV_INDEV_STATE_PRESSED)
+        lv_indev_t *indev = lv_indev_get_next(NULL);
+        while (indev)
         {
-            _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_menu_init, 0);
-            return;
+            if (lv_indev_get_type(indev) == LV_INDEV_TYPE_KEYPAD &&
+                lv_indev_get_state(indev) == LV_INDEV_STATE_PRESSED)
+            {
+                _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                  lv_app_menu_init, 0);
+                return;
+            }
+            indev = lv_indev_get_next(indev);
         }
-        indev = lv_indev_get_next(indev);
     }
+}
+
+static void enter_control_board(lv_event_t *event)
+{
+    _ui_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_control_board_init, false);
 }
 

@@ -77,7 +77,7 @@ static bool close_flag = 1;
 static bool is_bottom_start(lv_point_t *point)
 {
     lv_coord_t height = lv_disp_get_ver_res(NULL); // Get screen height
-    lv_coord_t threshold = height * 5 / 6; // Define bottom area as the lower 1/5
+    lv_coord_t threshold = height * 5 / 6; // Define bottom area as the lower 1/6
     return (point->y > threshold);
 }
 
