@@ -320,10 +320,6 @@
 
 #define LV_USE_RTK_IDU 1
 
-#if (LV_USE_DRAW_PPE_RTL87X2G || LV_USE_DRAW_PPE_RTL8773E) && LV_USE_RTK_IDU
-#define LV_USE_RTK_IDU_HW 0
-#endif
-
 /*=======================
  * FEATURE CONFIGURATION
  *=======================*/
