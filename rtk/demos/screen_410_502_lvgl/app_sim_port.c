@@ -23,8 +23,8 @@
 /*********************
  *      DEFINES
  *********************/
-#define LV_USE_PSRAM         2
-#define PSRAM_BUF_SIZE       (2*1024*1024)
+#define LV_USE_PSRAM         1
+#define PSRAM_BUF_SIZE       (3*1024*1024)
 
 #if LV_USE_PSRAM == 1
 #define LV_USE_PSRAM_POOL

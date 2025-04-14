@@ -17,18 +17,18 @@ PR: <https://github.com/lvgl/lvgl/pull/7960>
 
 ---
 
-#### Date: YYYY-MM-DD
+#### Date: 2025-04-14
 
-#### Author: [Author's Name]
+#### Author: [astor_zhang, wenjing_jiang, luke_sun]
 
-- **Change Reason**: Briefly describe the reason for the change.
+- **Change Reason**: add PPE/IDU init into lvgl_init.
 - **Modified Files**:
-  - `path/to/another_modified_file.c`
+  - `src\lv_init.c`
 - **Modified APIs**:
-  - `int yet_another_function(double arg)`
+  - `void lv_init(void)`
 
 #### Description
 
-A detailed description of the changes made, potential impacts on the system, and any other relevant information.
+Add PPE initialization and SW IDU decoder initialization during LVGL initialization, depending on the macros in the config file.
 
 ---

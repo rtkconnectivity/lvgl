@@ -314,6 +314,16 @@
 /** Draw using cached OpenGLES textures */
 #define LV_USE_DRAW_OPENGLES 0
 
+#define LV_USE_DRAW_PPE_RTL87X2G 0
+
+#define LV_USE_DRAW_PPE_RTL8773E 0
+
+#define LV_USE_RTK_IDU 1
+
+#if (LV_USE_DRAW_PPE_RTL87X2G || LV_USE_DRAW_PPE_RTL8773E) && LV_USE_RTK_IDU
+#define LV_USE_RTK_IDU_HW 0
+#endif
+
 /*=======================
  * FEATURE CONFIGURATION
  *=======================*/
@@ -332,7 +342,7 @@
  *  - LV_LOG_LEVEL_ERROR    Log only critical issues, when system may fail.
  *  - LV_LOG_LEVEL_USER     Log only custom log messages added by the user.
  *  - LV_LOG_LEVEL_NONE     Do not log anything. */
-#define LV_LOG_LEVEL LV_LOG_LEVEL_ERROR
+#define LV_LOG_LEVEL LV_LOG_LEVEL_WARN
 
 /** - 1: Print log with 'printf';
  *  - 0: User needs to register a callback with `lv_log_register_print_cb()`. */
@@ -527,7 +537,7 @@
 #define LV_USE_MATRIX           0
 
 /** Include `lvgl_private.h` in `lvgl.h` to access internal data and functions by default */
-#define LV_USE_PRIVATE_API      0
+#define LV_USE_PRIVATE_API      1
 
 /*==================
  *   FONT USAGE

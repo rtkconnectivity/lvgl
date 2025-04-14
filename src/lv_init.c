@@ -78,6 +78,10 @@
     #include "lv_draw_ppe_rtl8773e.h"
 #endif
 
+#if LV_USE_RTK_IDU
+    #include "libs\rle\lv_idu.h"
+#endif
+
 /*********************
  *      DEFINES
  *********************/
