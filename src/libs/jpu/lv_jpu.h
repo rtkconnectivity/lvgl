@@ -1,13 +1,10 @@
 /**
- * @file lv_port_fs_templ.h
+ * @file lv_jpu.h
  *
  */
 
-/*Copy this file as "lv_port_fs.h" and set this value to "1" to enable content*/
-#if 1
-
-#ifndef LV_PORT_FS_TEMPL_H
-#define LV_PORT_FS_TEMPL_H
+#ifndef LV_JPU_H
+#define LV_JPU_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +13,8 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "lvgl.h"
+#include "../../lv_conf_internal.h"
+#if LV_USE_JPU
 
 /*********************
  *      DEFINES
@@ -29,16 +27,22 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void lv_port_fs_init(void);
+
+/**
+ * Register the JPU decoder functions in LVGL
+ */
+void lv_jpu_init(void);
+
+void lv_jpu_deinit(void);
 
 /**********************
  *      MACROS
  **********************/
 
+#endif /*LV_USE_JPU*/
+
 #ifdef __cplusplus
-} /*extern "C"*/
+} /* extern "C" */
 #endif
 
-#endif /*LV_PORT_FS_TEMPL_H*/
-
-#endif /*Disable/Enable content*/
+#endif /*LV_USE_JPU*/
