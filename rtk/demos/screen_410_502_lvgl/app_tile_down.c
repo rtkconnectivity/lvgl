@@ -43,21 +43,26 @@ static bool is_top_start(lv_point_t *point)
     return (point->y < threshold);
 }
 
-static void scr_down_curtain_event_cb(lv_event_t *e)
+static void scr_tile_down_event_cb(lv_event_t *e)
 {
     lv_obj_t *cardview = lv_event_get_user_data(e);
     CardViewData *view_data = lv_obj_get_user_data(cardview);
     lv_event_code_t code = lv_event_get_code(e);
+    static lv_point_t point;
 
     lv_indev_t *indev = lv_indev_get_act();  // Get the current input device
-
+    if (code == LV_EVENT_PRESSED && indev && lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER)
+    {
+        lv_indev_get_point(indev, &point); // Get touch point coordinates
+    }
     if (code == LV_EVENT_PRESSING && indev && lv_indev_get_type(indev) == LV_INDEV_TYPE_POINTER)
     {
-        lv_obj_add_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
-        lv_point_t point;
-        lv_indev_get_point(indev, &point); // Get touch point coordinates
         // Check if the slide starts from the bottom
-        if (!(is_top_start(&point) || view_data->offset_y == 0))
+        if (is_top_start(&point))
+        {
+            lv_obj_clear_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
+        }
+        else
         {
             lv_obj_clear_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
         }
@@ -65,6 +70,7 @@ static void scr_down_curtain_event_cb(lv_event_t *e)
     else if (code == LV_EVENT_PRESS_LOST || code == LV_EVENT_RELEASED)
     {
         lv_obj_add_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
     }
 
     if (clock_big && clock_small)
@@ -108,11 +114,11 @@ static void enter_app_menu_cb(lv_event_t *e)
                       lv_app_menu_init, false);
 }
 
-void lv_down_curtain_init(void)
+void lv_tile_down_init(void)
 {
     // date & time big one
     {
-        clock_big = lv_image_create(scr_down_curtain);
+        clock_big = lv_image_create(scr_tile_down);
         lv_image_set_src(clock_big, &ui_card_clockcircle);
         lv_obj_set_pos(clock_big, 38, 30);
 
@@ -157,7 +163,7 @@ void lv_down_curtain_init(void)
     {
         lv_coord_t card_width = 400;
         lv_coord_t card_height = 167;
-        lv_obj_t *card_view = lv_create_card_view(scr_down_curtain, REDUCTION, 300, card_height);
+        lv_obj_t *card_view = lv_create_card_view(scr_tile_down, REDUCTION, 300, card_height);
 
         // Add cards
         {
@@ -169,7 +175,8 @@ void lv_down_curtain_init(void)
             lv_image_set_src(img, &ui_card_appview);
             lv_obj_align(img, LV_ALIGN_TOP_MID, 0, 5);
             lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_event_cb(img, (lv_event_cb_t)enter_app_menu_cb, LV_EVENT_CLICKED, NULL);
+            lv_obj_add_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_add_event_cb(img, (lv_event_cb_t)enter_app_menu_cb, LV_EVENT_SHORT_CLICKED, NULL);
         }
         {
             lv_obj_t *card = lv_create_card(card_view, 2, card_width, card_height);
@@ -179,22 +186,26 @@ void lv_down_curtain_init(void)
             lv_obj_t *img = lv_image_create(card);
             lv_image_set_src(img, &ui_card_bg);
             lv_obj_set_align(img, LV_ALIGN_CENTER);
+            lv_obj_add_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
 
             lv_obj_t *img_app = lv_image_create(img);
             lv_image_set_src(img_app, &ui_clock_music_icon);
             lv_obj_set_pos(img_app, 17, 28);
             lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_music_cb, LV_EVENT_CLICKED, NULL);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_music_cb, LV_EVENT_SHORT_CLICKED, NULL);
             img_app = lv_image_create(img);
             lv_image_set_src(img_app, &ui_clock_calendar_icon);
             lv_obj_set_pos(img_app, 17 + 109, 28);
             lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_calendar_cb, LV_EVENT_CLICKED, NULL);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_calendar_cb, LV_EVENT_SHORT_CLICKED, NULL);
             img_app = lv_image_create(img);
             lv_image_set_src(img_app, &ui_clock_activity_icon);
             lv_obj_set_pos(img_app, 17 + 109 * 2, 28);
             lv_obj_add_flag(img_app, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_activity_cb, LV_EVENT_CLICKED, NULL);
+            lv_obj_add_flag(img_app, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_activity_cb, LV_EVENT_SHORT_CLICKED, NULL);
         }
         {
             lv_obj_t *card = lv_create_card(card_view, 1, card_width, card_height);
@@ -214,18 +225,20 @@ void lv_down_curtain_init(void)
             lv_image_set_src(img, &ui_card_calendar);
             lv_obj_set_align(img, LV_ALIGN_CENTER);
         }
-        lv_obj_add_event_cb(scr_down_curtain, scr_down_curtain_event_cb, LV_EVENT_ALL, card_view);
+        lv_obj_add_event_cb(scr_tile_down, scr_tile_down_event_cb, LV_EVENT_ALL, card_view);
     }
 
     // date & time small one
     {
-        clock_small = lv_image_create(scr_down_curtain);
+        clock_small = lv_image_create(scr_tile_down);
         lv_image_set_src(clock_small, &option_bar_bg);
         lv_obj_set_align(clock_small, LV_ALIGN_TOP_MID);
+        lv_obj_remove_flag(clock_small, LV_OBJ_FLAG_CLICKABLE);
 
         lv_obj_t *date_label = lv_label_create(clock_small);
         lv_label_set_text(date_label, "SUN 0");
         lv_obj_set_pos(date_label, 15, 30);
+        lv_obj_remove_flag(date_label, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(date_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size24_bits1_font,
@@ -234,11 +247,12 @@ void lv_down_curtain_init(void)
         lv_obj_t *time_label = lv_label_create(clock_small);
         lv_label_set_text(time_label, "00:00");
         lv_obj_set_pos(time_label, 280, 30);
+        lv_obj_remove_flag(time_label, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_text_color(time_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(time_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(time_label, &SourceHanSansSC_size24_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
     }
-    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_watchface);
+    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_tile_center);
     lv_timer_set_repeat_count(timer, -1);
 }

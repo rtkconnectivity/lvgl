@@ -123,37 +123,37 @@ void lv_app_control_board_init(void)
     lv_obj_set_pos(img_mute, 98, 9);
 
     // button
-    lv_obj_t *button_lte = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_lte = lv_image_create(scr_tile_down);
     lv_image_set_src(button_lte, &control_lte_off);
     lv_obj_set_pos(button_lte, 20, 100);
     lv_obj_add_flag(button_lte, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(button_lte, button_lte_event_cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *button_wifi = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_wifi = lv_image_create(scr_tile_down);
     lv_image_set_src(button_wifi, &control_wifi_off);
     lv_obj_set_pos(button_wifi, 207, 100);
     lv_obj_add_flag(button_wifi, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(button_wifi, button_wifi_event_cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *button_phone = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_phone = lv_image_create(scr_tile_down);
     lv_image_set_src(button_phone, &control_phone_off);
     lv_obj_set_pos(button_phone, 20, 100 + 125 * 1);
     lv_obj_add_flag(button_phone, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(button_phone, button_phone_event_cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *button_mute = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_mute = lv_image_create(scr_tile_down);
     lv_image_set_src(button_mute, &control_mute_off);
     lv_obj_set_pos(button_mute, 20, 100 + 125 * 2);
     lv_obj_add_flag(button_mute, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(button_mute, button_mute_event_cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *button_nobother = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_nobother = lv_image_create(scr_tile_down);
     lv_image_set_src(button_nobother, &control_nobother_off);
     lv_obj_set_pos(button_nobother, 207, 100 + 125 * 2);
     lv_obj_add_flag(button_nobother, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(button_nobother, button_nobother_event_cb, LV_EVENT_CLICKED, NULL);
 
-    lv_obj_t *button_charge = lv_image_create(scr_down_curtain);
+    lv_obj_t *button_charge = lv_image_create(scr_tile_down);
     lv_image_set_src(button_charge, &control_pad);
     lv_obj_set_pos(button_charge, 207, 100 + 125 * 1);
     lv_obj_t *charge_num = lv_image_create(button_charge);

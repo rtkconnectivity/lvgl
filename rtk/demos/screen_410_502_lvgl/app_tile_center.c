@@ -326,21 +326,21 @@ static void heartrate_cb(lv_event_t *event)
     return;
 }
 
-void lv_watchface_init(void)
+void lv_tile_center_init(void)
 {
-    // scr_watchface = lv_obj_create(NULL);
-    // lv_obj_set_style_bg_color(scr_watchface, lv_color_make(0, 0, 0), 0);
-    // lv_obj_set_style_bg_opa(scr_watchface, LV_OPA_COVER, 0);
-    lv_obj_clear_flag(scr_watchface, LV_OBJ_FLAG_SCROLLABLE);
+    // scr_tile_center = lv_obj_create(NULL);
+    // lv_obj_set_style_bg_color(scr_tile_center, lv_color_make(0, 0, 0), 0);
+    // lv_obj_set_style_bg_opa(scr_tile_center, LV_OPA_COVER, 0);
+    lv_obj_clear_flag(scr_tile_center, LV_OBJ_FLAG_SCROLLABLE);
 
     // extern const lv_image_dsc_t ui_clock_face_main;
-    // lv_obj_t *img1 = lv_image_create(scr_watchface);
+    // lv_obj_t *img1 = lv_image_create(scr_tile_center);
     // lv_image_set_src(img1, &ui_clock_face_main);
     // lv_obj_align(img1, LV_ALIGN_CENTER, 0, 0);
 
     // date_label & time text
     {
-        date_label = lv_label_create(scr_watchface);
+        date_label = lv_label_create(scr_tile_center);
         lv_label_set_text(date_label, "SUN 0");
         lv_obj_set_pos(date_label, 270, 50);
         lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -348,7 +348,7 @@ void lv_watchface_init(void)
         lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size32_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
 
-        time_img_container = lv_obj_create(scr_watchface);
+        time_img_container = lv_obj_create(scr_tile_center);
         lv_obj_set_pos(time_img_container, 211, 88);
         lv_obj_set_size(time_img_container, 200, 200);
         lv_obj_clear_flag(time_img_container, LV_OBJ_FLAG_SCROLLABLE);
@@ -377,7 +377,7 @@ void lv_watchface_init(void)
     {
         uint16_t start_angle = 270;
 
-        lv_obj_t *arc_1 = lv_arc_create(scr_watchface);
+        lv_obj_t *arc_1 = lv_arc_create(scr_tile_center);
         activity_arc = arc_1;
         uint8_t radius = 50;
         lv_obj_set_pos(arc_1, 87 - radius, 128 - radius);
@@ -392,7 +392,7 @@ void lv_watchface_init(void)
         lv_obj_remove_flag(arc_1, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
         lv_arc_set_end_angle(arc_1, start_angle + (uint16_t)(360 * 10000 / 20000)); // cap 20000 steps
 
-        lv_obj_t *arc_2 = lv_arc_create(scr_watchface);
+        lv_obj_t *arc_2 = lv_arc_create(scr_tile_center);
         radius = 38;
         lv_obj_set_pos(arc_2, 87 - radius, 128 - radius);
         lv_obj_set_size(arc_2, radius * 2, radius * 2);
@@ -406,7 +406,7 @@ void lv_watchface_init(void)
         lv_obj_remove_flag(arc_2, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
         lv_arc_set_end_angle(arc_2, start_angle + (uint16_t)(360 * 30 / 60)); // cap 60 min
 
-        lv_obj_t *arc_3 = lv_arc_create(scr_watchface);
+        lv_obj_t *arc_3 = lv_arc_create(scr_tile_center);
         radius = 26;
         lv_obj_set_pos(arc_3, 87 - radius, 128 - radius);
         lv_obj_set_size(arc_3, radius * 2, radius * 2);
@@ -423,7 +423,7 @@ void lv_watchface_init(void)
 
     // weather condition
     {
-        weather_card = lv_image_create(scr_watchface);
+        weather_card = lv_image_create(scr_tile_center);
         lv_image_set_src(weather_card, &ui_clock_card_weather);
         lv_obj_set_pos(weather_card, 37, 185);
         lv_obj_clear_flag(weather_card, LV_OBJ_FLAG_SCROLLABLE);
@@ -500,7 +500,7 @@ void lv_watchface_init(void)
 
     // temperature icon
     {
-        lv_obj_t *container = lv_obj_create(scr_watchface);
+        lv_obj_t *container = lv_obj_create(scr_tile_center);
         temperature_container = container;
         lv_obj_set_pos(container, 15, 335);
         lv_obj_set_size(container, 120, 120);
@@ -563,7 +563,7 @@ void lv_watchface_init(void)
 
     // compass icon
     {
-        compass_dial = lv_image_create(scr_watchface);
+        compass_dial = lv_image_create(scr_tile_center);
         lv_image_set_src(compass_dial, &ui_clock_compass_dial_icon);
         lv_obj_set_pos(compass_dial, 154, 348);
         lv_obj_set_size(compass_dial, 100, 100);
@@ -604,7 +604,7 @@ void lv_watchface_init(void)
 
     // heartrate icon
     {
-        lv_obj_t *heartrate = lv_image_create(scr_watchface);
+        lv_obj_t *heartrate = lv_image_create(scr_tile_center);
         lv_image_set_src(heartrate, &ui_clock_heartrate_icon);
         lv_obj_set_pos(heartrate, 276, 348);
         lv_obj_set_size(heartrate, 100, 100);
@@ -614,8 +614,8 @@ void lv_watchface_init(void)
         lv_obj_set_style_bg_opa(heartrate, LV_OPA_TRANSP, 0);
         lv_obj_add_event_cb(heartrate, (lv_event_cb_t)heartrate_cb, LV_EVENT_CLICKED, NULL);
     }
-    // lv_obj_add_event_cb(scr_watchface, (lv_event_cb_t)tile_center_cb, LV_EVENT_ALL, NULL);
-    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_watchface);
+    // lv_obj_add_event_cb(scr_tile_center, (lv_event_cb_t)tile_center_cb, LV_EVENT_ALL, NULL);
+    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_tile_center);
     lv_timer_set_repeat_count(timer, -1);
 }
 

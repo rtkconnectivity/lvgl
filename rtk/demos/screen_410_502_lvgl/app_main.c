@@ -64,12 +64,12 @@ lv_obj_t *tile_left;
 lv_obj_t *tile_right;
 lv_obj_t *tile_right_2;
 
-lv_obj_t *scr_watchface;
-lv_obj_t *scr_up_curtain;
-lv_obj_t *scr_down_curtain;
-lv_obj_t *scr_left_curtain;
-lv_obj_t *scr_right_curtain;
-lv_obj_t *scr_right_curtain_2;
+lv_obj_t *scr_tile_center;
+lv_obj_t *scr_tile_up;
+lv_obj_t *scr_tile_down;
+lv_obj_t *scr_tile_left;
+lv_obj_t *scr_tile_right;
+lv_obj_t *scr_tile_right_2;
 
 lv_obj_t *scr_app_control_board;
 lv_obj_t *scr_app_menu;
@@ -113,43 +113,43 @@ void watch_demo_init(void)
     // lv_obj_add_event_cb(tileview, (lv_event_cb_t)enter_menu_cb, LV_EVENT_ALL, NULL);
 
     tile_center = lv_tileview_add_tile(tileview, 1, 1, LV_DIR_ALL); // create center tile
-    tile_up = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_BOTTOM); // create up tile
-    tile_down = lv_tileview_add_tile(tileview, 1, 2, LV_DIR_TOP); // create down tile
-    tile_left = lv_tileview_add_tile(tileview, 0, 1, LV_DIR_RIGHT); // create left tile
+    tile_up = lv_tileview_add_tile(tileview, 1, 0, LV_DIR_VER); // create up tile
+    tile_down = lv_tileview_add_tile(tileview, 1, 2, LV_DIR_VER); // create down tile
+    tile_left = lv_tileview_add_tile(tileview, 0, 1, LV_DIR_HOR); // create left tile
     tile_right = lv_tileview_add_tile(tileview, 2, 1, LV_DIR_HOR); // create right tile
-    tile_right_2 = lv_tileview_add_tile(tileview, 3, 1, LV_DIR_LEFT); // create right 2 tile
+    tile_right_2 = lv_tileview_add_tile(tileview, 3, 1, LV_DIR_HOR); // create right 2 tile
 
-    scr_watchface = lv_obj_create(tile_center);
-    lv_obj_remove_style_all(scr_watchface);
-    lv_obj_set_size(scr_watchface, LV_PCT(100), LV_PCT(100));
+    scr_tile_center = lv_obj_create(tile_center);
+    lv_obj_remove_style_all(scr_tile_center);
+    lv_obj_set_size(scr_tile_center, LV_PCT(100), LV_PCT(100));
 
-    scr_up_curtain = lv_obj_create(tile_up);
-    lv_obj_remove_style_all(scr_up_curtain);
-    lv_obj_set_size(scr_up_curtain, LV_PCT(100), LV_PCT(100));
+    scr_tile_up = lv_obj_create(tile_up);
+    lv_obj_remove_style_all(scr_tile_up);
+    lv_obj_set_size(scr_tile_up, LV_PCT(100), LV_PCT(100));
 
-    scr_down_curtain = lv_obj_create(tile_down);
-    lv_obj_remove_style_all(scr_down_curtain);
-    lv_obj_set_size(scr_down_curtain, LV_PCT(100), LV_PCT(100));
+    scr_tile_down = lv_obj_create(tile_down);
+    lv_obj_remove_style_all(scr_tile_down);
+    lv_obj_set_size(scr_tile_down, LV_PCT(100), LV_PCT(100));
 
-    scr_left_curtain = lv_obj_create(tile_left);
-    lv_obj_remove_style_all(scr_left_curtain);
-    lv_obj_set_size(scr_left_curtain, LV_PCT(100), LV_PCT(100));
+    scr_tile_left = lv_obj_create(tile_left);
+    lv_obj_remove_style_all(scr_tile_left);
+    lv_obj_set_size(scr_tile_left, LV_PCT(100), LV_PCT(100));
 
-    scr_right_curtain = lv_obj_create(tile_right);
-    lv_obj_remove_style_all(scr_right_curtain);
-    lv_obj_set_size(scr_right_curtain, LV_PCT(100), LV_PCT(100));
+    scr_tile_right = lv_obj_create(tile_right);
+    lv_obj_remove_style_all(scr_tile_right);
+    lv_obj_set_size(scr_tile_right, LV_PCT(100), LV_PCT(100));
 
-    scr_right_curtain_2 = lv_obj_create(tile_right_2);
-    lv_obj_remove_style_all(scr_right_curtain_2);
-    lv_obj_set_size(scr_right_curtain_2, LV_PCT(100), LV_PCT(100));
+    scr_tile_right_2 = lv_obj_create(tile_right_2);
+    lv_obj_remove_style_all(scr_tile_right_2);
+    lv_obj_set_size(scr_tile_right_2, LV_PCT(100), LV_PCT(100));
 
     //initialize curtains
-    lv_watchface_init();
-    lv_up_curtain_init();
-    lv_down_curtain_init();
-    lv_left_curtain_init();
-    lv_right_curtain_init();
-    lv_right_curtain_2_init();
+    lv_tile_center_init();
+    lv_tile_up_init();
+    lv_tile_down_init();
+    lv_tile_left_init();
+    lv_tile_right_init();
+    lv_tile_right_2_init();
 
     lv_tileview_set_tile_by_index(tileview, 1, 1, LV_ANIM_OFF); // start with center tile, no animation
 

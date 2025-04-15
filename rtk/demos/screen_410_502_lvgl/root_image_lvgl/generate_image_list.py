@@ -72,7 +72,8 @@ def generate_c_file(bin_file_data, output_c_file, output_h_file):
         f_c.write('#include "root_image_lvgl/ui_resource.h"\n\n')
         for data in bin_file_data:
             # Write the structure
-            f_c.write(f"const lv_image_dsc_t {data['struct_name']} = {{\n")
+            f_c.write(f"const lv_image_dsc_t {data['struct_name']} =\n")
+            f_c.write("{\n")
             f_c.write(f"    .header.magic = LV_IMAGE_HEADER_MAGIC,\n")
             f_c.write(f"    .header.w = {data['width']},\n")
             f_c.write(f"    .header.h = {data['height']},\n")

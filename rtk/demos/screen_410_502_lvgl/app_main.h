@@ -67,12 +67,12 @@ extern lv_obj_t *tile_left;
 extern lv_obj_t *tile_right;
 extern lv_obj_t *tile_right_2;
 
-extern lv_obj_t *scr_watchface;
-extern lv_obj_t *scr_up_curtain;
-extern lv_obj_t *scr_down_curtain;
-extern lv_obj_t *scr_left_curtain;
-extern lv_obj_t *scr_right_curtain;
-extern lv_obj_t *scr_right_curtain_2;
+extern lv_obj_t *scr_tile_center;
+extern lv_obj_t *scr_tile_up;
+extern lv_obj_t *scr_tile_down;
+extern lv_obj_t *scr_tile_left;
+extern lv_obj_t *scr_tile_right;
+extern lv_obj_t *scr_tile_right_2;
 extern lv_obj_t *scr_app_control_board;
 extern lv_obj_t *scr_app_menu;
 extern lv_obj_t *scr_app_calendar;
@@ -86,12 +86,12 @@ extern struct tm watch_time;
 
 extern bool enter_menu_flag;
 
-void lv_watchface_init(void);
-void lv_up_curtain_init(void);
-void lv_down_curtain_init(void);
-void lv_left_curtain_init(void);
-void lv_right_curtain_init(void);
-void lv_right_curtain_2_init(void);
+void lv_tile_center_init(void);
+void lv_tile_up_init(void);
+void lv_tile_down_init(void);
+void lv_tile_left_init(void);
+void lv_tile_right_init(void);
+void lv_tile_right_2_init(void);
 
 void lv_app_control_board_init(void);
 void lv_app_menu_init(void);

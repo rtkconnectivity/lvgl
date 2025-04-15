@@ -44,8 +44,8 @@ static bool close_flag = 1;
 //         {
 //             is_at_bottom = true;
 //             lv_indev_wait_release(lv_indev_get_act());
-//             _ui_screen_change(&scr_watchface, &scr_up_curtain, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
-//                               &lv_watchface_init, 1);
+//             _ui_screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
+//                               &lv_tile_center_init, 1);
 //         }
 //         else
 //         {
@@ -69,8 +69,8 @@ static bool close_flag = 1;
 //         lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP)
 //     {
 //         lv_indev_wait_release(lv_indev_get_act());
-//         _ui_screen_change(&scr_watchface, &scr_up_curtain, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
-//                           &lv_watchface_init, 1);
+//         _ui_screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
+//                           &lv_tile_center_init, 1);
 //     }
 // }
 
@@ -506,11 +506,11 @@ void pagelist_create(information_t *payload)
     lv_obj_add_event_cb(right_bg, clear_tv_cb, LV_EVENT_CLICKED, NULL);
 }
 
-void lv_up_curtain_init(void)
+void lv_tile_up_init(void)
 {
-    // scr_up_curtain = lv_obj_create(NULL);
-    // lv_obj_add_event_cb(scr_up_curtain, (lv_event_cb_t)tile_up_cb, LV_EVENT_ALL, NULL);
-    page = lv_obj_create(scr_up_curtain);
+    // scr_tile_up = lv_obj_create(NULL);
+    // lv_obj_add_event_cb(scr_tile_up, (lv_event_cb_t)tile_up_cb, LV_EVENT_ALL, NULL);
+    page = lv_obj_create(scr_tile_up);
     lv_obj_remove_style_all(page);
     lv_obj_set_scroll_dir(page, LV_DIR_VER);
     lv_obj_set_style_bg_color(page, lv_color_make(76, 76, 76), LV_PART_MAIN);

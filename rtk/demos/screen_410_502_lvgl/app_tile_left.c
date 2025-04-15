@@ -98,20 +98,20 @@ void create_slide_effect_checkbox(lv_obj_t *parent)
     }
 }
 
-void lv_left_curtain_init(void)
+void lv_tile_left_init(void)
 {
-    // scr_left_curtain = lv_obj_create(NULL);
+    // scr_tile_left = lv_obj_create(NULL);
 
-    // lv_obj_set_style_bg_color(scr_left_curtain, lv_color_make(0, 0, 0), 0);
-    // lv_obj_set_style_bg_opa(scr_left_curtain, LV_OPA_COVER, 0);
+    // lv_obj_set_style_bg_color(scr_tile_left, lv_color_make(0, 0, 0), 0);
+    // lv_obj_set_style_bg_opa(scr_tile_left, LV_OPA_COVER, 0);
 
     LV_IMG_DECLARE(w3w);
-    lv_obj_t *img1 = lv_image_create(scr_left_curtain);
+    lv_obj_t *img1 = lv_image_create(scr_tile_left);
     lv_image_set_src(img1, &w3w);
     lv_obj_center(img1);
 
-    create_slide_effect_checkbox(scr_left_curtain);
+    create_slide_effect_checkbox(scr_tile_left);
 
-    // lv_obj_add_event_cb(scr_left_curtain, (lv_event_cb_t)tile_left_cb, LV_EVENT_ALL, NULL);
+    // lv_obj_add_event_cb(scr_tile_left, (lv_event_cb_t)tile_left_cb, LV_EVENT_ALL, NULL);
 }
 

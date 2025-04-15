@@ -174,7 +174,7 @@ static void tileview_event_cb(lv_event_t *e)
     static bool flag = false; //prevent enter animate twice
     if (act_tile == tile_right_2 && !flag)
     {
-        update_arc_activity(scr_right_curtain_2);
+        update_arc_activity(scr_tile_right_2);
         flag = true;
     }
     else
@@ -183,9 +183,9 @@ static void tileview_event_cb(lv_event_t *e)
     }
 }
 
-void lv_right_curtain_2_init(void)
+void lv_tile_right_2_init(void)
 {
-    app_activity(scr_right_curtain_2);
+    app_activity(scr_tile_right_2);
     lv_obj_add_event_cb(tileview, tileview_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
 }
 

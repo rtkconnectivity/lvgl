@@ -47,7 +47,10 @@ static void touch_event_cb(lv_event_t *e)
     lv_obj_t *card_view = lv_event_get_current_target(e);
     CardViewData *view_data = lv_obj_get_user_data(card_view);
     lv_event_code_t code = lv_event_get_code(e);
-
+    if (!lv_obj_has_flag(card_view, LV_OBJ_FLAG_CLICKABLE))
+    {
+        return;
+    }
     lv_point_t point;
     lv_indev_t *indev = lv_indev_active();
     lv_indev_get_point(indev, &point);
@@ -136,7 +139,6 @@ lv_obj_t *lv_create_card_view(lv_obj_t *parent, CARDSTYLE style, lv_coord_t stac
                     lv_display_get_vertical_resolution(NULL));
     lv_obj_add_flag(card_view, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_flag(card_view, LV_OBJ_FLAG_EVENT_BUBBLE);
-    // lv_obj_clear_flag(card_view, LV_OBJ_FLAG_SCROLLABLE);
 
     // Set user data
     CardViewData *view_data = lv_malloc(sizeof(CardViewData));
