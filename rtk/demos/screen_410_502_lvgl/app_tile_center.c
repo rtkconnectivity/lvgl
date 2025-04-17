@@ -320,8 +320,8 @@ static void timer_cb(lv_timer_t *timer)
 
 static void heartrate_cb(lv_event_t *event)
 {
-    // _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-    //                   &lv_app_menu_init, 0);
+    _ui_screen_change(&scr_app_heartrate, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      &lv_app_heartrate_init, 0);
     LV_LOG("click heartrate icon\n");
 }
 

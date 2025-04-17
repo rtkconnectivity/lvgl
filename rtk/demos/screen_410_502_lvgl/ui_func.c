@@ -87,7 +87,7 @@ static void return_gesture_cb(lv_event_t *e)
             if (drag_x > DRAG_THRESHOLD)
             {
                 param->cb(); // Exit
-                LV_LOG("RETURN\n");
+                // LV_LOG("RETURN\n");
             }
             if (has_flag)
             {

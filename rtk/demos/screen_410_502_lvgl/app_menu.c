@@ -21,13 +21,11 @@ static app_item_t app_list[] =
     {"Heart Rate", &ui_clock_heartrate_icon},
     {"Music", &ui_clock_music_icon},
     {"Calendar", &ui_clock_calendar_icon},
-    {"Box2d Ring", &ui_clock_box2d_ring_icon},
     {"Activity", &ui_clock_activity_icon},
     {"Heart Rate", &ui_clock_heartrate_icon},
     {"Music", &ui_clock_music_icon},
     {"Calendar", &ui_clock_calendar_icon},
-    {"Box2d Ring", &ui_clock_box2d_ring_icon},
-    {"Activity", &ui_clock_activity_icon}
+    {"Activity", &ui_clock_activity_icon},
 };
 #define APP_COUNT (sizeof(app_list) / sizeof(app_list[0]))
 
@@ -48,21 +46,35 @@ static void enter_app_cb(lv_event_t *e)
     lv_obj_t *obj = lv_event_get_target(e);
     uint8_t index = lv_obj_get_index(obj);
     index %= (APP_COUNT / 2);
-    if (index == 1)
+    switch (index)
     {
-        lv_tileview_set_tile_by_index(tileview, 2, 1, LV_ANIM_OFF);
-        _ui_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          NULL, false);
-    }
-    else if (index == 4)
-    {
-        _ui_screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_activity_init, true);
-    }
-    else if (index == 2)
-    {
-        _ui_screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_calendar_init, true);
+    case 0:
+        {
+            _ui_screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_heartrate_init, true);
+        }
+        break;
+    case 1:
+        {
+            lv_tileview_set_tile_by_index(tileview, 2, 1, LV_ANIM_OFF);
+            _ui_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              NULL, false);
+        }
+        break;
+    case 2:
+        {
+            _ui_screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_calendar_init, true);
+        }
+        break;
+    case 3:
+        {
+            _ui_screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_activity_init, true);
+        }
+        break;
+    default:
+        break;
     }
 }
 

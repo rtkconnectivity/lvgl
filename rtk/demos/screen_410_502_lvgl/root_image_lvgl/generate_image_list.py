@@ -28,6 +28,12 @@ def parse_bin_file(file_path):
         if color_byte == 0:
             color_space = "LV_COLOR_FORMAT_RGB565"
             size = 2
+        elif color_byte == 1:
+            color_space = "LV_COLOR_FORMAT_ARGB8565"
+            size = 3
+        elif color_byte == 3:
+            color_space = "LV_COLOR_FORMAT_RGB888"
+            size = 3
         elif color_byte == 4:
             color_space = "LV_COLOR_FORMAT_ARGB8888"
             size = 4
