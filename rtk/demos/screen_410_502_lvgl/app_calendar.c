@@ -135,7 +135,7 @@ void lv_app_calendar_init(void)
     scr_app_calendar = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(scr_app_calendar, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_calendar, LV_OPA_COVER, 0);
-    lv_obj_clear_flag(scr_app_calendar, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(scr_app_calendar, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *calendar = lv_calendar_create(scr_app_calendar);
     lv_obj_set_size(calendar, 410, 502);

@@ -320,10 +320,20 @@ static void timer_cb(lv_timer_t *timer)
 
 static void heartrate_cb(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      &lv_app_menu_init, 0);
+    // _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+    //                   &lv_app_menu_init, 0);
     LV_LOG("click heartrate icon\n");
-    return;
+}
+
+static void enter_menu_cb(lv_event_t *event)
+{
+    _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
+}
+
+static void enter_control_board_cb(lv_event_t *event)
+{
+    _ui_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_control_board_init, 0);
 }
 
 void lv_tile_center_init(void)
@@ -331,7 +341,7 @@ void lv_tile_center_init(void)
     // scr_tile_center = lv_obj_create(NULL);
     // lv_obj_set_style_bg_color(scr_tile_center, lv_color_make(0, 0, 0), 0);
     // lv_obj_set_style_bg_opa(scr_tile_center, LV_OPA_COVER, 0);
-    lv_obj_clear_flag(scr_tile_center, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(scr_tile_center, LV_OBJ_FLAG_SCROLLABLE);
 
     // extern const lv_image_dsc_t ui_clock_face_main;
     // lv_obj_t *img1 = lv_image_create(scr_tile_center);
@@ -351,7 +361,7 @@ void lv_tile_center_init(void)
         time_img_container = lv_obj_create(scr_tile_center);
         lv_obj_set_pos(time_img_container, 211, 88);
         lv_obj_set_size(time_img_container, 200, 200);
-        lv_obj_clear_flag(time_img_container, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_remove_flag(time_img_container, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_border_width(time_img_container, 0, 0);
         lv_obj_set_style_bg_opa(time_img_container, LV_OPA_TRANSP, 0);
 
@@ -426,7 +436,11 @@ void lv_tile_center_init(void)
         weather_card = lv_image_create(scr_tile_center);
         lv_image_set_src(weather_card, &ui_clock_card_weather);
         lv_obj_set_pos(weather_card, 37, 185);
-        lv_obj_clear_flag(weather_card, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(weather_card, LV_OBJ_FLAG_CLICKABLE);
+
+        lv_obj_add_event_cb(weather_card, (lv_event_cb_t)enter_menu_cb, LV_EVENT_SHORT_CLICKED, NULL);
+        lv_obj_add_event_cb(weather_card, (lv_event_cb_t)enter_control_board_cb, LV_EVENT_LONG_PRESSED,
+                            NULL);
 
         lv_obj_t *img = lv_image_create(weather_card);
         lv_image_set_src(img, &ui_weather_cloudy);
@@ -504,7 +518,7 @@ void lv_tile_center_init(void)
         temperature_container = container;
         lv_obj_set_pos(container, 15, 335);
         lv_obj_set_size(container, 120, 120);
-        lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_remove_flag(container, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_border_width(container, 0, 0);
         lv_obj_set_style_bg_opa(container, LV_OPA_TRANSP, 0);
 
@@ -567,7 +581,7 @@ void lv_tile_center_init(void)
         lv_image_set_src(compass_dial, &ui_clock_compass_dial_icon);
         lv_obj_set_pos(compass_dial, 154, 348);
         lv_obj_set_size(compass_dial, 100, 100);
-        lv_obj_clear_flag(compass_dial, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_remove_flag(compass_dial, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_border_width(compass_dial, 0, 0);
         lv_obj_set_style_bg_opa(compass_dial, LV_OPA_TRANSP, 0);
 
@@ -608,7 +622,7 @@ void lv_tile_center_init(void)
         lv_image_set_src(heartrate, &ui_clock_heartrate_icon);
         lv_obj_set_pos(heartrate, 276, 348);
         lv_obj_set_size(heartrate, 100, 100);
-        lv_obj_clear_flag(heartrate, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_remove_flag(heartrate, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_add_flag(heartrate, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_border_width(heartrate, 0, 0);
         lv_obj_set_style_bg_opa(heartrate, LV_OPA_TRANSP, 0);

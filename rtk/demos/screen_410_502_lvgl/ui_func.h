@@ -140,8 +140,28 @@ void _ui_spinbox_step(lv_obj_t *target, int val)
 void _ui_switch_theme(int val)
 ;
 
-void clear_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag);
+/*
+* @brief Remove object and its chilrd object flag
+* @tip Do not create in the top level screen object
+* @param parent Parent object
+* @param flag Object flag
+*/
+void remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag);
+
+/*
+* @brief Add object and its chilrd object flag
+* @tip Do not create in the top level screen object
+* @param parent Parent object
+* @param flag Object flag
+*/
 void add_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag);
+
+/*
+* @brief Create return gesture indicator
+* @tip Do not create in the top level screen object
+* @param parent Parent object
+* @param cb Callback function
+*/
 void return_create(lv_obj_t *parent, void (*cb)(void));
 
 

@@ -44,6 +44,7 @@ static void return_gesture_cb(lv_event_t *e)
     lv_indev_t *indev = lv_indev_get_act();
     lv_point_t point;
     static bool release_flag = 1; // 1: release
+    static bool has_flag = 0;
     static lv_coord_t pressed_x = 0;
     lv_indev_get_point(indev, &point);
 
@@ -57,18 +58,22 @@ static void return_gesture_cb(lv_event_t *e)
                 // Start dragging, record starting point and show image
                 pressed_x = point.x;
                 release_flag = 0;
-                lv_obj_clear_flag(img, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_remove_flag(img, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_pos(img, 0, point.y - lv_obj_get_height(img) / 2);
             }
             // Disable scrolling of the parent object
-            lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+            if (lv_obj_has_flag(obj, LV_OBJ_FLAG_SCROLLABLE))
+            {
+                lv_obj_remove_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                has_flag = 1;
+            }
             // Update image position and sequence
             lv_coord_t drag_x = point.x - pressed_x;
             if (drag_x >= 0 && drag_x <= DRAG_THRESHOLD)
             {
                 // Select image based on drag distance
                 uint8_t img_index = floor((DRAG_IMG_COUNT - 1) * drag_x / DRAG_THRESHOLD);
-                lv_img_set_src(img, drag_indicator_imgs[img_index]);
+                lv_image_set_src(img, drag_indicator_imgs[img_index]);
             }
         }
     }
@@ -82,8 +87,13 @@ static void return_gesture_cb(lv_event_t *e)
             if (drag_x > DRAG_THRESHOLD)
             {
                 param->cb(); // Exit
+                LV_LOG("RETURN\n");
             }
-            lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN);
+            if (has_flag)
+            {
+                lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN);
+                has_flag = 0;
+            }
             release_flag = 1;
             pressed_x = 0;
         }
@@ -105,7 +115,7 @@ void return_create(lv_obj_t *parent, void (*cb)(void))
     {
         img = lv_img_create(parent);
     }
-    lv_img_set_src(img, drag_indicator_imgs[0]);
+    lv_image_set_src(img, drag_indicator_imgs[0]);
     lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN); // Hide initially
     lv_obj_set_pos(img, 0, 0);
     param.img = img;
@@ -113,9 +123,9 @@ void return_create(lv_obj_t *parent, void (*cb)(void))
     lv_obj_add_event_cb(parent, return_gesture_cb, LV_EVENT_ALL, (void *)&param);
 }
 
-void clear_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
+void remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
 {
-    lv_obj_clear_flag(obj, flag);
+    lv_obj_remove_flag(obj, flag);
     // iterate over all child widgets
     uint32_t child_cnt = lv_obj_get_child_cnt(obj);
     for (uint32_t i = 0; i < child_cnt; i++)
@@ -123,7 +133,7 @@ void clear_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
         lv_obj_t *child = lv_obj_get_child(obj, i);
         if (child != NULL)
         {
-            clear_flag_recursive(child, flag);
+            remove_flag_recursive(child, flag);
         }
     }
 }
@@ -164,7 +174,7 @@ void _ui_dropdown_set_property(lv_obj_t *target, int id, int val)
 
 void _ui_image_set_property(lv_obj_t *target, int id, uint8_t *val)
 {
-    if (id == _UI_IMAGE_PROPERTY_IMAGE) { lv_img_set_src(target, val); }
+    if (id == _UI_IMAGE_PROPERTY_IMAGE) { lv_image_set_src(target, val); }
 }
 
 void _ui_label_set_property(lv_obj_t *target, int id, const char *val)
@@ -238,11 +248,11 @@ void _ui_flag_modify(lv_obj_t *target, int32_t flag, int value)
 {
     if (value == _UI_MODIFY_FLAG_TOGGLE)
     {
-        if (lv_obj_has_flag(target, flag)) { lv_obj_clear_flag(target, flag); }
+        if (lv_obj_has_flag(target, flag)) { lv_obj_remove_flag(target, flag); }
         else { lv_obj_add_flag(target, flag); }
     }
     else if (value == _UI_MODIFY_FLAG_ADD) { lv_obj_add_flag(target, flag); }
-    else { lv_obj_clear_flag(target, flag); }
+    else { lv_obj_remove_flag(target, flag); }
 }
 void _ui_state_modify(lv_obj_t *target, int32_t state, int value)
 {
@@ -367,7 +377,7 @@ void _ui_anim_callback_set_image_frame(lv_anim_t *a, int32_t v)
 
     if (v < 0) { v = 0; }
     if (v >= usr->imgset_size) { v = usr->imgset_size - 1; }
-    lv_img_set_src(usr->target, usr->imgset[v]);
+    lv_image_set_src(usr->target, usr->imgset[v]);
 }
 
 int32_t _ui_anim_callback_get_x(lv_anim_t *a)

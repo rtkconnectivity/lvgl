@@ -91,7 +91,7 @@ void app_activity(lv_obj_t *parent)
     lv_obj_remove_style_all(arc_container);
     lv_obj_set_pos(arc_container, 0, 0);
     lv_obj_set_size(arc_container, 300, 300);
-    lv_obj_clear_flag(arc_container, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(arc_container, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_border_width(arc_container, 0, 0);
     lv_obj_set_style_bg_opa(arc_container, LV_OPA_TRANSP, 0);
 

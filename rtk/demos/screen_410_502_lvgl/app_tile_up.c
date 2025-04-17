@@ -94,7 +94,7 @@ static void page_event_cb(lv_event_t *e)
         // Check if the slide starts from the bottom
         if (is_bottom_start(&point))
         {
-            clear_flag_recursive(page, LV_OBJ_FLAG_SCROLLABLE);
+            remove_flag_recursive(page, LV_OBJ_FLAG_SCROLLABLE);
         }
         return;
     }
@@ -413,7 +413,7 @@ void pagelist_create(information_t *payload)
     lv_image_set_src(msg_box, &msg_tab_bg);
     lv_obj_set_pos(msg_box, 30, 0);
     lv_obj_set_size(msg_box, 350, TV_HEIGHT);
-    lv_obj_clear_flag(msg_box, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(msg_box, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *icon = lv_image_create(msg_box);
     lv_obj_align(icon, LV_ALIGN_TOP_LEFT, 0, 0);

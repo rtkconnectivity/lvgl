@@ -84,7 +84,7 @@ void create_slide_effect_checkbox(lv_obj_t *parent)
         if (effect_list[i] >= BOX)
         {
             lv_obj_add_state(obj, LV_STATE_DISABLED);
-            lv_obj_clear_flag(obj, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_remove_flag(obj, LV_OBJ_FLAG_EVENT_BUBBLE);
         }
 #endif
     }

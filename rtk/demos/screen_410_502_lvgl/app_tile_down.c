@@ -60,11 +60,11 @@ static void scr_tile_down_event_cb(lv_event_t *e)
         // Check if the slide starts from the bottom
         if (is_top_start(&point))
         {
-            lv_obj_clear_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_remove_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
         }
         else
         {
-            lv_obj_clear_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_remove_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
         }
     }
     else if (code == LV_EVENT_PRESS_LOST || code == LV_EVENT_RELEASED)
@@ -78,11 +78,11 @@ static void scr_tile_down_event_cb(lv_event_t *e)
         if (view_data->offset_y < -150)
         {
             lv_obj_add_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_clear_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-            lv_obj_clear_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
         }
     }
