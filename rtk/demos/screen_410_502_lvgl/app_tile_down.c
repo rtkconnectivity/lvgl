@@ -2,6 +2,9 @@
 #include "app_main.h"
 #include "lv_card.h"
 #include <time.h>
+#include <string.h>
+
+#define LOCATION "Suzhou"
 
 lv_obj_t *clock_big, *clock_small;
 
@@ -114,6 +117,151 @@ static void enter_app_menu_cb(lv_event_t *e)
                       lv_app_menu_init, false);
 }
 
+static void create_weather_card(lv_obj_t *card)
+{
+    lv_image_dsc_t const *weather_icon = NULL;
+    int tm_hour = watch_time.tm_hour;
+    int wday = watch_time.tm_wday;
+    int hour[6] =
+    {
+        tm_hour,
+        (tm_hour + 1) % 24,
+        (tm_hour + 2) % 24,
+        (tm_hour + 3) % 24,
+        (tm_hour + 4) % 24,
+        (tm_hour + 5) % 24,
+    };
+    uint8_t temp_array[6] =
+    {
+        estimate_temp(hour[0]),
+        estimate_temp(hour[1]),
+        estimate_temp(hour[2]),
+        estimate_temp(hour[3]),
+        estimate_temp(hour[4]),
+        estimate_temp(hour[5]),
+    };
+
+    lv_obj_t *bg = lv_image_create(card);
+    lv_obj_set_align(bg, LV_ALIGN_CENTER);
+    lv_obj_set_style_border_width(bg, 0, 0);
+    lv_obj_set_style_pad_all(bg, 0, 0);
+    if (tm_hour >= 6 && tm_hour <= 19)
+    {
+        lv_image_set_src(bg, &ui_card_weather_day);
+        if (strcmp(weather_array[wday], "Sunny") == 0)
+        {
+            weather_icon = &ui_weather_sunny;
+        }
+        else
+        {
+            weather_icon = &ui_weather_cloudy;
+        }
+    }
+    else
+    {
+        lv_image_set_src(bg, &ui_card_weather_night);
+        weather_icon = &ui_weather_clear;
+    }
+    // top
+    {
+        lv_obj_t *label = lv_label_create(card);
+        lv_label_set_text(label, LOCATION);
+        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 18);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
+                                   0);
+
+        char content[15];
+        sprintf(content, "%d°", temp_array[0]);
+        label = lv_label_create(card);
+        lv_label_set_text(label, content);
+        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 35);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size32_bits1_font,
+                                   0);
+
+        // lv_obj_t *img = lv_image_create(card);
+        // lv_image_set_src(img, &weather_location);
+        // lv_obj_set_pos(img, 105, 30);
+
+        lv_obj_t *img = lv_image_create(card);
+        lv_obj_align(img, LV_ALIGN_TOP_RIGHT, -45, 5);
+        lv_image_set_src(img, weather_icon);
+
+        sprintf(content, "%s", weather_array[wday]);
+        if (tm_hour < 6 || tm_hour > 19)
+        {
+            sprintf(content, "%s", "Clear");
+        }
+        label = lv_label_create(card);
+        lv_label_set_text(label, content);
+        lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -43, 35);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
+                                   0);
+
+        sprintf(content, "H:%d° L:%d°", temp_range[wday + 7],  temp_range[wday]);
+        label = lv_label_create(card);
+        lv_label_set_text(label, content);
+        lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -43, 54);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
+                                   0);
+    }
+    // bottom
+    {
+        char content[200];
+        sprintf(content,
+                "%02d               %02d               %02d               %02d               %02d               %02d",
+                hour[0], hour[1], hour[2], hour[3], hour[4], hour[5]);
+        lv_obj_t *label = lv_label_create(card);
+        lv_label_set_text(label, content);
+        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 80);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xBCBEC4), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
+                                   0);
+
+        for (uint8_t i = 0; i < 6; i++)
+        {
+            uint8_t offset_x = 58;
+            lv_obj_t *img = lv_image_create(card);
+            lv_image_set_src(img, weather_icon);
+            lv_obj_set_pos(img, 45 + offset_x * i, 100);
+            if (hour[i] > 19 || hour[i] < 6)
+            {
+                lv_image_set_src(img, &ui_weather_clear);
+            }
+            else
+            {
+                if (strcmp(weather_array[wday], "Sunny") == 0)
+                {
+                    lv_image_set_src(img, &ui_weather_sunny);
+                }
+                else
+                {
+                    lv_image_set_src(img, &ui_weather_cloudy);
+                }
+            }
+        }
+
+        sprintf(content,
+                "%02d°             %02d°              %02d°              %02d°              %02d°            %02d°",
+                temp_array[0], temp_array[1], temp_array[2], temp_array[3], temp_array[4], temp_array[5]);
+        label = lv_label_create(card);
+        lv_label_set_text(label, content);
+        lv_obj_align(label, LV_ALIGN_BOTTOM_LEFT, 50, -10);
+        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
+        lv_obj_set_style_text_opa(label, 255, 0);
+        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
+                                   0);
+    }
+}
+
 void lv_tile_down_init(void)
 {
     // date & time big one
@@ -126,22 +274,22 @@ void lv_tile_down_init(void)
         uint16_t y = 60;
         uint16_t interval = 26;
         lv_obj_t *hour_decimal = lv_image_create(clock_big);
-        lv_image_set_src(hour_decimal, text_num_array[0]);
+        lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
         lv_obj_set_pos(hour_decimal, x, y);
         lv_image_set_scale(hour_decimal, 0.7 * LV_SCALE_NONE);
 
         lv_obj_t *hour_single = lv_image_create(clock_big);
-        lv_image_set_src(hour_single, text_num_array[0]);
+        lv_image_set_src(hour_single, text_num_array[watch_time.tm_hour % 10]);
         lv_obj_set_pos(hour_single, x + interval, y);
         lv_image_set_scale(hour_single, 0.7 * LV_SCALE_NONE);
 
         lv_obj_t *minute_decimal = lv_image_create(clock_big);
-        lv_image_set_src(minute_decimal, text_num_array[0]);
+        lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
         lv_obj_set_pos(minute_decimal, x + interval * 2 + 17, y);
         lv_image_set_scale(minute_decimal, 0.7 * LV_SCALE_NONE);
 
         lv_obj_t *minute_singel = lv_image_create(clock_big);
-        lv_image_set_src(minute_singel, text_num_array[0]);
+        lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
         lv_obj_set_pos(minute_singel, x + interval * 3 + 17, y);
         lv_image_set_scale(minute_singel, 0.7 * LV_SCALE_NONE);
 
@@ -150,8 +298,11 @@ void lv_tile_down_init(void)
         lv_obj_set_pos(colon, x + interval * 2 + 5, y + 5);
         lv_image_set_scale(colon, 0.7 * LV_SCALE_NONE);
 
+        char content[20];
+        sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
+                day[watch_time.tm_wday]);
         lv_obj_t *date_label = lv_label_create(clock_big);
-        lv_label_set_text(date_label, "January0\nSUN");
+        lv_label_set_text(date_label, content);
         lv_obj_set_pos(date_label, 0, 42);
         lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(date_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -212,9 +363,7 @@ void lv_tile_down_init(void)
             lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
             lv_obj_set_style_border_width(card, 0, 0);
             lv_obj_set_style_pad_all(card, 0, 0);
-            lv_obj_t *img = lv_image_create(card);
-            lv_image_set_src(img, &ui_card_weather);
-            lv_obj_set_align(img, LV_ALIGN_CENTER);
+            create_weather_card(card);
         }
         {
             lv_obj_t *card = lv_create_card(card_view, 0, card_width, card_height);
@@ -235,17 +384,19 @@ void lv_tile_down_init(void)
         lv_obj_set_align(clock_small, LV_ALIGN_TOP_MID);
         lv_obj_remove_flag(clock_small, LV_OBJ_FLAG_CLICKABLE);
 
+        char content[10];
+        sprintf(content, "%s %d\n", day[watch_time.tm_wday], watch_time.tm_mday);
         lv_obj_t *date_label = lv_label_create(clock_small);
-        lv_label_set_text(date_label, "SUN 0");
+        lv_label_set_text(date_label, content);
         lv_obj_set_pos(date_label, 15, 30);
         lv_obj_remove_flag(date_label, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(date_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size24_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-
+        sprintf(content, "%02d:%02d", watch_time.tm_hour, watch_time.tm_min);
         lv_obj_t *time_label = lv_label_create(clock_small);
-        lv_label_set_text(time_label, "00:00");
+        lv_label_set_text(time_label, content);
         lv_obj_set_pos(time_label, 280, 30);
         lv_obj_remove_flag(time_label, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_text_color(time_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -253,6 +404,6 @@ void lv_tile_down_init(void)
         lv_obj_set_style_text_font(time_label, &SourceHanSansSC_size24_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
     }
-    lv_timer_t *timer = lv_timer_create(timer_cb, 2000, scr_tile_center);
+    lv_timer_t *timer = lv_timer_create(timer_cb, 30000, scr_tile_center);
     lv_timer_set_repeat_count(timer, -1);
 }

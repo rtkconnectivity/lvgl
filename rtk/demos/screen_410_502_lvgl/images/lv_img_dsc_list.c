@@ -201,39 +201,6 @@ const lv_image_dsc_t ui_clock_calendar_icon =
     .data = UI_CLOCK_CALENDAR_ICON_BIN + 8
 };
 
-const lv_image_dsc_t ui_clock_card_alarm =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 331,
-    .header.h = 148,
-    .header.stride = 1324,
-    .data_size = 195952,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CLOCK_CARD_ALARM_BIN + 8
-};
-
-const lv_image_dsc_t ui_clock_card_compass =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 328,
-    .header.h = 148,
-    .header.stride = 1312,
-    .data_size = 194176,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CLOCK_CARD_COMPASS_BIN + 8
-};
-
-const lv_image_dsc_t ui_clock_card_music =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 329,
-    .header.h = 148,
-    .header.stride = 1316,
-    .data_size = 194768,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CLOCK_CARD_MUSIC_BIN + 8
-};
-
 const lv_image_dsc_t ui_clock_card_weather =
 {
     .header.magic = LV_IMAGE_HEADER_MAGIC,
@@ -243,17 +210,6 @@ const lv_image_dsc_t ui_clock_card_weather =
     .data_size = 192864,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .data = UI_CLOCK_CARD_WEATHER_BIN + 8
-};
-
-const lv_image_dsc_t ui_clock_card_workout =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 328,
-    .header.h = 148,
-    .header.stride = 1312,
-    .data_size = 194176,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CLOCK_CARD_WORKOUT_BIN + 8
 };
 
 const lv_image_dsc_t ui_clock_compass_dial_icon =
@@ -276,17 +232,6 @@ const lv_image_dsc_t ui_clock_compass_pointer_icon =
     .data_size = 560,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .data = UI_CLOCK_COMPASS_POINTER_ICON_BIN + 8
-};
-
-const lv_image_dsc_t ui_clock_face_main =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 417,
-    .header.h = 472,
-    .header.stride = 1668,
-    .data_size = 787296,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_CLOCK_FACE_MAIN_BIN + 8
 };
 
 const lv_image_dsc_t ui_clock_fruit_ninja_icon =
@@ -366,83 +311,6 @@ const lv_image_dsc_t ui_person_icon =
     .data = UI_PERSON_ICON_BIN + 8
 };
 
-const lv_image_dsc_t ui_weather_cloudy =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 39,
-    .header.h = 28,
-    .header.stride = 156,
-    .data_size = 4368,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_WEATHER_CLOUDY_BIN + 8
-};
-
-const lv_image_dsc_t ui_weather_rain_l =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 31,
-    .header.h = 31,
-    .header.stride = 124,
-    .data_size = 3844,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_WEATHER_RAIN_L_BIN + 8
-};
-
-const lv_image_dsc_t ui_weather_rain_m =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 31,
-    .header.h = 31,
-    .header.stride = 124,
-    .data_size = 3844,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_WEATHER_RAIN_M_BIN + 8
-};
-
-const lv_image_dsc_t ui_weather_rain_s =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 31,
-    .header.h = 31,
-    .header.stride = 124,
-    .data_size = 3844,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_WEATHER_RAIN_S_BIN + 8
-};
-
-const lv_image_dsc_t ui_weather_sunny =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 30,
-    .header.h = 30,
-    .header.stride = 120,
-    .data_size = 3600,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = UI_WEATHER_SUNNY_BIN + 8
-};
-
-const lv_image_dsc_t w1slice1 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 410,
-    .header.h = 502,
-    .header.stride = 1640,
-    .data_size = 823280,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = W1SLICE1_BIN + 8
-};
-
-const lv_image_dsc_t w2w =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 410,
-    .header.h = 502,
-    .header.stride = 1640,
-    .data_size = 823280,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = W2W_BIN + 8
-};
-
 const lv_image_dsc_t w3w =
 {
     .header.magic = LV_IMAGE_HEADER_MAGIC,
@@ -452,50 +320,6 @@ const lv_image_dsc_t w3w =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .data = W3W_BIN + 8
-};
-
-const lv_image_dsc_t w5battery =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 45,
-    .header.h = 53,
-    .header.stride = 180,
-    .data_size = 9540,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = W5BATTERY_BIN + 8
-};
-
-const lv_image_dsc_t w5w =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 410,
-    .header.h = 502,
-    .header.stride = 1640,
-    .data_size = 823280,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = W5W_BIN + 8
-};
-
-const lv_image_dsc_t watchface_butterfly =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 203,
-    .header.h = 250,
-    .header.stride = 812,
-    .data_size = 203000,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = WATCHFACE_BUTTERFLY_BIN + 8
-};
-
-const lv_image_dsc_t watchface_ring =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 205,
-    .header.h = 250,
-    .header.stride = 820,
-    .data_size = 205000,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = WATCHFACE_RING_BIN + 8
 };
 
 const lv_image_dsc_t watch_hour_hand =
@@ -760,160 +584,6 @@ const lv_image_dsc_t mute_on_icon =
     .data_size = 2464,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .data = MUTE_ON_ICON_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_banana =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 126,
-    .header.h = 50,
-    .header.stride = 504,
-    .data_size = 25200,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_BANANA_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_banana_half_1 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 126,
-    .header.h = 50,
-    .header.stride = 504,
-    .data_size = 25200,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_BANANA_HALF_1_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_banana_half_2 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 126,
-    .header.h = 50,
-    .header.stride = 504,
-    .data_size = 25200,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_BANANA_HALF_2_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_bg =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 410,
-    .header.h = 502,
-    .header.stride = 1640,
-    .data_size = 823280,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_BG_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_bomb =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 97,
-    .header.h = 106,
-    .header.stride = 388,
-    .data_size = 41128,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_BOMB_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_peach =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 62,
-    .header.h = 59,
-    .header.stride = 248,
-    .data_size = 14632,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_PEACH_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_peach_half_1 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 62,
-    .header.h = 59,
-    .header.stride = 248,
-    .data_size = 14632,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_PEACH_HALF_1_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_peach_half_2 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 62,
-    .header.h = 59,
-    .header.stride = 248,
-    .data_size = 14632,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_PEACH_HALF_2_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_strawberry =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 68,
-    .header.h = 72,
-    .header.stride = 272,
-    .data_size = 19584,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_STRAWBERRY_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_strawberry_half_1 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 68,
-    .header.h = 72,
-    .header.stride = 272,
-    .data_size = 19584,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_STRAWBERRY_HALF_1_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_strawberry_half_2 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 68,
-    .header.h = 72,
-    .header.stride = 272,
-    .data_size = 19584,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_STRAWBERRY_HALF_2_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_watermelon =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 98,
-    .header.h = 85,
-    .header.stride = 392,
-    .data_size = 33320,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_WATERMELON_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_watermelon_half_1 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 98,
-    .header.h = 85,
-    .header.stride = 392,
-    .data_size = 33320,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_WATERMELON_HALF_1_BIN + 8
-};
-
-const lv_image_dsc_t fruit_ninja_watermelon_half_2 =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 98,
-    .header.h = 85,
-    .header.stride = 392,
-    .data_size = 33320,
-    .header.cf = LV_COLOR_FORMAT_ARGB8888,
-    .data = FRUIT_NINJA_WATERMELON_HALF_2_BIN + 8
 };
 
 const lv_image_dsc_t app_music_btn_list_pause =
@@ -1464,5 +1134,137 @@ const lv_image_dsc_t ui_text_percent =
     .data_size = 13420,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .data = UI_TEXT_PERCENT_BIN + 8
+};
+
+const lv_image_dsc_t ui_card_weather_day =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 352,
+    .header.h = 157,
+    .header.stride = 704,
+    .data_size = 110528,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
+    .data = UI_CARD_WEATHER_DAY_BIN + 8
+};
+
+const lv_image_dsc_t ui_card_weather_night =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 352,
+    .header.h = 157,
+    .header.stride = 704,
+    .data_size = 110528,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
+    .data = UI_CARD_WEATHER_NIGHT_BIN + 8
+};
+
+const lv_image_dsc_t ui_clock_weather_icon =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 100,
+    .header.h = 100,
+    .header.stride = 400,
+    .data_size = 40000,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_CLOCK_WEATHER_ICON_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_clear =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 30,
+    .header.h = 30,
+    .header.stride = 120,
+    .data_size = 3600,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_CLEAR_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_cloudy =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 39,
+    .header.h = 28,
+    .header.stride = 156,
+    .data_size = 4368,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_CLOUDY_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_rain_l =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 31,
+    .header.h = 31,
+    .header.stride = 124,
+    .data_size = 3844,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_RAIN_L_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_rain_m =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 31,
+    .header.h = 31,
+    .header.stride = 124,
+    .data_size = 3844,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_RAIN_M_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_rain_s =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 31,
+    .header.h = 31,
+    .header.stride = 124,
+    .data_size = 3844,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_RAIN_S_BIN + 8
+};
+
+const lv_image_dsc_t ui_weather_sunny =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 30,
+    .header.h = 30,
+    .header.stride = 120,
+    .data_size = 3600,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_WEATHER_SUNNY_BIN + 8
+};
+
+const lv_image_dsc_t weather_day_scr_bg =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 410,
+    .header.h = 502,
+    .header.stride = 820,
+    .data_size = 411640,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
+    .data = WEATHER_DAY_SCR_BG_BIN + 8
+};
+
+const lv_image_dsc_t weather_location =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 22,
+    .header.h = 22,
+    .header.stride = 88,
+    .data_size = 1936,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = WEATHER_LOCATION_BIN + 8
+};
+
+const lv_image_dsc_t weather_night_scr_bg =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 410,
+    .header.h = 502,
+    .header.stride = 820,
+    .data_size = 411640,
+    .header.cf = LV_COLOR_FORMAT_RGB565,
+    .data = WEATHER_NIGHT_SCR_BG_BIN + 8
 };
 

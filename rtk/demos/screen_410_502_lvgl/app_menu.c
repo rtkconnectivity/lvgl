@@ -16,16 +16,18 @@ typedef struct
 } app_item_t;
 
 // Sample APP data
-static app_item_t app_list[] =
+static const app_item_t app_list[] =
 {
-    {"Heart Rate", &ui_clock_heartrate_icon},
+    {"Weather", &ui_clock_weather_icon},
     {"Music", &ui_clock_music_icon},
     {"Calendar", &ui_clock_calendar_icon},
     {"Activity", &ui_clock_activity_icon},
     {"Heart Rate", &ui_clock_heartrate_icon},
+    {"Weather", &ui_clock_weather_icon},
     {"Music", &ui_clock_music_icon},
     {"Calendar", &ui_clock_calendar_icon},
     {"Activity", &ui_clock_activity_icon},
+    {"Heart Rate", &ui_clock_heartrate_icon},
 };
 #define APP_COUNT (sizeof(app_list) / sizeof(app_list[0]))
 
@@ -50,8 +52,8 @@ static void enter_app_cb(lv_event_t *e)
     {
     case 0:
         {
-            _ui_screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_heartrate_init, true);
+            _ui_screen_change(&scr_app_weather, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_weather_init, true);
         }
         break;
     case 1:
@@ -71,6 +73,12 @@ static void enter_app_cb(lv_event_t *e)
         {
             _ui_screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
                               lv_app_activity_init, true);
+        }
+        break;
+    case 4:
+        {
+            _ui_screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_heartrate_init, true);
         }
         break;
     default:
@@ -134,8 +142,8 @@ static void page_event_cb(lv_event_t *e)
 void lv_app_menu_init(void)
 {
     scr_app_menu = lv_obj_create(NULL);
-    lv_obj_remove_style_all(scr_app_menu);
-    lv_obj_set_size(scr_app_menu, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_bg_color(scr_app_menu, lv_color_hex(0x0), 0);
+    lv_obj_set_style_bg_opa(scr_app_menu, LV_OPA_COVER, 0);
 
     lv_obj_t *page = lv_obj_create(scr_app_menu);
     lv_obj_set_style_border_width(page, 0, LV_PART_MAIN); // No border

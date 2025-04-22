@@ -62,6 +62,8 @@ static void update_data(lv_timer_t *t)
 void lv_app_heartrate_init(void)
 {
     scr_app_heartrate = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_heartrate);
+    lv_obj_set_size(scr_app_heartrate, LV_PCT(100), LV_PCT(100));
 
     lv_obj_t *container = lv_obj_create(scr_app_heartrate);
     lv_obj_remove_style_all(container);

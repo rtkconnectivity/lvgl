@@ -79,10 +79,13 @@ extern lv_obj_t *scr_app_calendar;
 extern lv_obj_t *scr_app_activity;
 extern lv_obj_t *scr_app_music;
 extern lv_obj_t *scr_app_heartrate;
+extern lv_obj_t *scr_app_weather;
 
 extern lv_image_dsc_t const *text_num_array[11];
-extern char *day[7];
-extern char *month[12];
+extern const char *day[7];
+extern const char *month[12];
+extern const char *weather_array[7];
+extern const uint8_t temp_range[14];
 extern struct tm watch_time;
 
 extern bool enter_menu_flag;
@@ -100,7 +103,9 @@ void lv_app_calendar_init(void);
 void lv_app_activity_init(void);
 void lv_app_music_init(void);
 void lv_app_heartrate_init(void);
+void lv_app_weather_init(void);
 
+extern uint8_t estimate_temp(int hour);
 
 // FONTS
 LV_FONT_DECLARE(SourceHanSansSC_size12_bits1_font);
