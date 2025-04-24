@@ -9,7 +9,7 @@
 #include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773E
 #include "lv_draw_ppe_rtl8773e.h"
-#include "lv_draw_sw_private.h"
+#include "../../sw/lv_draw_sw_private.h"
 #include "../../../core/lv_refr.h"
 #include "../../../display/lv_display_private.h"
 #include "../../../stdlib/lv_string.h"

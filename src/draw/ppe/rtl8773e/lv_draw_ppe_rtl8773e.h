@@ -13,7 +13,7 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "../lv_draw.h"
+#include "../../lv_draw.h"
 #if LV_USE_DRAW_PPE_RTL8773E
 
 #include "../../../misc/lv_area.h"
@@ -24,7 +24,7 @@ extern "C" {
 #include "../../lv_draw_rect.h"
 #include "../../lv_draw_image.h"
 #include "lv_ppe_rtl8773e_utils.h"
-#include "lv_draw_sw_utils.h"
+#include "../../sw/lv_draw_sw_utils.h"
 
 /*********************
  *      DEFINES

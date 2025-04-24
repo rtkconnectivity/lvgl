@@ -13,7 +13,7 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "../lv_draw.h"
+#include "../../lv_draw.h"
 #if LV_USE_DRAW_PPE_RTL872xG
 
 #include "../../../misc/lv_area.h"

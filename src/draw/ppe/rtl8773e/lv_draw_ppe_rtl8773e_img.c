@@ -9,7 +9,7 @@
 #include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773E
 #include "../../../misc/lv_area_private.h"
-#include "blend/lv_draw_sw_blend_private.h"
+#include "../../sw/blend/lv_draw_sw_blend_private.h"
 #include "../../lv_image_decoder_private.h"
 #include "../../lv_draw_image_private.h"
 #include "../../../display/lv_display.h"
@@ -21,7 +21,7 @@
 #include "../../../misc/lv_color.h"
 #include "../../../stdlib/lv_string.h"
 #include "../../../core/lv_global.h"
-#include "lv_image_decoder.h"
+#include "../../../draw/lv_image_decoder.h"
 
 #include "lv_ppe_rtl8773e_utils.h"
 #include "rtl_idu.h"

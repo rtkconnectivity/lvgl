@@ -9,10 +9,10 @@
 #include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773E
 #include "../../../misc/lv_area_private.h"
-#include "lv_draw_sw_mask_private.h"
+#include "../../sw/lv_draw_sw_mask_private.h"
 #include "lv_draw_ppe_rtl8773e.h"
-#include "blend/lv_draw_sw_blend_private.h"
-#include "lv_draw_sw_gradient_private.h"
+#include "../../sw/blend/lv_draw_sw_blend_private.h"
+#include "../../sw/lv_draw_sw_gradient_private.h"
 #include "../../../misc/lv_math.h"
 #include "../../../misc/lv_text_ap.h"
 #include "../../../core/lv_refr.h"
