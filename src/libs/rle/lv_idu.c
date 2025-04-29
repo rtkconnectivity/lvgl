@@ -17,12 +17,22 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if LV_USE_RTK_IDU_HW
+#include "rtl_idu.h"
+#include "rtl_ppe.h"
+#include <dma_channel.h>
+#endif
+
 /*********************
  *      DEFINES
  *********************/
 #define DECODER_NAME    "IDU"
 #define image_cache_draw_buf_handlers &(LV_GLOBAL_DEFAULT()->image_cache_draw_buf_handlers)
 
+#if LV_USE_RTK_IDU_HW
+static uint8_t high_speed_dma_channel_num = 0xFF;
+static uint8_t low_speed_dma_channel_num = 0xFF;
+#endif
 /**********************
  *      TYPEDEFS
  **********************/
@@ -97,6 +107,8 @@ static lv_result_t idu_decoder_info(lv_image_decoder_t *decoder, lv_image_decode
                                     lv_image_header_t *header);
 static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc);
 static void idu_decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc);
+static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_stride,uint8_t *output, uint16_t width,
+                                  uint16_t height);
 static lv_result_t decompress_rle_rgb565_data(const idu_file_t *file, uint8_t *img_data,
                                               uint16_t width, uint16_t height);
 static lv_result_t decompress_rle_rgb888_data(const idu_file_t *file, uint8_t *img_data,
@@ -126,7 +138,14 @@ void lv_rtk_idu_init(void)
     lv_image_decoder_set_open_cb(dec, idu_decoder_open);
     lv_image_decoder_set_close_cb(dec, idu_decoder_close);
     dec->name = DECODER_NAME;
-    // LV_LOG_INFO("RLE decoder initialized");
+
+#if LV_USE_RTK_IDU_HW
+     PPE_CLK_ENABLE(ENABLE);
+
+     GDMA_channel_request(&high_speed_dma_channel_num, NULL, true);
+     GDMA_channel_request(&low_speed_dma_channel_num, NULL, false);
+#endif
+   LV_LOG_INFO("IDU decoder initialized");
 }
 /**********************
  * STATIC FUNCTIONS
@@ -162,19 +181,60 @@ static lv_result_t idu_decoder_info(lv_image_decoder_t *decoder, lv_image_decode
     /*If it's a RLE file...*/
     if (src_type == LV_IMAGE_SRC_FILE)
     {
-        LV_LOG_ERROR("Failed to LV_IMAGE_SRC_FILE");
-        return LV_RESULT_INVALID;
+        const char *fn = src;
+        if (strcmp(lv_fs_get_ext(fn), "rle") == 0)               /*Check the extension*/
+       {
+           /*Save the data in the header*/
+           lv_fs_file_t f;
+           lv_fs_res_t res = lv_fs_open(&f, src, LV_FS_MODE_RD);
+           if (res != LV_FS_RES_OK) { return LV_RES_INV; }
+           uint8_t headers[20];
+
+           lv_fs_read(&f, headers, sizeof(headers), NULL);
+           uint16_t width = headers[2] | (headers[3] << 8);
+           uint16_t height = headers[4] | (headers[5] << 8);
+
+           lv_fs_close(&f);
+           header->magic = LV_IMAGE_HEADER_MAGIC;
+           header->w = width;
+           header->h = height;
+           char input_type = headers[1];
+           if (input_type == 0)
+           {
+               header->cf = LV_COLOR_FORMAT_RGB565;
+               header->stride = width * 2; 
+           }
+           else if (input_type == 3)
+           {
+               header->cf = LV_COLOR_FORMAT_RGB888;
+               header->stride = width * 3; 
+           }
+           else if (input_type == 1)
+           {
+               header->cf = LV_COLOR_FORMAT_ARGB8565;
+               header->stride = width * 3; 
+           }
+           else if (input_type == 4)
+           {
+               header->cf = LV_COLOR_FORMAT_ARGB8888;
+               header->stride = width * 4; 
+           }
+           LV_LOG_USER("decoder_info IDU %d %d %d", header->w, header->h, header->cf);
+           LV_LOG_USER("decoder_info IDU width %d height %d header->stride %d", width, height,header->stride);
+           return LV_RES_OK;
+       }
     }
     else if (dsc->src_type == LV_IMAGE_SRC_VARIABLE)
     {
+        LV_LOG_USER("LV_IMAGE_SRC_VARIABLE");
         const lv_image_dsc_t *src_dsc = (const lv_image_dsc_t *)dsc->src;
         LV_ASSERT(src_dsc != NULL);
         if (!is_rle(src_dsc))
         {
             return LV_RESULT_INVALID;
         }
-        lv_image_dsc_t *image = (lv_image_dsc_t *)src;
-        lv_memcpy(header, &image->header, sizeof(lv_image_header_t));
+                                
+        lv_memcpy(header, &src_dsc->header, sizeof(lv_image_header_t));
         return LV_RESULT_OK;
     }
     return LV_RESULT_INVALID;
@@ -185,51 +245,8 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
     LV_UNUSED(decoder);
     if (dsc->src_type == LV_IMAGE_SRC_FILE)
     {
-        const char *fn = dsc->src;
-        LV_LOG_ERROR("Failed to LV_IMAGE_SRC_FILE");
+        LV_LOG_ERROR("LV_IMAGE_SRC_FILE todo");
         return LV_RESULT_INVALID;
-        if (strcmp(lv_fs_get_ext(fn), "rle") == 0)               /*Check the extension*/
-        {
-            uint8_t *rle_data;
-            lv_fs_file_t f;
-            lv_fs_res_t res = lv_fs_open(&f, fn, LV_FS_MODE_RD);
-            if (res != LV_FS_RES_OK) { return LV_RESULT_INVALID; }
-            uint8_t headers[20];
-
-            // lv_fs_ioctl(&f, (void **)&rle_data, 0);
-            memcpy(headers, rle_data, 20);
-            uint8_t idu_type = headers[8] & 0x03;// Lowest 2 bits
-            uint16_t width = dsc->header.w;
-            uint16_t height = dsc->header.h;
-            lv_fs_close(&f);
-
-            LV_ASSERT(idu_type == 0); //source RLE
-
-            dsc->decoded = lv_draw_buf_create_ex(image_cache_draw_buf_handlers, width, height, dsc->header.cf,
-                                                 LV_STRIDE_AUTO);
-            if (dsc->decoded == NULL)
-            {
-                LV_LOG_ERROR("Failed to create draw buffer");
-                return LV_RESULT_INVALID;  // Handle error appropriately
-            }
-
-            uint8_t *img_data = (uint8_t *)dsc->decoded->data;
-            idu_file_t *file = (idu_file_t *)(rle_data + 8);
-
-            lv_result_t ret;
-            char input_type = headers[1];
-            ret = decompress_rle_data(input_type, file, img_data, width, height);
-            if (ret != LV_RESULT_OK)
-            {
-                lv_draw_buf_destroy((void *)dsc->decoded);
-                LV_LOG_ERROR("Decompression failed for input type: %c", input_type);
-                return ret;
-            }
-
-            // LV_LOG_INFO("Software decode success.");
-            return LV_RESULT_OK;     /*The image is fully decoded. Return with its pointer*/
-        }
-
     }
     else if (dsc->src_type == LV_IMAGE_SRC_VARIABLE)
     {
@@ -245,16 +262,18 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             LV_LOG_ERROR("Invalid image dimensions");
             return LV_RESULT_INVALID;
         }
-        const uint8_t *data = image->data;
         uint16_t width = dsc->header.w;
         uint16_t height = dsc->header.h;
-        char input_type = dsc->header.cf;
+        uint8_t input_type = dsc->header.cf;
+        uint32_t stride = dsc->header.stride;
+        LV_LOG_INFO("Input width: %d height %d", width,height);
+        LV_LOG_INFO("Input type: %d stride %d", input_type,stride);
 
-        const uint8_t *rle_header = data;
+        const uint8_t *rle_header = (const uint8_t *)(image->data + 8);
         idu_file_t *file = (idu_file_t *)rle_header;
 
         uint32_t required_size = height * image->header.stride;
-        // LV_LOG_USER("Required memory: %u bytes", required_size);
+        // LV_LOG_INFO("Required memory: %u bytes", required_size);
 
         if (required_size == 0 || required_size > (10 * 1024 * 1024))
         {
@@ -273,6 +292,15 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         uint8_t *img_data = (uint8_t *)dsc->decoded->data;
 
         lv_result_t ret;
+#if LV_USE_RTK_IDU_HW
+        ret = hw_acc_idu_decode((const uint8_t *)file, stride, img_data, width, height);
+
+        if (ret != LV_RESULT_OK) {
+            lv_draw_buf_destroy((void *)dsc->decoded);
+            LV_LOG_ERROR("HW decompression failed ");
+            return ret;
+        }
+#endif
 
         ret = decompress_rle_data(input_type, file, img_data, width, height);
         if (ret != LV_RESULT_OK)
@@ -282,7 +310,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             return ret;
         }
 
-        // LV_LOG_USER("Software decode success.");
+        // LV_LOG_INFO("Software decode success.");
         return LV_RESULT_OK;
     }
     return LV_RESULT_INVALID;    /*If not returned earlier then it failed*/
@@ -329,6 +357,39 @@ static lv_result_t decompress_rle_data(char input_type, idu_file_t *file, uint8_
 
     return ret;
 }
+#if LV_USE_RTK_IDU_HW
+static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_stride,uint8_t *output, uint16_t width,
+                                  uint16_t height)
+{
+    if (image == NULL || output == NULL)
+    {
+        LV_ASSERT(image != NULL && output != NULL);
+        return LV_RESULT_INVALID;
+    }
+
+    IDU_decode_range range;
+    range.start_column = 0;
+    range.end_column = width - 1;
+    range.start_line = 0;
+    range.end_line = height - 1;
+    range.target_stride = buffer_stride;
+
+    IDU_DMA_config dma_cfg = {0};
+    dma_cfg.output_buf = (uint32_t *)output;
+    dma_cfg.RX_DMA_channel_num = high_speed_dma_channel_num;
+    dma_cfg.TX_DMA_channel_num = low_speed_dma_channel_num;
+
+    IDU_ERROR err = IDU_Decode((uint8_t *)image, &range, &dma_cfg);
+    if (err != IDU_SUCCESS)
+    {
+        return LV_RESULT_INVALID;
+    }
+    else
+    {
+        return LV_RESULT_OK;
+    }
+}
+#endif
 static lv_result_t decompress_rle_rgb565_data(const idu_file_t *file, uint8_t *img_data,
                                               uint16_t width, uint16_t height)
 {
