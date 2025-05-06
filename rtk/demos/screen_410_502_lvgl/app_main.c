@@ -96,6 +96,14 @@ void watch_demo_init(void)
         lv_timer_ready(timer);
     }
 #endif
+
+#ifdef __WIN32
+    time_t rawtime;
+    time(&rawtime);
+    struct tm *timeinfo = localtime(&rawtime);
+    watch_time = *timeinfo;
+#endif
+
     {
         lv_timer_t *timer = lv_timer_create(inform_generate_task_entry, 3000, NULL);
         lv_timer_set_repeat_count(timer, -1);
@@ -105,11 +113,6 @@ void watch_demo_init(void)
         lv_timer_t *timer = lv_timer_create(time_update_cb, 30000, NULL);
         lv_timer_set_repeat_count(timer, -1);
         lv_timer_ready(timer);
-
-        time_t rawtime;
-        time(&rawtime);
-        struct tm *timeinfo = localtime(&rawtime);
-        watch_time = *timeinfo;
     }
 
     tileview = lv_tileview_create(NULL);
