@@ -20,10 +20,13 @@
 static void auto_step_cb(lv_timer_t *timer);
 #endif
 
+static void exit_app_music(void);
+
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *ctrl;
+static lv_obj_t *music_container;
+static lv_obj_t *main_cont;
 static lv_obj_t *list;
 
 static const char *title_list[] =
@@ -103,9 +106,9 @@ static const uint32_t time_list[] =
  *      MACROS
  **********************/
 
-static lv_obj_t *app_music_list_create(lv_obj_t *parent);
+static void app_music_list_create(lv_obj_t *parent);
 static void app_music_list_button_check(uint32_t track_id, bool state);
-static lv_obj_t *app_music_main_create(lv_obj_t *parent);
+static void app_music_main_create(lv_obj_t *parent);
 static void app_music_play(uint32_t id);
 static void app_music_resume(void);
 static void app_music_pause(void);
@@ -116,10 +119,28 @@ static void app_music_album_next(bool next);
  *   GLOBAL FUNCTIONS
  **********************/
 
+void lv_app_music_init(void)
+{
+    scr_app_music = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_music);
+    lv_obj_set_style_bg_color(scr_app_music, lv_color_hex(0x0), 0);
+    lv_obj_set_style_bg_opa(scr_app_music, LV_OPA_COVER, 0);
+    lv_obj_set_parent(music_container, scr_app_music);
+
+    return_create(scr_app_music, exit_app_music);
+}
+
 void app_music(lv_obj_t *parent)
 {
-    list = app_music_list_create(parent);
-    ctrl = app_music_main_create(parent);
+    music_container = lv_obj_create(parent);
+    lv_obj_remove_style_all(music_container);
+    lv_obj_add_flag(music_container, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_size(music_container, LV_PCT(100), LV_PCT(100));
+
+    lv_obj_set_style_bg_color(music_container, lv_color_hex(0x0), 0);
+    lv_obj_set_style_bg_opa(music_container, LV_OPA_COVER, 0);
+    app_music_list_create(music_container);
+    app_music_main_create(music_container);
 
 #if APP_MUSIC_AUTO_PLAY
     lv_timer_create(auto_step_cb, 1000, NULL);
@@ -266,7 +287,6 @@ static void list_delete_event_cb(lv_event_t *e);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *list;
 static const lv_font_t *font_small;
 static const lv_font_t *font_medium;
 static const lv_font_t *font_large;
@@ -283,7 +303,7 @@ static lv_style_t style_time;
  *   GLOBAL FUNCTIONS
  **********************/
 
-static lv_obj_t *app_music_list_create(lv_obj_t *parent)
+static void app_music_list_create(lv_obj_t *parent)
 {
     font_small = &SourceHanSansSC_size12_bits1_font;
     font_medium = &SourceHanSansSC_size24_bits1_font;
@@ -332,8 +352,9 @@ static lv_obj_t *app_music_list_create(lv_obj_t *parent)
 
     /*Create an empty transparent container*/
     list = lv_obj_create(parent);
-    lv_obj_add_event_cb(list, list_delete_event_cb, LV_EVENT_DELETE, NULL);
     lv_obj_remove_style_all(list);
+    lv_obj_add_flag(list, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_add_event_cb(list, list_delete_event_cb, LV_EVENT_DELETE, NULL);
     lv_obj_set_size(list, LV_HOR_RES, LV_VER_RES - APP_MUSIC_HANDLE_SIZE);
     lv_obj_set_y(list, APP_MUSIC_HANDLE_SIZE);
     lv_obj_set_style_width(list, 4, LV_PART_SCROLLBAR);
@@ -352,8 +373,6 @@ static lv_obj_t *app_music_list_create(lv_obj_t *parent)
 #endif
 
     app_music_list_button_check(0, true);
-
-    return list;
 }
 
 static void app_music_list_button_check(uint32_t track_id, bool state)
@@ -377,6 +396,21 @@ static void app_music_list_button_check(uint32_t track_id, bool state)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static void exit_app_music(void)
+{
+    lv_obj_set_parent(music_container, scr_tile_right);
+    if (enter_menu_flag)
+    {
+        _ui_screen_change(&scr_app_menu, &scr_app_music, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_menu_init, true);
+    }
+    else
+    {
+        _ui_screen_change(&tileview, &scr_app_music, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          NULL, true);
+    }
+}
 
 static lv_obj_t *add_list_button(lv_obj_t *parent, uint32_t track_id)
 {
@@ -487,7 +521,6 @@ static void album_fade_anim_cb(void *var, int32_t v);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *main_cont;
 static lv_obj_t *spectrum_obj;
 static lv_obj_t *title_label;
 static lv_obj_t *artist_label;
@@ -526,10 +559,9 @@ static void _obj_set_x_anim_cb(void *obj, int32_t x)
     lv_obj_set_x((lv_obj_t *)obj, (int32_t)x);
 }
 
-static lv_obj_t *app_music_main_create(lv_obj_t *parent)
+static void app_music_main_create(lv_obj_t *parent)
 {
     lv_obj_t *cont = create_cont(parent);
-
     create_wave_images(cont);
     lv_obj_t *title_box = create_title_box(cont);
     lv_obj_t *icon_box = create_icon_box(cont);
@@ -599,10 +631,6 @@ static lv_obj_t *app_music_main_create(lv_obj_t *parent)
     // lv_anim_set_exec_cb(&a, _image_set_scale_anim_cb);
     // lv_anim_set_completed_cb(&a, NULL);
     // lv_anim_start(&a);
-
-    // lv_obj_update_layout(main_cont);
-
-    return main_cont;
 }
 
 static void app_music_album_next(bool next)
@@ -674,9 +702,10 @@ static void app_music_pause(void)
 static lv_obj_t *create_cont(lv_obj_t *parent)
 {
     main_cont = lv_obj_create(parent);
-    lv_obj_remove_flag(main_cont, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_remove_flag(main_cont, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_remove_flag(main_cont, LV_OBJ_FLAG_SCROLL_ELASTIC);
     lv_obj_remove_style_all(main_cont);
+    lv_obj_add_flag(main_cont, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_size(main_cont, lv_pct(100), lv_pct(100));
     lv_obj_set_scroll_snap_y(main_cont, LV_SCROLL_SNAP_CENTER);
 
@@ -688,6 +717,7 @@ static lv_obj_t *create_cont(lv_obj_t *parent)
     lv_obj_set_size(player, LV_HOR_RES, LV_VER_RES + APP_MUSIC_HANDLE_SIZE * 2);
 #endif
     lv_obj_remove_flag(player, LV_OBJ_FLAG_SNAPPABLE);
+    lv_obj_add_flag(player, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_style_bg_color(player, lv_color_hex(0xffffff), 0);
     lv_obj_set_style_border_width(player, 0, 0);
     lv_obj_set_style_pad_all(player, 0, 0);
@@ -853,6 +883,7 @@ static lv_obj_t *create_ctrl_box(lv_obj_t *parent)
     lv_obj_set_grid_cell(icon, LV_GRID_ALIGN_CENTER, 2, 1, LV_GRID_ALIGN_CENTER, 0, 1);
     lv_obj_add_event_cb(icon, prev_click_event_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_flag(icon, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_add_flag(icon, LV_OBJ_FLAG_EVENT_BUBBLE);
 
     play_obj = lv_imagebutton_create(cont);
     lv_imagebutton_set_src(play_obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &app_music_btn_play, NULL);
@@ -862,6 +893,7 @@ static lv_obj_t *create_ctrl_box(lv_obj_t *parent)
     lv_obj_set_grid_cell(play_obj, LV_GRID_ALIGN_CENTER, 3, 1, LV_GRID_ALIGN_CENTER, 0, 1);
     lv_obj_add_event_cb(play_obj, play_event_click_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_flag(play_obj, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_add_flag(play_obj, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_width(play_obj, app_music_btn_play.header.w);
 
     icon = lv_image_create(cont);
@@ -869,10 +901,12 @@ static lv_obj_t *create_ctrl_box(lv_obj_t *parent)
     lv_obj_set_grid_cell(icon, LV_GRID_ALIGN_CENTER, 4, 1, LV_GRID_ALIGN_CENTER, 0, 1);
     lv_obj_add_event_cb(icon, next_click_event_cb, LV_EVENT_CLICKED, NULL);
     lv_obj_add_flag(icon, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_add_flag(icon, LV_OBJ_FLAG_EVENT_BUBBLE);
 
     slider_obj = lv_slider_create(cont);
     lv_obj_set_style_anim_duration(slider_obj, 100, 0);
     lv_obj_add_flag(slider_obj, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_add_flag(slider_obj, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_remove_flag(slider_obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
 #if APP_MUSIC_LARGE == 0
     lv_obj_set_height(slider_obj, 3);
@@ -1061,6 +1095,7 @@ static lv_obj_t *album_image_create(lv_obj_t *parent)
     lv_obj_add_event_cb(img, album_gesture_event_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_remove_flag(img, LV_OBJ_FLAG_GESTURE_BUBBLE);
     lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
+    // lv_obj_add_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
 
     return img;
 }

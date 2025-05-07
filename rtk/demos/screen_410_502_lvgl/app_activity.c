@@ -5,6 +5,8 @@
 #include "cJSON.h"
 #endif
 
+static lv_obj_t *ac_container;
+
 static void arc_anim_cb(void *obj, int32_t value)
 {
     lv_arc_set_end_angle((lv_obj_t *)obj, value);
@@ -174,7 +176,7 @@ static void tileview_event_cb(lv_event_t *e)
     static bool flag = false; //prevent enter animate twice
     if (act_tile == tile_right_2 && !flag)
     {
-        update_arc_activity(scr_tile_right_2);
+        update_arc_activity(ac_container);
         flag = true;
     }
     else
@@ -185,6 +187,7 @@ static void tileview_event_cb(lv_event_t *e)
 
 void exit_app_activity(void)
 {
+    lv_obj_set_parent(ac_container, scr_tile_right_2);
     if (enter_menu_flag)
     {
         _ui_screen_change(&scr_app_menu, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
@@ -200,26 +203,23 @@ void exit_app_activity(void)
 void lv_app_activity_init(void)
 {
     scr_app_activity = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_activity);
     lv_obj_set_style_bg_color(scr_app_activity, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_activity, LV_OPA_COVER, 0);
 
-    lv_obj_t *container = lv_obj_create(scr_app_activity);
-    lv_obj_remove_style_all(container);
-    lv_obj_set_style_bg_color(container, lv_color_hex(0x0), 0);
-    lv_obj_set_style_bg_opa(container, LV_OPA_COVER, 0);
-    lv_obj_set_size(container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_pos(container, 0, 0);
-    lv_obj_set_style_border_width(container, 0, 0);
+    lv_obj_set_parent(ac_container, scr_app_activity);
+    update_arc_activity(ac_container);
 
-    app_activity(container);
-    update_arc_activity(container);
-
-    return_create(container, exit_app_activity);
+    return_create(scr_app_activity, exit_app_activity);
 }
 
 void lv_tile_right_2_init(void)
 {
-    app_activity(scr_tile_right_2);
+    ac_container = lv_obj_create(scr_tile_right_2);
+    lv_obj_remove_style_all(ac_container);
+    lv_obj_add_flag(ac_container, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_size(ac_container, LV_PCT(100), LV_PCT(100));
+    app_activity(ac_container);
     lv_obj_add_event_cb(tileview, tileview_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
 }
 

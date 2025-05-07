@@ -94,15 +94,20 @@ static void scr_tile_down_event_cb(lv_event_t *e)
 
 static void enter_music_cb(lv_event_t *e)
 {
-    lv_tileview_set_tile_by_index(tileview, 2, 1, LV_ANIM_OFF);
-    _ui_screen_change(&tileview, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, false);
+    _ui_screen_change(&scr_app_music, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_music_init, false);
 }
 
 static void enter_calendar_cb(lv_event_t *e)
 {
     _ui_screen_change(&scr_app_calendar, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
                       lv_app_calendar_init, false);
+}
+
+static void enter_weather_cb(lv_event_t *e)
+{
+    _ui_screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_weather_init, false);
 }
 
 static void enter_activity_cb(lv_event_t *e)
@@ -364,6 +369,7 @@ void lv_tile_down_init(void)
             lv_obj_set_style_border_width(card, 0, 0);
             lv_obj_set_style_pad_all(card, 0, 0);
             create_weather_card(card);
+            lv_obj_add_event_cb(card, (lv_event_cb_t)enter_weather_cb, LV_EVENT_SHORT_CLICKED, NULL);
         }
         {
             lv_obj_t *card = lv_create_card(card_view, 0, card_width, card_height);

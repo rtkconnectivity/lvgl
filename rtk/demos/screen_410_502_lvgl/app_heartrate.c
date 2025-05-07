@@ -63,17 +63,12 @@ void lv_app_heartrate_init(void)
 {
     scr_app_heartrate = lv_obj_create(NULL);
     lv_obj_remove_style_all(scr_app_heartrate);
+    lv_obj_set_style_bg_color(scr_app_heartrate, lv_color_hex(0x0), 0);
+    lv_obj_set_style_bg_opa(scr_app_heartrate, LV_OPA_COVER, 0);
     lv_obj_set_size(scr_app_heartrate, LV_PCT(100), LV_PCT(100));
 
-    lv_obj_t *container = lv_obj_create(scr_app_heartrate);
-    lv_obj_remove_style_all(container);
-    lv_obj_set_style_bg_color(container, lv_color_hex(0x0), 0);
-    lv_obj_set_style_bg_opa(container, LV_OPA_COVER, 0);
-    lv_obj_set_size(container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_pos(container, 0, 0);
-    lv_obj_set_style_border_width(container, 0, 0);
-
-    lv_obj_t *chart = lv_chart_create(container);
+    lv_obj_t *chart = lv_chart_create(scr_app_heartrate);
+    lv_obj_add_flag(chart, LV_OBJ_FLAG_EVENT_BUBBLE);
     // lv_obj_set_style_bg_color(chart, lv_color_hex(0x0), 0);
     // lv_obj_set_style_bg_opa(chart, LV_OPA_COVER, 0);
     lv_chart_set_update_mode(chart, LV_CHART_UPDATE_MODE_CIRCULAR);
@@ -96,28 +91,28 @@ void lv_app_heartrate_init(void)
     }
 
     {
-        lv_obj_t *x_label = lv_label_create(container);
+        lv_obj_t *x_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(x_label, "12AM");
         lv_obj_set_pos(x_label, 30, 290);
         lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-        x_label = lv_label_create(container);
+        x_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(x_label, "6AM");
         lv_obj_set_pos(x_label, 30 + 82, 290);
         lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-        x_label = lv_label_create(container);
+        x_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(x_label, "12PM");
         lv_obj_set_pos(x_label, 30 + 82 * 2, 290);
         lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-        x_label = lv_label_create(container);
+        x_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(x_label, "6PM");
         lv_obj_set_pos(x_label, 30 + 82 * 3, 290);
         lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -127,21 +122,21 @@ void lv_app_heartrate_init(void)
     }
 
     {
-        lv_obj_t *y_label = lv_label_create(container);
+        lv_obj_t *y_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(y_label, "160");
         lv_obj_set_pos(y_label, 360, 80);
         lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(y_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(y_label, &SourceHanSansSC_size12_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-        y_label = lv_label_create(container);
+        y_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(y_label, "120");
         lv_obj_set_pos(y_label, 360, 80 + 70);
         lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_opa(y_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_font(y_label, &SourceHanSansSC_size12_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
-        y_label = lv_label_create(container);
+        y_label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(y_label, "80");
         lv_obj_set_pos(y_label, 360, 80 + 70 * 2);
         lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -151,7 +146,7 @@ void lv_app_heartrate_init(void)
     }
 
     {
-        lv_obj_t *label = lv_label_create(container);
+        lv_obj_t *label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(label, "Current heartrate");
         lv_obj_set_pos(label, 50, 340);
         lv_obj_set_style_text_color(label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -159,7 +154,7 @@ void lv_app_heartrate_init(void)
         lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
 
-        label = lv_label_create(container);
+        label = lv_label_create(scr_app_heartrate);
         lv_label_set_text(label, "times/min");
         lv_obj_set_pos(label, 165, 410);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -168,10 +163,11 @@ void lv_app_heartrate_init(void)
                                    LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     {
-        img_container = lv_obj_create(container);
+        img_container = lv_obj_create(scr_app_heartrate);
         lv_obj_set_pos(img_container, 40, 368);
         lv_obj_set_size(img_container, 200, 200);
         lv_obj_remove_flag(img_container, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(img_container, LV_OBJ_FLAG_EVENT_BUBBLE);
         lv_obj_set_style_border_width(img_container, 0, 0);
         lv_obj_set_style_bg_opa(img_container, LV_OPA_TRANSP, 0);
 
@@ -188,5 +184,5 @@ void lv_app_heartrate_init(void)
 
     timer = lv_timer_create(update_data, 500, chart);
 
-    return_create(container, exit_app_heartrate);
+    return_create(scr_app_heartrate, exit_app_heartrate);
 }

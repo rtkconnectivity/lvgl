@@ -62,6 +62,7 @@ static void exit_app_weather(void)
 void lv_app_weather_init(void)
 {
     scr_app_weather = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_weather);
     lv_obj_set_style_bg_color(scr_app_weather, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_weather, LV_OPA_COVER, 0);
 

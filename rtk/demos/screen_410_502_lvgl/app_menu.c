@@ -58,9 +58,8 @@ static void enter_app_cb(lv_event_t *e)
         break;
     case 1:
         {
-            lv_tileview_set_tile_by_index(tileview, 2, 1, LV_ANIM_OFF);
-            _ui_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              NULL, false);
+            _ui_screen_change(&scr_app_music, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                              lv_app_music_init, true);
         }
         break;
     case 2:
@@ -142,6 +141,8 @@ static void page_event_cb(lv_event_t *e)
 void lv_app_menu_init(void)
 {
     scr_app_menu = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_menu);
+    lv_obj_set_size(scr_app_menu, LV_PCT(100), LV_PCT(100));
     lv_obj_set_style_bg_color(scr_app_menu, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_menu, LV_OPA_COVER, 0);
 
@@ -153,6 +154,7 @@ void lv_app_menu_init(void)
     lv_obj_set_size(page, SCREEN_WIDTH, SCREEN_HEIGHT);
     lv_obj_set_pos(page, 0, 0);
     lv_obj_add_flag(page, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(page, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_scrollbar_mode(page, LV_SCROLLBAR_MODE_OFF);
     lv_obj_set_scroll_dir(page, LV_DIR_VER);
     lv_obj_add_event_cb(page, page_event_cb, LV_EVENT_SCROLL, NULL);
@@ -184,6 +186,6 @@ void lv_app_menu_init(void)
     lv_obj_scroll_to_y(page, page_menu_y_his, LV_ANIM_OFF);
     update_button_pos(page, page_menu_y_his);
 
-    return_create(page, exit_menu);
+    return_create(scr_app_menu, exit_menu);
     enter_menu_flag = true;
 }

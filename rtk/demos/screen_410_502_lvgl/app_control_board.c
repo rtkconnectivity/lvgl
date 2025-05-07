@@ -103,6 +103,7 @@ static void exit_app_control_board(void)
 void lv_app_control_board_init(void)
 {
     scr_app_control_board = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_control_board);
     lv_obj_set_style_bg_color(scr_app_control_board, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_control_board, LV_OPA_COVER, 0);
     lv_obj_set_scrollbar_mode(scr_app_control_board, LV_SCROLLBAR_MODE_OFF);

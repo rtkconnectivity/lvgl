@@ -1,5 +1,6 @@
 #include "lvgl.h"
 #include "app_main.h"
+#include <time.h>
 
 
 typedef struct
@@ -133,20 +134,24 @@ void lv_app_calendar_init(void)
     init_highlighted_dates();
 
     scr_app_calendar = lv_obj_create(NULL);
+    lv_obj_remove_style_all(scr_app_calendar);
+    lv_obj_set_size(scr_app_calendar, LV_PCT(100), LV_PCT(100));
     lv_obj_set_style_bg_color(scr_app_calendar, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_calendar, LV_OPA_COVER, 0);
     lv_obj_remove_flag(scr_app_calendar, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *calendar = lv_calendar_create(scr_app_calendar);
+    lv_obj_add_flag(calendar, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_set_size(calendar, 410, 502);
     lv_obj_align(calendar, LV_ALIGN_CENTER, 0, 0);
     lv_obj_add_event_cb(calendar, calendar_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
 
-    lv_calendar_set_today_date(calendar, 2025, 1, 1);
-    lv_calendar_set_showed_date(calendar, 2025, 1);
+    lv_calendar_set_today_date(calendar, watch_time.tm_year + 1900, watch_time.tm_mon + 1,
+                               watch_time.tm_mday);
+    lv_calendar_set_showed_date(calendar, watch_time.tm_year + 1900, watch_time.tm_mon + 1);
 
     lv_calendar_header_dropdown_create(calendar);
     lv_calendar_set_highlighted_dates(calendar, highlighted_dates.dates, highlighted_dates.count);
 
-    return_create(calendar, exit_app_calendar);
+    return_create(scr_app_calendar, exit_app_calendar);
 }

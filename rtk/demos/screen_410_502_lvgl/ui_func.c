@@ -105,16 +105,8 @@ static custom_data_t param = {0};
 // Create return gesture indicator
 void return_create(lv_obj_t *parent, void (*cb)(void))
 {
-    lv_obj_t *img;
-    lv_obj_t *obj = lv_obj_get_parent(parent);
-    if (obj != NULL)
-    {
-        img = lv_img_create(obj);
-    }
-    else
-    {
-        img = lv_img_create(parent);
-    }
+    lv_obj_add_flag(parent, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t *img = lv_img_create(parent);
     lv_image_set_src(img, drag_indicator_imgs[0]);
     lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN); // Hide initially
     lv_obj_set_pos(img, 0, 0);
