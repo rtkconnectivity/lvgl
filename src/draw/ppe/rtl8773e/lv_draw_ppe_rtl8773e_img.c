@@ -129,6 +129,7 @@ void lv_draw_ppe_layer(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords)
 {
+    LV_PROFILER_DRAW_BEGIN;
     lv_layer_t *layer = draw_unit->target_layer;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
     lv_area_t area_rot;
@@ -137,6 +138,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     bool compressed = false;
     if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, draw_unit->clip_area))
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
     bool transform = (draw_dsc->scale_x != LV_SCALE_NONE || draw_dsc->scale_y != LV_SCALE_NONE\
@@ -165,6 +167,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         break;
     default:
         lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        LV_PROFILER_DRAW_END;
         return;
     }
     target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
@@ -205,6 +208,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     ppe_rect_t draw_rect;
     if (!lv_area_intersect(&constraint_area, &constraint_area, &area_rot))
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
     else
@@ -228,6 +232,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         uint32_t src_addr = source.address + (source.stride * draw_rect.y + draw_rect.x) * pixel_byte;
         uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
         lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
+        LV_PROFILER_DRAW_END;
         return;
     }
     ppe_rect_t image_area;
@@ -235,6 +240,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     ppe_matrix_inverse(&inverse);
     if (!ppe_get_area(&image_area, &draw_rect, &inverse, &source))
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
 
@@ -298,14 +304,17 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     PPE_Finish();
     if (err == PPE_SUCCESS)
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
+    LV_PROFILER_DRAW_END;
     return;
 }
 
 static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                              const lv_area_t *coords)
 {
+    LV_PROFILER_DRAW_BEGIN;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
     bool compressed = false;
     int32_t img_w = img_dsc->header.w;
@@ -345,6 +354,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     if (source.format == PPE_FORMAT_NOT_SUPPORT || (source.format == PPE_A8 && recolor != 0))
     {
         lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        LV_PROFILER_DRAW_END;
         return;
     }
     target.format = PPE_ABGR8888;
@@ -364,6 +374,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
         break;
     default:
         lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        LV_PROFILER_DRAW_END;
         return;
     }
     source.address = (uint32_t)img_dsc->data;
@@ -486,12 +497,14 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
         tile_area.x2 = tile_x_start + img_w - 1;
     }
     PPE_Finish();
+    LV_PROFILER_DRAW_END;
 }
 
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords, lv_matrix_t *matrix)
 {
+    LV_PROFILER_DRAW_BEGIN;
     lv_layer_t *layer = draw_unit->target_layer;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
     lv_area_t area_rot;
@@ -521,6 +534,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     ppe_rect_t draw_rect;
     if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, &area_rot))
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
     else
@@ -552,6 +566,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         target.format = PPE_XRGB8888;
         break;
     default:
+        LV_PROFILER_DRAW_END;
         return;
     }
     target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
@@ -593,6 +608,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     ppe_matrix_inverse(&inverse);
     if (!ppe_get_area(&image_area, &draw_rect, &inverse, &source))
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
 
@@ -656,8 +672,10 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     PPE_Finish();
     if (err == PPE_SUCCESS)
     {
+        LV_PROFILER_DRAW_END;
         return;
     }
+    LV_PROFILER_DRAW_END;
     return;
 }
 #endif

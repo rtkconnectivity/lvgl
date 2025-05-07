@@ -200,6 +200,7 @@ static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_
     lv_area_move(&blend_area, -layer->buf_area.x1, -layer->buf_area.y1);
     ppe_rect_t draw_rect = {.x = blend_area.x1, .y = blend_area.y1, .w = lv_area_get_width(&blend_area), .h = lv_area_get_height(&blend_area)};
     PPE_err err = PPE_Mask(&target, ppe_color, &draw_rect);
+    LV_PROFILER_DRAW_END;
 }
 
 #endif /*LV_USE_PPE*/
