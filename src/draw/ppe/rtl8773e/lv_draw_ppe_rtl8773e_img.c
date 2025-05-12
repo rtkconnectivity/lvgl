@@ -189,7 +189,14 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
-    source.stride = img_dsc->header.stride / pixel_byte;
+    if (img_dsc->header.stride != 0)
+    {
+        source.stride = img_dsc->header.stride / pixel_byte;
+    }
+    else
+    {
+        source.stride = img_dsc->header.w;
+    }
     source.opacity = draw_dsc->opa;
     source.win_x_min = target.win_x_min;
     source.win_x_max = target.win_x_max;
@@ -227,7 +234,15 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         draw_rect.y = constraint_area.y1 - coords->y1;
         uint32_t length = draw_rect.w * pixel_byte;
         uint32_t height = draw_rect.h;
-        uint32_t src_stride = img_dsc->header.stride;
+        uint32_t src_stride = 0;
+        if (img_dsc->header.stride != 0)
+        {
+            src_stride = img_dsc->header.stride / pixel_byte;
+        }
+        else
+        {
+            src_stride = img_dsc->header.w;
+        }
         uint32_t dst_stride = target.width * pixel_byte;
         uint32_t src_addr = source.address + (source.stride * draw_rect.y + draw_rect.x) * pixel_byte;
         uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
@@ -251,7 +266,14 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         {
             uint32_t length = image_area.w * pixel_byte;
             uint32_t height = image_area.h;
-            uint32_t src_stride = img_dsc->header.stride;
+            if (img_dsc->header.stride != 0)
+            {
+                src_stride = img_dsc->header.stride / pixel_byte;
+            }
+            else
+            {
+                src_stride = img_dsc->header.w;
+            }
             uint32_t dst_stride = length;
             uint32_t src_addr = source.address + (source.stride * image_area.y + image_area.x) * pixel_byte;
             lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)pic_buffer);
@@ -380,7 +402,14 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
-    source.stride = img_dsc->header.stride / PPE_Get_Pixel_Size(source.format);
+    if (img_dsc->header.stride != 0)
+    {
+        source.stride = img_dsc->header.stride / pixel_byte;
+    }
+    else
+    {
+        source.stride = img_dsc->header.w;
+    }
     source.opacity = draw_dsc->opa;
     target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
     target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
@@ -426,7 +455,14 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                         {
                             uint32_t length = draw_w * pixel_byte;
                             uint32_t height = draw_h;
-                            uint32_t src_stride = img_dsc->header.stride;
+                            if (img_dsc->header.stride != 0)
+                            {
+                                source.stride = img_dsc->header.stride / pixel_byte;
+                            }
+                            else
+                            {
+                                source.stride = img_dsc->header.w;
+                            }
                             uint32_t dst_stride = length;
                             uint32_t src_addr = (uint32_t)img_dsc->data + img_dsc->header.stride * image_y + image_x *
                                                 pixel_byte;
@@ -586,7 +622,14 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
-    source.stride = img_dsc->header.stride / pixel_byte;
+    if (img_dsc->header.stride != 0)
+    {
+        source.stride = img_dsc->header.stride / pixel_byte;
+    }
+    else
+    {
+        source.stride = img_dsc->header.w;
+    }
     source.opacity = draw_dsc->opa;
     source.win_x_min = target.win_x_min;
     source.win_x_max = target.win_x_max;
