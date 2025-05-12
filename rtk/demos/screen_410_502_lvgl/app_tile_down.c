@@ -1,8 +1,9 @@
+#include <time.h>
+#include <string.h>
 #include "lvgl.h"
 #include "app_main.h"
 #include "lv_card.h"
-#include <time.h>
-#include <string.h>
+#include "lv_custom_tile_snapshot.h"
 
 #define LOCATION "Suzhou"
 
@@ -122,7 +123,7 @@ static void enter_app_menu_cb(lv_event_t *e)
                       lv_app_menu_init, false);
 }
 
-static void create_weather_card(lv_obj_t *card)
+static void create_weather_card(lv_obj_t *parent)
 {
     lv_image_dsc_t const *weather_icon = NULL;
     int tm_hour = watch_time.tm_hour;
@@ -146,10 +147,8 @@ static void create_weather_card(lv_obj_t *card)
         estimate_temp(hour[5]),
     };
 
-    lv_obj_t *bg = lv_image_create(card);
+    lv_obj_t *bg = lv_image_create(parent);
     lv_obj_set_align(bg, LV_ALIGN_CENTER);
-    lv_obj_set_style_border_width(bg, 0, 0);
-    lv_obj_set_style_pad_all(bg, 0, 0);
     if (tm_hour >= 6 && tm_hour <= 19)
     {
         lv_image_set_src(bg, &ui_card_weather_day);
@@ -169,7 +168,7 @@ static void create_weather_card(lv_obj_t *card)
     }
     // top
     {
-        lv_obj_t *label = lv_label_create(card);
+        lv_obj_t *label = lv_label_create(parent);
         lv_label_set_text(label, LOCATION);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 18);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
@@ -179,7 +178,7 @@ static void create_weather_card(lv_obj_t *card)
 
         char content[15];
         sprintf(content, "%d°", temp_array[0]);
-        label = lv_label_create(card);
+        label = lv_label_create(parent);
         lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 35);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
@@ -187,11 +186,7 @@ static void create_weather_card(lv_obj_t *card)
         lv_obj_set_style_text_font(label, &SourceHanSansSC_size32_bits1_font,
                                    0);
 
-        // lv_obj_t *img = lv_image_create(card);
-        // lv_image_set_src(img, &weather_location);
-        // lv_obj_set_pos(img, 105, 30);
-
-        lv_obj_t *img = lv_image_create(card);
+        lv_obj_t *img = lv_image_create(parent);
         lv_obj_align(img, LV_ALIGN_TOP_RIGHT, -45, 5);
         lv_image_set_src(img, weather_icon);
 
@@ -200,7 +195,7 @@ static void create_weather_card(lv_obj_t *card)
         {
             sprintf(content, "%s", "Clear");
         }
-        label = lv_label_create(card);
+        label = lv_label_create(parent);
         lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -43, 35);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
@@ -209,7 +204,7 @@ static void create_weather_card(lv_obj_t *card)
                                    0);
 
         sprintf(content, "H:%d° L:%d°", temp_range[wday + 7],  temp_range[wday]);
-        label = lv_label_create(card);
+        label = lv_label_create(parent);
         lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -43, 54);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
@@ -223,7 +218,7 @@ static void create_weather_card(lv_obj_t *card)
         sprintf(content,
                 "%02d               %02d               %02d               %02d               %02d               %02d",
                 hour[0], hour[1], hour[2], hour[3], hour[4], hour[5]);
-        lv_obj_t *label = lv_label_create(card);
+        lv_obj_t *label = lv_label_create(parent);
         lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 50, 80);
         lv_obj_set_style_text_color(label, lv_color_hex(0xBCBEC4), 0);
@@ -234,7 +229,7 @@ static void create_weather_card(lv_obj_t *card)
         for (uint8_t i = 0; i < 6; i++)
         {
             uint8_t offset_x = 58;
-            lv_obj_t *img = lv_image_create(card);
+            lv_obj_t *img = lv_image_create(parent);
             lv_image_set_src(img, weather_icon);
             lv_obj_set_pos(img, 45 + offset_x * i, 100);
             if (hour[i] > 19 || hour[i] < 6)
@@ -257,7 +252,7 @@ static void create_weather_card(lv_obj_t *card)
         sprintf(content,
                 "%02d°             %02d°              %02d°              %02d°              %02d°            %02d°",
                 temp_array[0], temp_array[1], temp_array[2], temp_array[3], temp_array[4], temp_array[5]);
-        label = lv_label_create(card);
+        label = lv_label_create(parent);
         lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_BOTTOM_LEFT, 50, -10);
         lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
@@ -265,6 +260,14 @@ static void create_weather_card(lv_obj_t *card)
         lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
                                    0);
     }
+}
+
+static void create_snapshot_cb(lv_event_t *e)
+{
+    lv_obj_t *container =  lv_event_get_user_data(e);
+    lv_obj_t *snapshot = create_snapshot_obj_directly(lv_obj_get_parent(container), container);
+    lv_obj_set_align(snapshot, LV_ALIGN_CENTER);
+    lv_obj_remove_event_cb(tileview, (lv_event_cb_t)create_snapshot_cb);
 }
 
 void lv_tile_down_init(void)
@@ -318,7 +321,7 @@ void lv_tile_down_init(void)
     //card
     {
         lv_coord_t card_width = 400;
-        lv_coord_t card_height = 167;
+        lv_coord_t card_height = 167; //image_height + card_space
         lv_obj_t *card_view = lv_create_card_view(scr_tile_down, REDUCTION, 300, card_height);
 
         // Add cards
@@ -368,8 +371,18 @@ void lv_tile_down_init(void)
             lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
             lv_obj_set_style_border_width(card, 0, 0);
             lv_obj_set_style_pad_all(card, 0, 0);
-            create_weather_card(card);
             lv_obj_add_event_cb(card, (lv_event_cb_t)enter_weather_cb, LV_EVENT_SHORT_CLICKED, NULL);
+
+            lv_obj_t *container = lv_obj_create(card);
+            lv_obj_remove_style_all(container);
+            lv_obj_set_style_border_width(container, 0, 0);
+            lv_obj_set_style_pad_all(container, 0, 0);
+            lv_obj_set_size(container, card_width, card_height - 10); // - card_sapce
+            lv_obj_remove_flag(container, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_add_flag(container, LV_OBJ_FLAG_EVENT_BUBBLE);
+            create_weather_card(container);
+
+            lv_obj_add_event_cb(tileview, (lv_event_cb_t)create_snapshot_cb, LV_EVENT_VALUE_CHANGED, container);
         }
         {
             lv_obj_t *card = lv_create_card(card_view, 0, card_width, card_height);

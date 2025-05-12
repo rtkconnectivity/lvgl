@@ -152,6 +152,8 @@ void watch_demo_init(void)
     lv_obj_remove_style_all(scr_tile_right_2);
     lv_obj_set_size(scr_tile_right_2, LV_PCT(100), LV_PCT(100));
 
+    lv_tileview_set_tile_by_index(tileview, 1, 1, LV_ANIM_OFF); // start with center tile, no animation
+
     //initialize curtains
     lv_tile_center_init();
     lv_tile_up_init();
@@ -159,8 +161,6 @@ void watch_demo_init(void)
     lv_tile_left_init();
     lv_tile_right_init();
     lv_tile_right_2_init();
-
-    lv_tileview_set_tile_by_index(tileview, 1, 1, LV_ANIM_OFF); // start with center tile, no animation
 
 #if WATCH_DEMO_USE_TILESLIDE
     lv_obj_add_event_cb(tileview, tileview_custom_cb, LV_EVENT_ALL, &tileview_scrolling);

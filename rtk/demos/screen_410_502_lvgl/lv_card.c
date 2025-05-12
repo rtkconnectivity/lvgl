@@ -112,7 +112,7 @@ lv_obj_t *lv_create_card(lv_obj_t *parent, uint8_t id, lv_coord_t w, lv_coord_t 
     lv_obj_set_size(card, w, h);
     lv_obj_set_pos(card, (lv_display_get_horizontal_resolution(NULL) - w) / 2, 0);
     lv_obj_add_flag(card, LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(card, LV_OBJ_FLAG_SCROLLABLE);
 
     CardData *card_data = lv_malloc(sizeof(CardData));
     card_data->id = id;
