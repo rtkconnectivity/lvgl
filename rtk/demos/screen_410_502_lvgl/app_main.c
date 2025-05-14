@@ -352,8 +352,8 @@ static void enter_menu_cb(lv_event_t *event)
     if (enter_menu_flag && code < LV_EVENT_COVER_CHECK)
     {
         enter_menu_flag = false;
-        _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_menu_init, 0);
+        screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_menu_init, 0);
         return;
     }
     while (indev)
@@ -370,7 +370,7 @@ static void enter_menu_cb(lv_event_t *event)
 
 static void enter_control_board(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_control_board_init, false);
+    screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_control_board_init, false);
 }
 

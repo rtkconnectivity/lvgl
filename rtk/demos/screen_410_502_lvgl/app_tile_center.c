@@ -320,26 +320,26 @@ static void timer_cb(lv_timer_t *timer)
 
 static void heartrate_cb(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_heartrate, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      &lv_app_heartrate_init, 0);
+    screen_change(&scr_app_heartrate, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  &lv_app_heartrate_init, 0);
     LV_LOG("click heartrate icon\n");
 }
 
 static void enter_menu_cb(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
+    screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
 }
 
 static void weather_cb(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_weather_init,
-                      0);
+    screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_weather_init,
+                  0);
 }
 
 static void enter_control_board_cb(lv_event_t *event)
 {
-    _ui_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_control_board_init, 0);
+    screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_control_board_init, 0);
 }
 
 void lv_tile_center_init(void)

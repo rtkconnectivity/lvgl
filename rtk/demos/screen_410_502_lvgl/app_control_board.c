@@ -96,8 +96,8 @@ void button_nobother_event_cb(lv_event_t *e)
 
 static void exit_app_control_board(void)
 {
-    _ui_screen_change(&tileview, &scr_app_control_board, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, false);
+    screen_change(&tileview, &scr_app_control_board, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  NULL, false);
 }
 
 void lv_app_control_board_init(void)

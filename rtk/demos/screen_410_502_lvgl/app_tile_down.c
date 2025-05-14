@@ -95,32 +95,37 @@ static void scr_tile_down_event_cb(lv_event_t *e)
 
 static void enter_music_cb(lv_event_t *e)
 {
-    _ui_screen_change(&scr_app_music, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_music_init, false);
+    if (!judge_short_click()) { return; }
+    screen_change(&scr_app_music, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_music_init, false);
 }
 
 static void enter_calendar_cb(lv_event_t *e)
 {
-    _ui_screen_change(&scr_app_calendar, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_calendar_init, false);
+    if (!judge_short_click()) { return; }
+    screen_change(&scr_app_calendar, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_calendar_init, false);
 }
 
 static void enter_weather_cb(lv_event_t *e)
 {
-    _ui_screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_weather_init, false);
+    if (!judge_short_click()) { return; }
+    screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_weather_init, false);
 }
 
 static void enter_activity_cb(lv_event_t *e)
 {
-    _ui_screen_change(&scr_app_activity, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_activity_init, false);
+    if (!judge_short_click()) { return; }
+    screen_change(&scr_app_activity, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_activity_init, false);
 }
 
 static void enter_app_menu_cb(lv_event_t *e)
 {
-    _ui_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_menu_init, false);
+    if (!judge_short_click()) { return; }
+    screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  lv_app_menu_init, false);
 }
 
 static void create_weather_card(lv_obj_t *parent)

@@ -14,7 +14,7 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "lvgl.h"
-#include "ui_func.h"
+#include "lv_custom_func.h"
 #include "lv_img_dsc_list.h"
 #include "lv_image_dsc.h"
 

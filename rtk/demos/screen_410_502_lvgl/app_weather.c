@@ -49,13 +49,13 @@ static void exit_app_weather(void)
 {
     if (enter_menu_flag)
     {
-        _ui_screen_change(&scr_app_menu, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_menu_init, true);
+        screen_change(&scr_app_menu, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      lv_app_menu_init, true);
     }
     else
     {
-        _ui_screen_change(&tileview, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          NULL, true);
+        screen_change(&tileview, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                      NULL, true);
     }
 }
 

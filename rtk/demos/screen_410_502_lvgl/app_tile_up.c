@@ -44,7 +44,7 @@ static bool close_flag = 1;
 //         {
 //             is_at_bottom = true;
 //             lv_indev_wait_release(lv_indev_get_act());
-//             _ui_screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
+//             screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
 //                               &lv_tile_center_init, 1);
 //         }
 //         else
@@ -69,7 +69,7 @@ static bool close_flag = 1;
 //         lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP)
 //     {
 //         lv_indev_wait_release(lv_indev_get_act());
-//         _ui_screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
+//         screen_change(&scr_tile_center, &scr_tile_up, LV_SCR_LOAD_ANIM_OUT_TOP, 500, 0,
 //                           &lv_tile_center_init, 1);
 //     }
 // }
@@ -77,7 +77,7 @@ static bool close_flag = 1;
 static bool is_bottom_start(lv_point_t *point)
 {
     lv_coord_t height = lv_disp_get_ver_res(NULL); // Get screen height
-    lv_coord_t threshold = height * 5 / 6; // Define bottom area as the lower 1/6
+    lv_coord_t threshold = height * 9 / 10; // Define bottom area as the lower 1/10
     return (point->y > threshold);
 }
 

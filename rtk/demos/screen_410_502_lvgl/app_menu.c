@@ -38,8 +38,8 @@ bool enter_menu_flag = false;
 static void exit_menu(void)
 {
     // LV_LOG("enter exit_menu func\n");
-    _ui_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, true);
+    screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                  NULL, true);
     enter_menu_flag = false;
 }
 
@@ -52,32 +52,32 @@ static void enter_app_cb(lv_event_t *e)
     {
     case 0:
         {
-            _ui_screen_change(&scr_app_weather, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_weather_init, true);
+            screen_change(&scr_app_weather, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_weather_init, true);
         }
         break;
     case 1:
         {
-            _ui_screen_change(&scr_app_music, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_music_init, true);
+            screen_change(&scr_app_music, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_music_init, true);
         }
         break;
     case 2:
         {
-            _ui_screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_calendar_init, true);
+            screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_calendar_init, true);
         }
         break;
     case 3:
         {
-            _ui_screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_activity_init, true);
+            screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_activity_init, true);
         }
         break;
     case 4:
         {
-            _ui_screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                              lv_app_heartrate_init, true);
+            screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                          lv_app_heartrate_init, true);
         }
         break;
     default:
