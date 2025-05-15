@@ -47,7 +47,7 @@ static void apply_rotate_effect(lv_obj_t *obj);
 static void reset_rotate_effect(lv_obj_t *obj);
 #endif
 /**********************
- *  STATIC VARIABLES
+ *  GLOBAL VARIABLES
  **********************/
 SLIDE_EFFECT global_slide = SCALE;
 extern bool tileview_scrolling;

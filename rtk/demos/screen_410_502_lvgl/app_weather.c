@@ -1,14 +1,28 @@
+/**
+ * @file app_weather.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 #include <time.h>
 #include <string.h>
 
+/*********************
+ *      DEFINES
+ *********************/
 #ifndef M_PI
 #define M_PI    ((float)3.14159265358979323846)
 #endif
 
 #define LOCATION "Suzhou"
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
 lv_obj_t *scr_app_weather;
 
 const uint8_t temp_range[14] =
@@ -29,6 +43,26 @@ const char *weather_array[7] =
     "Cloudy"
 };
 
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+static void exit_app_weather(void)
+{
+    if (enter_menu_flag)
+    {
+        custom_screen_change(&scr_app_menu, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_init, true);
+    }
+    else
+    {
+        custom_screen_change(&tileview, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             NULL, true);
+    }
+}
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 uint8_t estimate_temp(int hour)
 {
     float min = (float)temp_range[watch_time.tm_wday];
@@ -43,20 +77,6 @@ uint8_t estimate_temp(int hour)
     // Sine model: T = avg + A * cos(2PI/24 * (t - phase))
     float temp = avg_temp + amplitude * cos(2 * M_PI / 24.0f * ((float)hour - phase));
     return (uint8_t)temp;
-}
-
-static void exit_app_weather(void)
-{
-    if (enter_menu_flag)
-    {
-        screen_change(&scr_app_menu, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_menu_init, true);
-    }
-    else
-    {
-        screen_change(&tileview, &scr_app_weather, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, true);
-    }
 }
 
 void lv_app_weather_init(void)
@@ -122,22 +142,16 @@ void lv_app_weather_init(void)
     // top
     {
         lv_obj_t *label = lv_label_create(container);
-        lv_label_set_text(label, LOCATION);
         lv_obj_set_pos(label, 20, 30);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, LOCATION, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
 
         char content[15];
         sprintf(content, "%d°", temp_array[0]);
         label = lv_label_create(container);
-        lv_label_set_text(label, content);
         lv_obj_set_pos(label, 20, 60);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size48_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size48_bits1_font);
 
         lv_obj_t *img = lv_image_create(container);
         lv_image_set_src(img, &weather_location);
@@ -153,21 +167,15 @@ void lv_app_weather_init(void)
             sprintf(content, "%s", "Clear");
         }
         label = lv_label_create(container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -20, 60);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
 
         sprintf(content, "H:%d° L:%d°", temp_range[wday + 7],  temp_range[wday]);
         label = lv_label_create(container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -20, 88);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
     }
 
     // mid
@@ -184,12 +192,9 @@ void lv_app_weather_init(void)
         sprintf(content, "%02d        %02d        %02d        %02d        %02d        %02d", hour[0],
                 hour[1], hour[2], hour[3], hour[4], hour[5]);
         lv_obj_t *label = lv_label_create(mid_container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 5, 5);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xBCBEC4), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xBCBEC4), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
 
         for (uint8_t i = 0; i < 6; i++)
         {
@@ -217,12 +222,9 @@ void lv_app_weather_init(void)
         sprintf(content, "%02d°      %02d°       %02d°      %02d°      %02d°      %02d°",
                 temp_array[0], temp_array[1], temp_array[2], temp_array[3], temp_array[4], temp_array[5]);
         label = lv_label_create(mid_container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_BOTTOM_LEFT, 5, 0);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
     }
 
     // bottom
@@ -236,12 +238,9 @@ void lv_app_weather_init(void)
         sprintf(content, "%s\n\n\n%s\n\n\n%s\n\n\n%s\n\n\n%s", day[(wday + 1) % 7], day[(wday + 2) % 7],
                 day[(wday + 3) % 7], day[(wday + 4) % 7], day[(wday + 5) % 7]);
         lv_obj_t *label = lv_label_create(down_container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 0, 15);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
 
         for (uint8_t i = 0; i < 5; i++)
         {
@@ -262,24 +261,17 @@ void lv_app_weather_init(void)
                 temp_range[(wday + 1) % 7], temp_range[(wday + 2) % 7], temp_range[(wday + 3) % 7],
                 temp_range[(wday + 4) % 7], temp_range[(wday + 5) % 7]);
         label = lv_label_create(down_container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_LEFT, 150, 15);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xBCBEC4), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
-                                   0);
+        custom_set_label_without_pos(label, content, lv_color_hex(0xBCBEC4), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
 
         sprintf(content, "%02d°\n\n\n%02d°\n\n\n%02d°\n\n\n%02d°\n\n\n%02d°",
                 temp_range[(wday + 1) % 7 + 7], temp_range[(wday + 2) % 7 + 7], temp_range[(wday + 3) % 7 + 7],
                 temp_range[(wday + 4) % 7 + 7], temp_range[(wday + 5) % 7 + 7]);
         label = lv_label_create(down_container);
-        lv_label_set_text(label, content);
         lv_obj_align(label, LV_ALIGN_TOP_RIGHT, -10, 15);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(label, 255, 0);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size12_bits1_font,
-                                   0);
-
+        custom_set_label_without_pos(label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
         for (uint8_t i = 0; i < 5; i++)
         {
             uint8_t offset_y = 45;
@@ -300,5 +292,5 @@ void lv_app_weather_init(void)
         }
     }
 
-    return_create(container, exit_app_weather);
+    custom_return_create(container, exit_app_weather);
 }

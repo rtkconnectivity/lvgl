@@ -1,6 +1,17 @@
+/**
+ * @file app_control_board.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 
+/**********************
+ *      TYPEDEFS
+ **********************/
 typedef struct switch_state
 {
     uint8_t sw_1 : 1;
@@ -10,10 +21,21 @@ typedef struct switch_state
     uint8_t sw_5 : 1;
 } switch_state_t;
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+lv_obj_t *scr_app_control_board;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static switch_state_t sw_state = {0};
 static lv_obj_t *img_phone, *img_nobother, *img_mute;
 
-void button_lte_event_cb(lv_event_t *e)
+/**********************
+ *  STATIC FUNCTIONS
+ **********************/
+static void button_lte_event_cb(lv_event_t *e)
 {
     lv_obj_t *img = lv_event_get_target(e);
     sw_state.sw_1 ^= 1;
@@ -28,7 +50,7 @@ void button_lte_event_cb(lv_event_t *e)
     }
 }
 
-void button_wifi_event_cb(lv_event_t *e)
+static void button_wifi_event_cb(lv_event_t *e)
 {
     lv_obj_t *img = lv_event_get_target(e);
     sw_state.sw_2 ^= 1;
@@ -43,7 +65,7 @@ void button_wifi_event_cb(lv_event_t *e)
     }
 }
 
-void button_phone_event_cb(lv_event_t *e)
+static void button_phone_event_cb(lv_event_t *e)
 {
     lv_obj_t *img = lv_event_get_target(e);
     sw_state.sw_3 ^= 1;
@@ -60,7 +82,7 @@ void button_phone_event_cb(lv_event_t *e)
     }
 }
 
-void button_mute_event_cb(lv_event_t *e)
+static void button_mute_event_cb(lv_event_t *e)
 {
     lv_obj_t *img = lv_event_get_target(e);
     sw_state.sw_4 ^= 1;
@@ -77,7 +99,7 @@ void button_mute_event_cb(lv_event_t *e)
     }
 }
 
-void button_nobother_event_cb(lv_event_t *e)
+static void button_nobother_event_cb(lv_event_t *e)
 {
     lv_obj_t *img = lv_event_get_target(e);
     sw_state.sw_5 ^= 1;
@@ -96,10 +118,13 @@ void button_nobother_event_cb(lv_event_t *e)
 
 static void exit_app_control_board(void)
 {
-    screen_change(&tileview, &scr_app_control_board, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                  NULL, false);
+    custom_screen_change(&tileview, &scr_app_control_board, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                         NULL, false);
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_app_control_board_init(void)
 {
     scr_app_control_board = lv_obj_create(NULL);
@@ -181,5 +206,5 @@ void lv_app_control_board_init(void)
     lv_obj_set_pos(charge_num, 95, 40);
     lv_obj_set_style_transform_scale(charge_num, 256 * 0.8f, 256 * 0.8f);
 
-    return_create(container, exit_app_control_board);
+    custom_return_create(container, exit_app_control_board);
 }

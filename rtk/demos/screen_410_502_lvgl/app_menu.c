@@ -1,6 +1,18 @@
+/**
+ * @file app_menu.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include <math.h>
 #include "lvgl.h"
 #include "app_main.h"
+
+/*********************
+ *      DEFINES
+ *********************/
 
 #define SCREEN_WIDTH 410
 #define SCREEN_HEIGHT 502
@@ -8,13 +20,23 @@
 #define ITEM_INTERVAL 10
 #define OFFSET_X 20
 
-// Define APP structure
+/**********************
+ *      TYPEDEFS
+ **********************/
 typedef struct
 {
     const char *name;
     const lv_img_dsc_t *icon;
 } app_item_t;
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+lv_obj_t *scr_app_menu;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 // Sample APP data
 static const app_item_t app_list[] =
 {
@@ -29,17 +51,27 @@ static const app_item_t app_list[] =
     {"Activity", &ui_clock_activity_icon},
     {"Heart Rate", &ui_clock_heartrate_icon},
 };
-#define APP_COUNT (sizeof(app_list) / sizeof(app_list[0]))
 
 static int16_t page_menu_y_his = 0;
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
 bool enter_menu_flag = false;
-// Exit menu function
+
+/**********************
+ *      MACROS
+ **********************/
+#define APP_COUNT (sizeof(app_list) / sizeof(app_list[0]))
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
 static void exit_menu(void)
 {
     // LV_LOG("enter exit_menu func\n");
-    screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                  NULL, true);
+    custom_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                         NULL, true);
     enter_menu_flag = false;
 }
 
@@ -52,32 +84,32 @@ static void enter_app_cb(lv_event_t *e)
     {
     case 0:
         {
-            screen_change(&scr_app_weather, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_weather_init, true);
+            custom_screen_change(&scr_app_weather, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_weather_init, true);
         }
         break;
     case 1:
         {
-            screen_change(&scr_app_music, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_music_init, true);
+            custom_screen_change(&scr_app_music, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_music_init, true);
         }
         break;
     case 2:
         {
-            screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_calendar_init, true);
+            custom_screen_change(&scr_app_calendar, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_calendar_init, true);
         }
         break;
     case 3:
         {
-            screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_activity_init, true);
+            custom_screen_change(&scr_app_activity, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_activity_init, true);
         }
         break;
     case 4:
         {
-            screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                          lv_app_heartrate_init, true);
+            custom_screen_change(&scr_app_heartrate, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_heartrate_init, true);
         }
         break;
     default:
@@ -137,7 +169,9 @@ static void page_event_cb(lv_event_t *e)
     update_button_pos(page, page_menu_y_his);
 }
 
-// Initialize the app menu
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_app_menu_init(void)
 {
     scr_app_menu = lv_obj_create(NULL);
@@ -170,22 +204,18 @@ void lv_app_menu_init(void)
         lv_obj_add_flag(bg, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_add_event_cb(bg, (lv_event_cb_t)enter_app_cb, LV_EVENT_CLICKED, NULL);
 
-        // Add icon
         lv_obj_t *img = lv_img_create(bg);
         lv_img_set_src(img, app_list[i].icon);
         lv_obj_align(img, LV_ALIGN_LEFT_MID, 20, 0);
-        // Add text
+
         lv_obj_t *label = lv_label_create(bg);
         lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-        lv_label_set_text(label, app_list[i].name);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(label, app_list[i].name, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
     }
     lv_obj_scroll_to_y(page, page_menu_y_his, LV_ANIM_OFF);
     update_button_pos(page, page_menu_y_his);
 
-    return_create(scr_app_menu, exit_menu);
+    custom_return_create(scr_app_menu, exit_menu);
     enter_menu_flag = true;
 }

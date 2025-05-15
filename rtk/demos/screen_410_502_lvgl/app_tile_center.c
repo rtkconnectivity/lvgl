@@ -1,3 +1,11 @@
+/**
+ * @file app_tile_center.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 #include "lv_img_dsc_list.h"
@@ -12,6 +20,16 @@ static cJSON *root;
 #include "cJSON.h"
 #endif
 
+/**********************
+ *      DEFINES
+ **********************/
+#ifndef M_PI
+#define M_PI    ((float)3.14159265358979323846)
+#endif
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static lv_obj_t *date_label;
 static lv_obj_t *time_img_container;
 static lv_obj_t *activity_arc;
@@ -20,11 +38,9 @@ static lv_obj_t *temperature_container;
 static lv_obj_t *compass_dial;
 static lv_obj_t *weather_current, *weather_range;
 
-
-#ifndef M_PI
-#define M_PI    ((float)3.14159265358979323846)
-#endif
-
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
 lv_image_dsc_t const *text_num_array[11] =
 {
     &ui_text_0,
@@ -67,7 +83,10 @@ const char *month[12] =
     "December"
 };
 
-void time_update_cb(void)
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+static void time_update_cb(void)
 {
     lv_obj_t *parent = time_img_container;
 
@@ -165,7 +184,7 @@ static void weather_update_cb(void)
     }
 }
 
-void arc_activity_cb(void)
+static void arc_activity_cb(void)
 {
     // parse activity array
     cJSON *activity_array = cJSON_GetObjectItemCaseSensitive(root, "activity");
@@ -320,28 +339,31 @@ static void timer_cb(lv_timer_t *timer)
 
 static void heartrate_cb(lv_event_t *event)
 {
-    screen_change(&scr_app_heartrate, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                  &lv_app_heartrate_init, 0);
+    custom_screen_change(&scr_app_heartrate, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                         &lv_app_heartrate_init, 0);
     LV_LOG("click heartrate icon\n");
 }
 
 static void enter_menu_cb(lv_event_t *event)
 {
-    screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
+    custom_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
 }
 
 static void weather_cb(lv_event_t *event)
 {
-    screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_weather_init,
-                  0);
+    custom_screen_change(&scr_app_weather, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_weather_init,
+                         0);
 }
 
 static void enter_control_board_cb(lv_event_t *event)
 {
-    screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                  lv_app_control_board_init, 0);
+    custom_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                         lv_app_control_board_init, 0);
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_tile_center_init(void)
 {
     lv_obj_remove_flag(scr_tile_center, LV_OBJ_FLAG_SCROLLABLE);
@@ -351,12 +373,9 @@ void lv_tile_center_init(void)
         char content[10];
         sprintf(content, "%s %d", day[watch_time.tm_wday], watch_time.tm_mday);
         date_label = lv_label_create(scr_tile_center);
-        lv_label_set_text(date_label, content);
         lv_obj_set_pos(date_label, 270, 50);
-        lv_obj_set_style_text_color(date_label, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(date_label, 255, 0);
-        lv_obj_set_style_text_font(date_label, &SourceHanSansSC_size32_bits1_font,
-                                   0);
+        custom_set_label_without_pos(date_label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size32_bits1_font);
 
         time_img_container = lv_obj_create(scr_tile_center);
         lv_obj_set_pos(time_img_container, 211, 88);
@@ -453,24 +472,18 @@ void lv_tile_center_init(void)
 
         {
             lv_obj_t *weather_date = lv_label_create(weather_card);
-            lv_label_set_text(weather_date, "TODAY");
             lv_obj_set_pos(weather_date, 24, 110);
-            lv_obj_set_style_text_color(weather_date, lv_color_hex(0xFFFFFF), 0);
-            lv_obj_set_style_text_opa(weather_date, 255, 0);
-            lv_obj_set_style_text_font(weather_date, &SourceHanSansSC_size12_bits1_font,
-                                       0);
+            custom_set_label_without_pos(weather_date, "TODAY", lv_color_hex(0xFFFFFF),
+                                         UINT8_MAX, &SourceHanSansSC_size12_bits1_font);
             for (uint8_t i = 0; i < 4; i++)
             {
                 uint8_t offset_x = 61;
                 char content[10];
                 sprintf(content, "%s.", day[(watch_time.tm_wday + i) % 7]);
                 lv_obj_t *weather_date = lv_label_create(weather_card);
-                lv_label_set_text(weather_date, content);
                 lv_obj_set_pos(weather_date, 90 + offset_x * i, 110);
-                lv_obj_set_style_text_color(weather_date, lv_color_hex(0xFFFFFF), 0);
-                lv_obj_set_style_text_opa(weather_date, 255, 0);
-                lv_obj_set_style_text_font(weather_date, &SourceHanSansSC_size12_bits1_font,
-                                           0);
+                custom_set_label_without_pos(weather_date, content, lv_color_hex(0xFFFFFF),
+                                             UINT8_MAX, &SourceHanSansSC_size12_bits1_font);
             }
         }
         {
@@ -479,21 +492,15 @@ void lv_tile_center_init(void)
             weather_current = lv_label_create(weather_card);
             lv_label_set_text(weather_current, content);
             lv_obj_set_pos(weather_current, 37, 7);
-            lv_obj_set_style_text_color(weather_current, lv_color_make(124, 199, 243),
-                                        0);
-            lv_obj_set_style_text_opa(weather_current, 255, 0);
-            lv_obj_set_style_text_font(weather_current, &SourceHanSansSC_size24_bits1_font,
-                                       0);
+            custom_set_label_without_pos(weather_current, content, lv_color_make(124, 199, 243),
+                                         UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
 
             sprintf(content, "H:%d° L:%d°", temp_range[watch_time.tm_wday + 7],
                     temp_range[watch_time.tm_wday]);
             weather_range = lv_label_create(weather_card);
-            lv_label_set_text(weather_range, content);
             lv_obj_set_pos(weather_range, 80, 7);
-            lv_obj_set_style_text_color(weather_range, lv_color_hex(0xFFFFFF), 0);
-            lv_obj_set_style_text_opa(weather_range, 255, 0);
-            lv_obj_set_style_text_font(weather_range, &SourceHanSansSC_size24_bits1_font,
-                                       0);
+            custom_set_label_without_pos(weather_range, content, lv_color_hex(0xFFFFFF),
+                                         UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
         }
     }
 
@@ -515,33 +522,21 @@ void lv_tile_center_init(void)
         char content[5];
         sprintf(content, "%d", cur_val);
         lv_obj_t *temperature_current = lv_label_create(container);
-        lv_label_set_text(temperature_current, content);
         lv_obj_align(temperature_current, LV_ALIGN_CENTER, 5, -5);
-        lv_obj_set_style_text_color(temperature_current, lv_color_hex(0xFFFFFF),
-                                    0);
-        lv_obj_set_style_text_opa(temperature_current, 255, 0);
-        lv_obj_set_style_text_font(temperature_current, &SourceHanSansSC_size32_bits1_font,
-                                   0);
+        custom_set_label_without_pos(temperature_current, content, lv_color_hex(0xFFFFFF),
+                                     UINT8_MAX, &SourceHanSansSC_size32_bits1_font);
 
         sprintf(content, "%d", low_val);
         lv_obj_t *temperature_low = lv_label_create(container);
-        lv_label_set_text(temperature_low, content);
         lv_obj_set_pos(temperature_low, 14, 72);
-        lv_obj_set_style_text_color(temperature_low, lv_color_hex(0xFFFFFF),
-                                    0);
-        lv_obj_set_style_text_opa(temperature_low, 255, 0);
-        lv_obj_set_style_text_font(temperature_low, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(temperature_low, content, lv_color_hex(0xFFFFFF),
+                                     UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
 
         sprintf(content, "%d", high_val);
         lv_obj_t *temperature_high = lv_label_create(container);
-        lv_label_set_text(temperature_high, content);
         lv_obj_set_pos(temperature_high, 57, 72);
-        lv_obj_set_style_text_color(temperature_high, lv_color_hex(0xFFFFFF),
-                                    0);
-        lv_obj_set_style_text_opa(temperature_high, 255, 0);
-        lv_obj_set_style_text_font(temperature_high, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(temperature_high, content, lv_color_hex(0xFFFFFF),
+                                     UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
 
         // arc
         {
@@ -605,20 +600,14 @@ void lv_tile_center_init(void)
         lv_image_set_rotation(compass_pointer, degree_val * 10);
 
         lv_obj_t *compass_degree = lv_label_create(compass_dial);
-        lv_label_set_text(compass_degree, "90°");
         lv_obj_align(compass_degree, LV_ALIGN_TOP_MID, 0, 23);
-        lv_obj_set_style_text_color(compass_dial, lv_color_make(254, 106, 26),
-                                    0);
-        lv_obj_set_style_text_opa(compass_dial, 255, 0);
-        lv_obj_set_style_text_font(compass_dial, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(compass_degree, "90°", lv_color_make(254, 106, 26),
+                                     UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
         lv_obj_t *compass_orien = lv_label_create(compass_dial);
         lv_label_set_text(compass_orien, "E");
         lv_obj_align(compass_orien, LV_ALIGN_TOP_MID, 0, 50);
-        lv_obj_set_style_text_color(compass_orien, lv_color_hex(0xFFFFFF), 0);
-        lv_obj_set_style_text_opa(compass_orien, 255, 0);
-        lv_obj_set_style_text_font(compass_orien, &SourceHanSansSC_size24_bits1_font,
-                                   0);
+        custom_set_label_without_pos(compass_orien, "E", lv_color_hex(0xFFFFFF),
+                                     UINT8_MAX, &SourceHanSansSC_size24_bits1_font);
     }
 
     // heartrate icon

@@ -1,8 +1,18 @@
+/**
+ * @file app_calendar.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 #include <time.h>
 
-
+/**********************
+ *      TYPEDEFS
+ **********************/
 typedef struct
 {
     lv_calendar_date_t *dates;
@@ -10,8 +20,19 @@ typedef struct
     uint32_t capacity;
 } HighlightedDates;
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+lv_obj_t *scr_app_calendar;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static HighlightedDates highlighted_dates = {NULL, 0, 5};
 
+/**********************
+ *  STATIC FUNCTIONS
+ **********************/
 static void init_highlighted_dates(void)
 {
     if (highlighted_dates.dates == NULL)
@@ -72,8 +93,8 @@ static void cleanup_highlighted_dates(void)
 
 static void return_to_menu(void)
 {
-    screen_change(&scr_app_menu, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                  lv_app_menu_init, true);
+    custom_screen_change(&scr_app_menu, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                         lv_app_menu_init, true);
     // cleanup_highlighted_dates();
 }
 
@@ -100,35 +121,23 @@ static void calendar_event_cb(lv_event_t *e)
     }
 }
 
-static void event_handler(lv_event_t *e)
-{
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *obj = lv_event_get_current_target(e);
-
-    if (code == LV_EVENT_VALUE_CHANGED)
-    {
-        lv_calendar_date_t date;
-        if (lv_calendar_get_pressed_date(obj, &date))
-        {
-            LV_LOG_USER("Clicked date: %02d.%02d.%d", date.day, date.month, date.year);
-        }
-    }
-}
-
 static void exit_app_calendar(void)
 {
     if (enter_menu_flag)
     {
-        screen_change(&scr_app_menu, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_menu_init, true);
+        custom_screen_change(&scr_app_menu, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_init, true);
     }
     else
     {
-        screen_change(&tileview, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, true);
+        custom_screen_change(&tileview, &scr_app_calendar, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             NULL, true);
     }
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_app_calendar_init(void)
 {
     init_highlighted_dates();
@@ -153,5 +162,5 @@ void lv_app_calendar_init(void)
     lv_calendar_header_dropdown_create(calendar);
     lv_calendar_set_highlighted_dates(calendar, highlighted_dates.dates, highlighted_dates.count);
 
-    return_create(scr_app_calendar, exit_app_calendar);
+    custom_return_create(scr_app_calendar, exit_app_calendar);
 }

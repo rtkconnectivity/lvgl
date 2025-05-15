@@ -1,9 +1,24 @@
+/**
+ * @file lv_custom_func.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include <math.h>
 #include "lv_custom_func.h"
+#include "lv_indev_private.h"
 
+/*********************
+ *      DEFINES
+ *********************/
 #define DRAG_THRESHOLD 30  // Drag distance threshold
 #define LEFT_EDGE_THRESHOLD 30  // Left edge detection range
 
+/**********************
+ *      TYPEDEFS
+ **********************/
 // Custom data structure for gesture handling
 typedef struct
 {
@@ -11,6 +26,9 @@ typedef struct
     void (*cb)(void);
 } return_data_t;
 
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 // Drag indicator image sequence
 static const lv_image_dsc_t *drag_indicator_imgs[] =
 {
@@ -32,8 +50,20 @@ static const lv_image_dsc_t *drag_indicator_imgs[] =
     &path17,
     &path18,
 };
+
+/**********************
+ *      MACROS
+ **********************/
 #define DRAG_IMG_COUNT (sizeof(drag_indicator_imgs) / sizeof(drag_indicator_imgs[0]))
 
+/**********************
+ *  STATIC VARIABLES
+ **********************/
+static return_data_t param = {0};
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
 // Gesture detection callback
 static void return_gesture_cb(lv_event_t *e)
 {
@@ -100,10 +130,11 @@ static void return_gesture_cb(lv_event_t *e)
     }
 }
 
-static return_data_t param = {0};
-
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 // Create return gesture indicator
-void return_create(lv_obj_t *parent, void (*cb)(void))
+void custom_return_create(lv_obj_t *parent, void (*cb)(void))
 {
     lv_obj_add_flag(parent, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_t *img = lv_img_create(parent);
@@ -115,7 +146,7 @@ void return_create(lv_obj_t *parent, void (*cb)(void))
     lv_obj_add_event_cb(parent, return_gesture_cb, LV_EVENT_ALL, (void *)&param);
 }
 
-void remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
+void custom_remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
 {
     lv_obj_remove_flag(obj, flag);
     // iterate over all child widgets
@@ -125,11 +156,11 @@ void remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
         lv_obj_t *child = lv_obj_get_child(obj, i);
         if (child != NULL)
         {
-            remove_flag_recursive(child, flag);
+            custom_remove_flag_recursive(child, flag);
         }
     }
 }
-void add_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
+void custom_add_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
 {
     lv_obj_add_flag(obj, flag);
     // iterate over all child widgets
@@ -139,12 +170,12 @@ void add_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
         lv_obj_t *child = lv_obj_get_child(obj, i);
         if (child != NULL)
         {
-            add_flag_recursive(child, flag);
+            custom_add_flag_recursive(child, flag);
         }
     }
 }
 
-bool judge_short_click(void)
+bool custom_judge_short_click(void)
 {
     uint32_t short_click_time = 80;
     bool ret = false;
@@ -160,9 +191,9 @@ bool judge_short_click(void)
     return ret;
 }
 
-void screen_change(lv_obj_t **target, lv_obj_t **source, lv_scr_load_anim_t anim, int spd,
-                   int delay,
-                   void (*target_init)(void), bool delete)
+void custom_screen_change(lv_obj_t **target, lv_obj_t **source, lv_scr_load_anim_t anim, int spd,
+                          int delay,
+                          void (*target_init)(void), bool delete)
 {
     if (*target == NULL)
     {
@@ -173,6 +204,15 @@ void screen_change(lv_obj_t **target, lv_obj_t **source, lv_scr_load_anim_t anim
     {
         *source = NULL;
     }
+}
+
+inline void custom_set_label_without_pos(lv_obj_t *label, const char *text, lv_color_t color,
+                                         lv_opa_t opa, const lv_font_t *font)
+{
+    lv_label_set_text(label, text);
+    lv_obj_set_style_text_color(label, color, 0);
+    lv_obj_set_style_text_opa(label, opa, 0);
+    lv_obj_set_style_text_font(label, font, 0);
 }
 
 

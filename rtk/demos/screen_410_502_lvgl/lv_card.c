@@ -1,5 +1,15 @@
+/**
+ * @file lv_card.c
+ *
+ */
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lv_card.h"
 
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
 static void update_card_transform(lv_obj_t *card, lv_obj_t *parent)
 {
     CardData *card_data = lv_obj_get_user_data(card);
@@ -104,6 +114,9 @@ static void cardview_delete_event_cb(lv_event_t *e)
     }
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 lv_obj_t *lv_create_card(lv_obj_t *parent, uint8_t id, lv_coord_t w, lv_coord_t h)
 {
     CardViewData *view_data = lv_obj_get_user_data(parent);

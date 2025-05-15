@@ -1,9 +1,28 @@
+/**
+ * @file app_tile_left.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 #include "lv_custom_tile_slide.h"
 
-
+/**********************
+ *      DEFINES
+ **********************/
 #define EFFECT_NUM 8
+
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+extern SLIDE_EFFECT global_slide;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static lv_style_t style_effect;
 static lv_style_t style_effect_chk;
 static lv_style_t style_font;
@@ -31,7 +50,10 @@ static SLIDE_EFFECT effect_list[EFFECT_NUM] =
     SPIRAL_NOTEBOOK,
     ROTATION
 };
-extern SLIDE_EFFECT global_slide;
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
 static void effect_event_handler(lv_event_t *e)
 {
     uint32_t *active_id = lv_event_get_user_data(e);
@@ -49,7 +71,7 @@ static void effect_event_handler(lv_event_t *e)
     global_slide = effect_list[*active_id];
 }
 
-void create_slide_effect_checkbox(lv_obj_t *parent)
+static void create_slide_effect_checkbox(lv_obj_t *parent)
 {
     lv_style_init(&style_effect);
     lv_style_set_radius(&style_effect, LV_RADIUS_CIRCLE);
@@ -98,20 +120,15 @@ void create_slide_effect_checkbox(lv_obj_t *parent)
     }
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_tile_left_init(void)
 {
-    // scr_tile_left = lv_obj_create(NULL);
-
-    // lv_obj_set_style_bg_color(scr_tile_left, lv_color_make(0, 0, 0), 0);
-    // lv_obj_set_style_bg_opa(scr_tile_left, LV_OPA_COVER, 0);
-
-    LV_IMG_DECLARE(w3w);
     lv_obj_t *img1 = lv_image_create(scr_tile_left);
     lv_image_set_src(img1, &w3w);
     lv_obj_center(img1);
 
     create_slide_effect_checkbox(scr_tile_left);
-
-    // lv_obj_add_event_cb(scr_tile_left, (lv_event_cb_t)tile_left_cb, LV_EVENT_ALL, NULL);
 }
 

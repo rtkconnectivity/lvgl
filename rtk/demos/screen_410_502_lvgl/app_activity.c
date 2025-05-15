@@ -1,3 +1,11 @@
+/**
+ * @file app_activity.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 
@@ -5,14 +13,25 @@
 #include "cJSON.h"
 #endif
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+lv_obj_t *scr_app_activity;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static lv_obj_t *ac_container;
 
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
 static void arc_anim_cb(void *obj, int32_t value)
 {
     lv_arc_set_end_angle((lv_obj_t *)obj, value);
 }
 
-void update_arc_activity(lv_obj_t *parent)
+static void update_arc_activity(lv_obj_t *parent)
 {
     const uint16_t start_angle = 270;
     lv_anim_t a;
@@ -84,7 +103,7 @@ void update_arc_activity(lv_obj_t *parent)
     lv_label_set_text(label_stand, content);
 }
 
-void app_activity(lv_obj_t *parent)
+static void app_activity(lv_obj_t *parent)
 {
     const uint16_t start_angle = 90;
     const uint16_t arc_x = 130, arc_y = 150, width = 16;
@@ -109,7 +128,6 @@ void app_activity(lv_obj_t *parent)
     lv_obj_set_style_arc_color(arc_1, lv_color_make(58, 23, 29), LV_PART_MAIN);
     lv_obj_remove_style(arc_1, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
     lv_obj_remove_flag(arc_1, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
-    // lv_arc_set_end_angle(arc_1, start_angle + (uint16_t)(360 * 10000 / 20000)); // cap 20000 steps
 
     lv_obj_t *arc_2 = lv_arc_create(arc_container);
     radius = 76;
@@ -123,7 +141,6 @@ void app_activity(lv_obj_t *parent)
     lv_obj_set_style_arc_color(arc_2, lv_color_make(30, 55, 25), LV_PART_MAIN);
     lv_obj_remove_style(arc_2, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
     lv_obj_remove_flag(arc_2, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
-    // lv_arc_set_end_angle(arc_2, start_angle + (uint16_t)(360 * 30 / 60)); // cap 60 min
 
     lv_obj_t *arc_3 = lv_arc_create(arc_container);
     radius = 52;
@@ -137,37 +154,24 @@ void app_activity(lv_obj_t *parent)
     lv_obj_set_style_arc_color(arc_3, lv_color_make(22, 50, 47), LV_PART_MAIN);
     lv_obj_remove_style(arc_3, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
     lv_obj_remove_flag(arc_3, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
-    // lv_arc_set_end_angle(arc_3, start_angle + (uint16_t)(360 * 15 / 30)); // cap 30 times
 
     // text
     lv_obj_t *label_move = lv_label_create(parent);
-    lv_obj_remove_style_all(label_move);
     lv_obj_set_pos(label_move, 130, 300);
-    lv_label_set_text(label_move, "Move: 0/20000steps");
-    lv_obj_set_style_text_color(label_move, lv_color_make(230, 67, 79),
-                                LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(label_move, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(label_move, &SourceHanSansSC_size24_bits1_font,
-                               LV_PART_MAIN | LV_STATE_DEFAULT);
+    custom_set_label_without_pos(label_move, "Move: 0/20000steps", lv_color_make(230, 67, 79),
+                                 UINT8_MAX,
+                                 &SourceHanSansSC_size24_bits1_font);
 
     lv_obj_t *label_ex = lv_label_create(parent);
-    lv_obj_remove_style_all(label_ex);
     lv_obj_set_pos(label_ex, 130, 350);
-    lv_label_set_text(label_ex, "Exercise: 0/60min");
-    lv_obj_set_style_text_color(label_ex, lv_color_make(186, 253, 79), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(label_ex, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(label_ex, &SourceHanSansSC_size24_bits1_font,
-                               LV_PART_MAIN | LV_STATE_DEFAULT);
+    custom_set_label_without_pos(label_ex, "Exercise: 0/60min", lv_color_make(186, 253, 79), UINT8_MAX,
+                                 &SourceHanSansSC_size24_bits1_font);
 
     lv_obj_t *label_stand = lv_label_create(parent);
-    lv_obj_remove_style_all(label_stand);
     lv_obj_set_pos(label_stand, 130, 400);
-    lv_label_set_text(label_stand, "Stand: 0/30times");
-    lv_obj_set_style_text_color(label_stand, lv_color_make(117, 230, 229),
-                                LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(label_stand, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(label_stand, &SourceHanSansSC_size24_bits1_font,
-                               LV_PART_MAIN | LV_STATE_DEFAULT);
+    custom_set_label_without_pos(label_stand, "Stand: 0/30times", lv_color_make(117, 230, 229),
+                                 UINT8_MAX,
+                                 &SourceHanSansSC_size24_bits1_font);
 }
 
 static void tileview_event_cb(lv_event_t *e)
@@ -185,21 +189,24 @@ static void tileview_event_cb(lv_event_t *e)
     }
 }
 
-void exit_app_activity(void)
+static void exit_app_activity(void)
 {
     lv_obj_set_parent(ac_container, scr_tile_right_2);
     if (enter_menu_flag)
     {
-        screen_change(&scr_app_menu, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_menu_init, true);
+        custom_screen_change(&scr_app_menu, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_init, true);
     }
     else
     {
-        screen_change(&tileview, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, true);
+        custom_screen_change(&tileview, &scr_app_activity, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             NULL, true);
     }
 }
 
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
 void lv_app_activity_init(void)
 {
     scr_app_activity = lv_obj_create(NULL);
@@ -210,7 +217,7 @@ void lv_app_activity_init(void)
     lv_obj_set_parent(ac_container, scr_app_activity);
     update_arc_activity(ac_container);
 
-    return_create(scr_app_activity, exit_app_activity);
+    custom_return_create(scr_app_activity, exit_app_activity);
 }
 
 void lv_tile_right_2_init(void)

@@ -1,3 +1,11 @@
+/**
+ * @file app_heartrate.c
+ *
+ */
+
+/*********************
+ *      INCLUDES
+ *********************/
 #include "lvgl.h"
 #include "app_main.h"
 
@@ -5,21 +13,31 @@
 #include "cJSON.h"
 #endif
 
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
 lv_obj_t *scr_app_heartrate;
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
 static lv_obj_t *img_container;
 static lv_timer_t *timer;
 
-void exit_app_heartrate(void)
+/**********************
+ *  STATIC FUNCTIONS
+ **********************/
+static void exit_app_heartrate(void)
 {
     if (enter_menu_flag)
     {
-        screen_change(&scr_app_menu, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      lv_app_menu_init, true);
+        custom_screen_change(&scr_app_menu, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_init, true);
     }
     else
     {
-        screen_change(&tileview, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                      NULL, true);
+        custom_screen_change(&tileview, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             NULL, true);
     }
     lv_timer_delete(timer);
 }
@@ -59,6 +77,9 @@ static void update_data(lv_timer_t *t)
     lv_image_set_src(img, text_num_array[num % 10]);
 }
 
+/**********************
+ *  GLOBAL FUNCTIONS
+ **********************/
 void lv_app_heartrate_init(void)
 {
     scr_app_heartrate = lv_obj_create(NULL);
@@ -92,75 +113,49 @@ void lv_app_heartrate_init(void)
 
     {
         lv_obj_t *x_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(x_label, "12AM");
         lv_obj_set_pos(x_label, 30, 290);
-        lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(x_label, "12AM", lv_color_hex(0x7B797B), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
+
         x_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(x_label, "6AM");
         lv_obj_set_pos(x_label, 30 + 82, 290);
-        lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(x_label, "6AM", lv_color_hex(0x7B797B), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
         x_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(x_label, "12PM");
         lv_obj_set_pos(x_label, 30 + 82 * 2, 290);
-        lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(x_label, "12PM", lv_color_hex(0x7B797B), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
         x_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(x_label, "6PM");
         lv_obj_set_pos(x_label, 30 + 82 * 3, 290);
-        lv_obj_set_style_text_color(x_label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(x_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(x_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(x_label, "6PM", lv_color_hex(0x7B797B), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
     }
 
     {
         lv_obj_t *y_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(y_label, "160");
         lv_obj_set_pos(y_label, 360, 80);
-        lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(y_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(y_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(y_label, "160", lv_color_hex(0xFF0000), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
         y_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(y_label, "120");
         lv_obj_set_pos(y_label, 360, 80 + 70);
-        lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(y_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(y_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(y_label, "120", lv_color_hex(0xFF0000), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
         y_label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(y_label, "80");
         lv_obj_set_pos(y_label, 360, 80 + 70 * 2);
-        lv_obj_set_style_text_color(y_label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(y_label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(y_label, &SourceHanSansSC_size12_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(y_label, "80", lv_color_hex(0xFF0000), UINT8_MAX,
+                                     &SourceHanSansSC_size12_bits1_font);
     }
 
     {
         lv_obj_t *label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(label, "Current heartrate");
         lv_obj_set_pos(label, 50, 340);
-        lv_obj_set_style_text_color(label, lv_color_hex(0x7B797B), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size24_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(label, "Current heartrate", lv_color_hex(0x7B797B), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
 
         label = lv_label_create(scr_app_heartrate);
-        lv_label_set_text(label, "times/min");
         lv_obj_set_pos(label, 165, 410);
-        lv_obj_set_style_text_color(label, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_opa(label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-        lv_obj_set_style_text_font(label, &SourceHanSansSC_size32_bits1_font,
-                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        custom_set_label_without_pos(label, "times/min", lv_color_hex(0xFF0000), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
     }
     {
         img_container = lv_obj_create(scr_app_heartrate);
@@ -184,5 +179,5 @@ void lv_app_heartrate_init(void)
 
     timer = lv_timer_create(update_data, 500, chart);
 
-    return_create(scr_app_heartrate, exit_app_heartrate);
+    custom_return_create(scr_app_heartrate, exit_app_heartrate);
 }

@@ -25,7 +25,6 @@ extern "C" {
 #define APP_MUSIC_LANDSCAPE 0
 #define APP_MUSIC_ROUND     0
 #define APP_MUSIC_LARGE     0
-#define APP_MUSIC_AUTO_PLAY 0
 #define APP_MUSIC_HANDLE_SIZE  60
 #else
 #define APP_MUSIC_HANDLE_SIZE  20
@@ -40,10 +39,6 @@ extern "C" {
  **********************/
 
 void app_music(lv_obj_t *parent);
-
-/**********************
- *      MACROS
- **********************/
 
 #ifdef __cplusplus
 } /* extern "C" */
