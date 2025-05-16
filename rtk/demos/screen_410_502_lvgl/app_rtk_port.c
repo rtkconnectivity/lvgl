@@ -13,6 +13,7 @@
 #include "os_task.h"
 #include "os_timer.h"
 #include "trace.h"
+#include "platform_utils.h"
 
 #include "lvgl.h"
 #include "lv_port_disp.h"
@@ -158,7 +159,25 @@ static uint32_t sys_tick_get(void)
 {
     return sys_timestamp_get_us() / 1000;
 }
-
+#if LV_USE_PROFILER == 1
+static uint32_t my_get_tick_cb(void)
+{
+    return read_cpu_counter() / 100;
+}
+static void my_flush_cb(const char *buf)
+{
+    DBG_DIRECT("%s", buf);
+}
+void my_profiler_init(void)
+{
+    lv_profiler_builtin_config_t config;
+    lv_profiler_builtin_config_init(&config);
+    config.tick_per_sec = 1000000; /* CPU 100MHz */
+    config.tick_get_cb = my_get_tick_cb;
+    config.flush_cb = my_flush_cb;
+    lv_profiler_builtin_init(&config);
+}
+#endif
 static void lvgl_demo_run(void *p)
 {
     os_timer_create(&gui_timer0, "lvgl tick", 1, 10, true, lv_tick);
@@ -167,6 +186,9 @@ static void lvgl_demo_run(void *p)
     lv_psram_init((void *)PSRAM_BUF, PSRAM_BUF_SIZE);
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
     lv_tick_set_cb(sys_tick_get);
+#if LV_USE_PROFILER == 1
+    my_profiler_init();
+#endif
     lv_port_disp_init();
     lv_port_indev_init();
     // lv_port_fs_init();

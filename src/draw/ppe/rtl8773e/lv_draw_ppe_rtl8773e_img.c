@@ -225,6 +225,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         draw_rect.w = lv_area_get_width(&constraint_area);
         draw_rect.h = lv_area_get_height(&constraint_area);
     }
+    uint32_t src_stride = 0;
     if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
@@ -234,7 +235,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         draw_rect.y = constraint_area.y1 - coords->y1;
         uint32_t length = draw_rect.w * pixel_byte;
         uint32_t height = draw_rect.h;
-        uint32_t src_stride = 0;
         if (img_dsc->header.stride != 0)
         {
             src_stride = img_dsc->header.stride / pixel_byte;
@@ -466,7 +466,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                             uint32_t dst_stride = length;
                             uint32_t src_addr = (uint32_t)img_dsc->data + img_dsc->header.stride * image_y + image_x *
                                                 pixel_byte;
-                            lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)pic_buffer);
+                            lv_acc_dma_copy(length, height, source.stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)pic_buffer);
                         }
                         else
                         {
