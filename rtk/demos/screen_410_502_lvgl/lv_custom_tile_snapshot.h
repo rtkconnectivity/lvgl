@@ -29,44 +29,21 @@ extern "C" {
 /**********************
  *      TYPEDEFS
  **********************/
+/**
+ * @brief Delete snapshot object directly
+ * @param widget Parent container for the snapshot image
+ * @param snapshot Snapshot image object to delete
+ * @note Automatically shows the original widget after deleting snapshot
+*/
+void delete_snapshot_obj_directly(lv_obj_t *widget, lv_obj_t *snapshot);
 
 /**
- * @brief Delete snapshot resources
- * @param widget Associated widget object
- * @param img_snapshot Target snapshot image object to operate
+ * @brief Create snapshot object without event binding
+ * @param parent Parent container for the snapshot image
+ * @param target Target widget to capture snapshot from
+ * @return lv_obj_t* Pointer to the created snapshot image object
+ * @note Automatically hides the original widget after creating snapshot
  */
-void delete_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot);
-
-/**
- * @brief Update widget snapshot cache
- * @param widget Source widget to capture
- * @param img_snapshot Image object for displaying snapshot
- * @note Automatically destroys old snapshot and creates new ARGB8888 format
- */
-void update_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot);
-
-/**
- * @brief Create new widget snapshot
- * @param widget Source widget to capture
- * @param img_snapshot Image object for displaying snapshot
- * @note Initializes black background and updates snapshot immediately
- */
-void create_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot);
-
-/**
- * @brief Delete snapshot event callback
- * @param e LVGL event object
- * @note Gets widget reference from event user data
- */
-void snapshot_custom_cb_delete(lv_event_t *e);
-
-/**
- * @brief Create snapshot event callback
- * @param e LVGL event object
- * @note Gets widget reference from event user data
- */
-void snapshot_custom_cb_create(lv_event_t *e);
-
 lv_obj_t *create_snapshot_obj_directly(lv_obj_t *parent, lv_obj_t *target);
 
 /**

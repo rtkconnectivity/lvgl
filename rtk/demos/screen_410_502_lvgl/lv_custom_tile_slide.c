@@ -49,7 +49,6 @@ static void reset_rotate_effect(lv_obj_t *obj);
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-SLIDE_EFFECT global_slide = SCALE;
 extern bool tileview_scrolling;
 
 /**********************
@@ -76,11 +75,12 @@ void tileview_custom_cb(lv_event_t *e)
             for (int i = 0; i < lv_obj_get_child_count(obj); i++)
             {
                 lv_obj_t *tile_obj = lv_obj_get_child(obj, i);
+                SLIDE_EFFECT *effect = (SLIDE_EFFECT *)lv_obj_get_user_data(tile_obj);
                 if (lv_tile_is_scrolling(tile_obj))
                 {
-                    lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_creat, NULL);
+                    lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_creat, effect);
                     lv_obj_add_flag(lv_obj_get_child(tile_obj, 0), LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_clear_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_remove_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN);
                 }
             }
 #endif
@@ -98,16 +98,17 @@ void tileview_custom_cb(lv_event_t *e)
                 continue;
             }
             lv_obj_t *target = tile_obj;
+            SLIDE_EFFECT *effect = (SLIDE_EFFECT *)lv_obj_get_user_data(tile_obj);
 #if TILE_SLIDE_USE_SNAPSHORT
             if (lv_obj_has_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN))
             {
-                lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_creat, NULL);
+                lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_creat, effect);
                 lv_obj_add_flag(lv_obj_get_child(tile_obj, 0), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN);
+                lv_obj_remove_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN);
             }
             target = lv_obj_get_child(tile_obj, 1);
 #endif
-            apply_slide_effect(target, global_slide);
+            apply_slide_effect(target, *effect);
         }
         // LV_LOG("tileview_custom_cb LV_EVENT_SCROLL \n");
     }
@@ -120,14 +121,15 @@ void tileview_custom_cb(lv_event_t *e)
             for (int i = 0; i < lv_obj_get_child_count(obj); i++)
             {
                 lv_obj_t *tile_obj = lv_obj_get_child(obj, i);
+                SLIDE_EFFECT *effect = (SLIDE_EFFECT *)lv_obj_get_user_data(tile_obj);
                 lv_obj_t *target = tile_obj;
 #if TILE_SLIDE_USE_SNAPSHORT
                 lv_obj_add_flag(lv_obj_get_child(tile_obj, 1), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(lv_obj_get_child(tile_obj, 0), LV_OBJ_FLAG_HIDDEN);
-                lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_delete, NULL);
+                lv_obj_remove_flag(lv_obj_get_child(tile_obj, 0), LV_OBJ_FLAG_HIDDEN);
+                lv_obj_send_event(lv_obj_get_child(tile_obj, 1), event_snapshot_delete, effect);
                 target = lv_obj_get_child(tile_obj, 1);
 #endif
-                reset_slide_effect(target, global_slide);
+                reset_slide_effect(target, *effect);
             }
             LV_LOG_INFO("REAL LV_EVENT_SCROLL_END \n");
         }
@@ -211,7 +213,7 @@ static bool lv_tile_is_scrolling(lv_obj_t *tile)
     lv_obj_get_coords(tile, &tile_area);
 
     lv_area_t scr_area;
-    lv_obj_get_coords(lv_scr_act(), &scr_area);
+    lv_obj_get_coords(lv_screen_active(), &scr_area);
 
     if (lv_area_is_on(&tile_area, &scr_area))
     {

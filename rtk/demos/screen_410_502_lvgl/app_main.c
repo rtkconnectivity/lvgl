@@ -48,6 +48,7 @@ static void time_update_cb(lv_timer_t *timer);
 static void enter_menu_cb(lv_event_t *event);
 static void inform_generate_task_entry(lv_timer_t *timer);
 static void enter_control_board(lv_event_t *event);
+static void ui_other_component_init(void);
 
 /**********************
  *  STATIC VARIABLES
@@ -80,6 +81,7 @@ lv_obj_t *scr_app_music;
 uint32_t event_snapshot_creat;
 uint32_t event_snapshot_delete;
 
+SLIDE_EFFECT global_slide = SCALE;
 /**********************
  *      MACROS
  **********************/
@@ -89,31 +91,7 @@ uint32_t event_snapshot_delete;
  **********************/
 void watch_demo_init(void)
 {
-#if LVGL_USE_CJSON
-    {
-        lv_timer_t *timer = lv_timer_create(read_json_cb, 3000, NULL);
-        lv_timer_set_repeat_count(timer, -1);
-        lv_timer_ready(timer);
-    }
-#endif
-
-#ifdef __WIN32
-    time_t rawtime;
-    time(&rawtime);
-    struct tm *timeinfo = localtime(&rawtime);
-    watch_time = *timeinfo;
-#endif
-
-    {
-        lv_timer_t *timer = lv_timer_create(inform_generate_task_entry, 3000, NULL);
-        lv_timer_set_repeat_count(timer, -1);
-        lv_timer_ready(timer);
-    }
-    {
-        lv_timer_t *timer = lv_timer_create(time_update_cb, 30000, NULL);
-        lv_timer_set_repeat_count(timer, -1);
-        lv_timer_ready(timer);
-    }
+    ui_other_component_init();
 
     tileview = lv_tileview_create(NULL);
     lv_obj_set_style_bg_color(tileview, lv_color_make(0, 0, 0), 0);
@@ -127,6 +105,13 @@ void watch_demo_init(void)
     tile_left = lv_tileview_add_tile(tileview, 0, 1, LV_DIR_HOR); // create left tile
     tile_right = lv_tileview_add_tile(tileview, 2, 1, LV_DIR_HOR); // create right tile
     tile_right_2 = lv_tileview_add_tile(tileview, 3, 1, LV_DIR_HOR); // create right 2 tile
+
+    lv_obj_set_user_data(tile_center, (void *)&global_slide);
+    lv_obj_set_user_data(tile_up, (void *)&global_slide);
+    lv_obj_set_user_data(tile_down, (void *)&global_slide);
+    lv_obj_set_user_data(tile_left, (void *)&global_slide);
+    lv_obj_set_user_data(tile_right, (void *)&global_slide);
+    lv_obj_set_user_data(tile_right_2, (void *)&global_slide);
 
     scr_tile_center = lv_obj_create(tile_center);
     lv_obj_remove_style_all(scr_tile_center);
@@ -154,7 +139,7 @@ void watch_demo_init(void)
 
     lv_tileview_set_tile_by_index(tileview, 1, 1, LV_ANIM_OFF); // start with center tile, no animation
 
-    //initialize curtains
+    //initialize tileview UI
     lv_tile_center_init();
     lv_tile_up_init();
     lv_tile_down_init();
@@ -168,14 +153,18 @@ void watch_demo_init(void)
     event_snapshot_creat = lv_event_register_id();
     event_snapshot_delete = lv_event_register_id();
 
-    create_snapshot_obj_with_enent(tile_center, tile_center, event_snapshot_creat,
-                                   event_snapshot_delete);
-    create_snapshot_obj_with_enent(tile_up, tile_up, event_snapshot_creat, event_snapshot_delete);
-    create_snapshot_obj_with_enent(tile_down, tile_down, event_snapshot_creat, event_snapshot_delete);
-    create_snapshot_obj_with_enent(tile_left, tile_left, event_snapshot_creat, event_snapshot_delete);
-    create_snapshot_obj_with_enent(tile_right, tile_right, event_snapshot_creat, event_snapshot_delete);
-    create_snapshot_obj_with_enent(tile_right_2, tile_right_2, event_snapshot_creat,
-                                   event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_center, tile_center,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_up, tile_up,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_down, tile_down,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_left, tile_left,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_right, tile_right,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_right_2, tile_right_2,
+                                   event_snapshot_creat, event_snapshot_delete);
 #endif
 #endif
     lv_screen_load(tileview);
@@ -251,5 +240,34 @@ static void enter_control_board(lv_event_t *event)
 {
     custom_screen_change(&scr_app_control_board, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
                          lv_app_control_board_init, false);
+}
+
+static void ui_other_component_init(void)
+{
+#if LVGL_USE_CJSON
+    {
+        lv_timer_t *timer = lv_timer_create(read_json_cb, 3000, NULL);
+        lv_timer_set_repeat_count(timer, -1);
+        lv_timer_ready(timer);
+    }
+#endif
+
+#ifdef __WIN32
+    time_t rawtime;
+    time(&rawtime);
+    struct tm *timeinfo = localtime(&rawtime);
+    watch_time = *timeinfo;
+#endif
+
+    {
+        lv_timer_t *timer = lv_timer_create(inform_generate_task_entry, 3000, NULL);
+        lv_timer_set_repeat_count(timer, -1);
+        lv_timer_ready(timer);
+    }
+    {
+        lv_timer_t *timer = lv_timer_create(time_update_cb, 30000, NULL);
+        lv_timer_set_repeat_count(timer, -1);
+        lv_timer_ready(timer);
+    }
 }
 
