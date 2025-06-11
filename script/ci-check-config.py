@@ -27,6 +27,7 @@ ci_check_config = {
     },
     "ignore_file_encoding":[
         r"rtk/win32_sim/RTE/",
+        r"rtk/demos/screen_410_502_squareline",
         r".devcontainer/",
         r".github/",
         r"demos/",
@@ -48,6 +49,7 @@ ci_check_config = {
         r"lv_version.h",
         r"lvgl.h",
         r"rtk/win32_sim/RTE/",
+        r"rtk/demos/screen_410_502_squareline",
         r"rtk/keil_sim/ac6/RTE/",
         r"rtk/keil_sim/ac5/RTE/",
         r".devcontainer/",
