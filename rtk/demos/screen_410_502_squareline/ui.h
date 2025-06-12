@@ -65,32 +65,32 @@ extern "C" {
 
 ///////////////////// VARIABLES ////////////////////
 
-extern lv_anim_t * clk04dots_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk05dots_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk06sec_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk06minut_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk06hour_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk07dots_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk08dots_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk09hour_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk09m_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk10timecolon_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk12hour_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk12minut_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk12sec_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk14hour_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk14minut_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk14sec_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk15nobot_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * clk17colon_Animation(lv_obj_t * TargetObject, int delay);
+extern lv_anim_t *clk04dots_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk05dots_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk06sec_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk06minut_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk06hour_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk07dots_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk08dots_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk09hour_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk09m_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk10timecolon_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk12hour_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk12minut_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk12sec_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk14hour_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk14minut_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk14sec_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk15nobot_Animation(lv_obj_t *TargetObject, int delay);
+extern lv_anim_t *clk17colon_Animation(lv_obj_t *TargetObject, int delay);
 
 // EVENTS
 
-extern lv_obj_t * ui____initial_actions0;
+extern lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 #include "lv_img_dsc_list.h"
-
+#include "ui_resource.h"
 // FONTS
 LV_FONT_DECLARE(ui_font_HONORS_18);
 LV_FONT_DECLARE(ui_font_HONORS_200);
