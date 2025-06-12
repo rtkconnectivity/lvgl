@@ -146,7 +146,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     ppe_buffer_t target, source;
     memset(&target, 0, sizeof(ppe_buffer_t));
     memset(&source, 0, sizeof(ppe_buffer_t));
-    if (img_dsc->header.cf == LV_COLOR_FORMAT_RAW)
+    if (img_dsc->header.flags == LV_IMAGE_FLAGS_USER1)
     {
         compressed = true;
     }
@@ -268,11 +268,11 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
             uint32_t height = image_area.h;
             if (img_dsc->header.stride != 0)
             {
-                src_stride = img_dsc->header.stride / pixel_byte;
+                src_stride = img_dsc->header.stride;
             }
             else
             {
-                src_stride = img_dsc->header.w;
+                src_stride = img_dsc->header.w * pixel_byte;
             }
             uint32_t dst_stride = length;
             uint32_t src_addr = source.address + (source.stride * image_area.y + image_area.x) * pixel_byte;
@@ -369,7 +369,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     memset(&source, 0, sizeof(ppe_buffer_t));
     source.format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format);
-    if (img_dsc->header.cf == LV_COLOR_FORMAT_RAW)
+    if (img_dsc->header.flags == LV_IMAGE_FLAGS_USER1)
     {
         compressed = true;
     }
@@ -583,7 +583,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     }
     memset(&target, 0, sizeof(ppe_buffer_t));
     memset(&source, 0, sizeof(ppe_buffer_t));
-    if (img_dsc->header.cf == LV_COLOR_FORMAT_RAW)
+    if (img_dsc->header.flags == LV_IMAGE_FLAGS_USER1)
     {
         compressed = true;
     }
