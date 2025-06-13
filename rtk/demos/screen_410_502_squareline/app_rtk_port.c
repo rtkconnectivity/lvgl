@@ -32,10 +32,17 @@
 #define LV_USE_PSRAM         1
 #define PSRAM_BUF_SIZE       (3*1024*1024)
 #define PSRAM_BUF_ADDR       0x4100000
+#define CPU_FREQ             100000000
+#elif defined TARGET_RTL8773G
+#define LV_USE_PSRAM         0
+#define PSRAM_BUF_SIZE       (3*1024*1024)
+#define PSRAM_BUF_ADDR       0x22100000
+#define CPU_FREQ             200000000
 #else
 #define LV_USE_PSRAM         0
 #define PSRAM_BUF_SIZE       0
 #define PSRAM_BUF_ADDR       0
+#define CPU_FREQ             100000000
 #endif
 
 #if LV_USE_PSRAM == 1
@@ -157,12 +164,12 @@ static void lv_tick(void *pxTimer)
 
 static uint32_t sys_tick_get(void)
 {
-    return read_cpu_counter() / 100000;
+    return read_cpu_counter() / (CPU_FREQ / 1000);
 }
 #if LV_USE_PROFILER == 1
 static uint32_t my_get_tick_cb(void)
 {
-    return read_cpu_counter() / 100;
+    return read_cpu_counter() / (CPU_FREQ / 1000000);
 }
 static void my_flush_cb(const char *buf)
 {
@@ -172,7 +179,7 @@ void my_profiler_init(void)
 {
     lv_profiler_builtin_config_t config;
     lv_profiler_builtin_config_init(&config);
-    config.tick_per_sec = 1000000; /* CPU 100MHz */
+    config.tick_per_sec = 1000000;
     config.tick_get_cb = my_get_tick_cb;
     config.flush_cb = my_flush_cb;
     lv_profiler_builtin_init(&config);
@@ -198,6 +205,7 @@ static void lvgl_demo_run(void *p)
     ui_init();
     while (1)
     {
+        // lv_obj_invalidate(lv_screen_active());
         lv_task_handler();
     }
 }
