@@ -34,7 +34,7 @@
 #define PSRAM_BUF_ADDR       0x4100000
 #define CPU_FREQ             100000000
 #elif defined TARGET_RTL8773G
-#define LV_USE_PSRAM         0
+#define LV_USE_PSRAM         1
 #define PSRAM_BUF_SIZE       (3*1024*1024)
 #define PSRAM_BUF_ADDR       0x22100000
 #define CPU_FREQ             200000000

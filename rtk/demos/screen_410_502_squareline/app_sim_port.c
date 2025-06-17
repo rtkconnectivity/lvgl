@@ -166,6 +166,7 @@ static void *lvgl_demo_run(void *arg)
     ui_init();
     while (true)
     {
+        // lv_obj_invalidate(lv_screen_active());
         lv_task_handler();
     }
 }
