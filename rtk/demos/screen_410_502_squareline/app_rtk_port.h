@@ -18,6 +18,7 @@ extern "C" {
  *      DEFINES
  *********************/
 
+void rt_lvgl_demo_init(void);
 
 /**********************
  *      TYPEDEFS
