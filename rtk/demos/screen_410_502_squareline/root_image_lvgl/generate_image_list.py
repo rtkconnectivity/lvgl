@@ -89,7 +89,7 @@ def generate_c_file(bin_file_data, output_c_file, output_h_file):
             f_c.write(f"    .data_size = {data['data_size']},\n")
             f_c.write(f"    .header.cf = {data['color_space']},\n")
             f_c.write(f"    .header.flags = {data['flags']},\n")
-            f_c.write(f"    .data = {data['data_name']}\n")
+            f_c.write(f"    .data = (uint8_t *){data['data_name']}\n")
             f_c.write("};\n\n")
 
     # Generate the .h file

@@ -57,11 +57,13 @@ const int JPEG_LITTLE_ENDIAN_TAG = 0x4949;
 /**********************
  *      MACROS
  **********************/
-// #define TRANS_32_VALUE(big_endian, data) big_endian ? \
-//     ((*(data) << 24) | (*((data) + 1) << 16) | (*((data) + 2) << 8) | *((data) + 3)) : \
-//     (*(data) | (*((data) + 1) << 8) | (*((data) + 2) << 16) | (*((data) + 3) << 24))
-// #define TRANS_16_VALUE(big_endian, data) big_endian ? \
-//     ((*(data) << 8) | *((data) + 1)) : (*(data) | (*((data) + 1) << 8))
+/*
+#define TRANS_32_VALUE(big_endian, data) big_endian ? \
+    ((*(data) << 24) | (*((data) + 1) << 16) | (*((data) + 2) << 8) | *((data) + 3)) : \
+    (*(data) | (*((data) + 1) << 8) | (*((data) + 2) << 16) | (*((data) + 3) << 24))
+#define TRANS_16_VALUE(big_endian, data) big_endian ? \
+    ((*(data) << 8) | *((data) + 1)) : (*(data) | (*((data) + 1) << 8))
+*/
 
 /**********************
  *   GLOBAL FUNCTIONS

@@ -12,7 +12,7 @@ const lv_image_dsc_t campaign_list_aimless_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_AIMLESS_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_AIMLESS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_calorimetric_icon =
@@ -24,7 +24,7 @@ const lv_image_dsc_t campaign_list_calorimetric_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_CALORIMETRIC_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_CALORIMETRIC_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_cancel_icon =
@@ -36,7 +36,7 @@ const lv_image_dsc_t campaign_list_cancel_icon =
     .data_size = 18496,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_CANCEL_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_CANCEL_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_cross_country_run_icon =
@@ -48,7 +48,7 @@ const lv_image_dsc_t campaign_list_cross_country_run_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_CROSS_COUNTRY_RUN_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_CROSS_COUNTRY_RUN_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_custom_icon =
@@ -60,7 +60,7 @@ const lv_image_dsc_t campaign_list_custom_icon =
     .data_size = 24336,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_CUSTOM_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_CUSTOM_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_elliptical_machine_icon =
@@ -72,7 +72,7 @@ const lv_image_dsc_t campaign_list_elliptical_machine_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_ELLIPTICAL_MACHINE_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_ELLIPTICAL_MACHINE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_free_training_icon =
@@ -84,7 +84,7 @@ const lv_image_dsc_t campaign_list_free_training_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_FREE_TRAINING_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_FREE_TRAINING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_goal_icon =
@@ -96,7 +96,7 @@ const lv_image_dsc_t campaign_list_goal_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_GOAL_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_GOAL_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_group_1000005435 =
@@ -108,7 +108,7 @@ const lv_image_dsc_t campaign_list_group_1000005435 =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_GROUP_1000005435_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_GROUP_1000005435_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_group_1000006178 =
@@ -120,7 +120,7 @@ const lv_image_dsc_t campaign_list_group_1000006178 =
     .data_size = 1440,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_GROUP_1000006178_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_GROUP_1000006178_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_group_1000006181 =
@@ -132,7 +132,7 @@ const lv_image_dsc_t campaign_list_group_1000006181 =
     .data_size = 78400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_GROUP_1000006181_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_GROUP_1000006181_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_group_1000006182 =
@@ -144,7 +144,7 @@ const lv_image_dsc_t campaign_list_group_1000006182 =
     .data_size = 5184,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_GROUP_1000006182_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_GROUP_1000006182_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_hiking_icon =
@@ -156,7 +156,7 @@ const lv_image_dsc_t campaign_list_hiking_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_HIKING_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_HIKING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_indoor_run_icon =
@@ -168,7 +168,7 @@ const lv_image_dsc_t campaign_list_indoor_run_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_INDOOR_RUN_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_INDOOR_RUN_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_indoor_run_icon184 =
@@ -180,7 +180,7 @@ const lv_image_dsc_t campaign_list_indoor_run_icon184 =
     .data_size = 135424,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_INDOOR_RUN_ICON184_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_INDOOR_RUN_ICON184_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_indoor_run_icon88 =
@@ -192,7 +192,7 @@ const lv_image_dsc_t campaign_list_indoor_run_icon88 =
     .data_size = 30976,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_INDOOR_RUN_ICON88_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_INDOOR_RUN_ICON88_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_indoor_walk_icon =
@@ -204,7 +204,7 @@ const lv_image_dsc_t campaign_list_indoor_walk_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_INDOOR_WALK_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_INDOOR_WALK_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_interval_alert_icon =
@@ -216,7 +216,7 @@ const lv_image_dsc_t campaign_list_interval_alert_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_INTERVAL_ALERT_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_INTERVAL_ALERT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_jump_rope_icon =
@@ -228,7 +228,7 @@ const lv_image_dsc_t campaign_list_jump_rope_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_JUMP_ROPE_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_JUMP_ROPE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_mountaineering_icon =
@@ -240,7 +240,7 @@ const lv_image_dsc_t campaign_list_mountaineering_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOUNTAINEERING_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOUNTAINEERING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_abort_icon =
@@ -252,7 +252,7 @@ const lv_image_dsc_t campaign_list_move_abort_icon =
     .data_size = 78400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_ABORT_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_ABORT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_hr_icon =
@@ -264,7 +264,7 @@ const lv_image_dsc_t campaign_list_move_hr_icon =
     .data_size = 5184,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_HR_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_HR_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_hr_icon1 =
@@ -276,7 +276,7 @@ const lv_image_dsc_t campaign_list_move_hr_icon1 =
     .data_size = 6400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_HR_ICON1_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_HR_ICON1_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_kcal_icon =
@@ -288,7 +288,7 @@ const lv_image_dsc_t campaign_list_move_kcal_icon =
     .data_size = 3920,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_KCAL_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_KCAL_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_lock_up_icon =
@@ -300,7 +300,7 @@ const lv_image_dsc_t campaign_list_move_lock_up_icon =
     .data_size = 78400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_LOCK_UP_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_LOCK_UP_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_pause_icon =
@@ -312,7 +312,7 @@ const lv_image_dsc_t campaign_list_move_pause_icon =
     .data_size = 78400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_PAUSE_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_PAUSE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_move_sound_icon =
@@ -324,7 +324,7 @@ const lv_image_dsc_t campaign_list_move_sound_icon =
     .data_size = 78400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_MOVE_SOUND_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_MOVE_SOUND_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_open_water_swimming_icon =
@@ -336,7 +336,7 @@ const lv_image_dsc_t campaign_list_open_water_swimming_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OPEN_WATER_SWIMMING_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OPEN_WATER_SWIMMING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_cycle_icon =
@@ -348,7 +348,7 @@ const lv_image_dsc_t campaign_list_outdoor_cycle_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_CYCLE_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_CYCLE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_run_icon =
@@ -360,7 +360,7 @@ const lv_image_dsc_t campaign_list_outdoor_run_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_RUN_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_RUN_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_run_icon01 =
@@ -372,7 +372,7 @@ const lv_image_dsc_t campaign_list_outdoor_run_icon01 =
     .data_size = 135424,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_RUN_ICON01_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_RUN_ICON01_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_run_icon02 =
@@ -384,7 +384,7 @@ const lv_image_dsc_t campaign_list_outdoor_run_icon02 =
     .data_size = 30976,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_RUN_ICON02_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_RUN_ICON02_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_run_icon03 =
@@ -396,7 +396,7 @@ const lv_image_dsc_t campaign_list_outdoor_run_icon03 =
     .data_size = 135424,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_RUN_ICON03_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_RUN_ICON03_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_outdoor_walk_icon =
@@ -408,7 +408,7 @@ const lv_image_dsc_t campaign_list_outdoor_walk_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_OUTDOOR_WALK_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_OUTDOOR_WALK_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_pool_swimming_icon =
@@ -420,7 +420,7 @@ const lv_image_dsc_t campaign_list_pool_swimming_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_POOL_SWIMMING_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_POOL_SWIMMING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rectangle_01 =
@@ -432,7 +432,7 @@ const lv_image_dsc_t campaign_list_rectangle_01 =
     .data_size = 183512,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_RECTANGLE_01_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_RECTANGLE_01_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rectangle_02 =
@@ -444,7 +444,7 @@ const lv_image_dsc_t campaign_list_rectangle_02 =
     .data_size = 183512,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_RECTANGLE_02_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_RECTANGLE_02_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rectangle_03 =
@@ -456,7 +456,7 @@ const lv_image_dsc_t campaign_list_rectangle_03 =
     .data_size = 181888,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_RECTANGLE_03_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_RECTANGLE_03_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rectangle_04 =
@@ -468,7 +468,7 @@ const lv_image_dsc_t campaign_list_rectangle_04 =
     .data_size = 181888,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_RECTANGLE_04_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_RECTANGLE_04_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rectangle_30 =
@@ -480,7 +480,7 @@ const lv_image_dsc_t campaign_list_rectangle_30 =
     .data_size = 273408,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_RECTANGLE_30_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_RECTANGLE_30_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_reminders_icon =
@@ -492,7 +492,7 @@ const lv_image_dsc_t campaign_list_reminders_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_REMINDERS_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_REMINDERS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_remind_icon =
@@ -504,7 +504,7 @@ const lv_image_dsc_t campaign_list_remind_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_REMIND_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_REMIND_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_rowing_machine_icon =
@@ -516,7 +516,7 @@ const lv_image_dsc_t campaign_list_rowing_machine_icon =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_ROWING_MACHINE_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_ROWING_MACHINE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_set_up_icon =
@@ -528,7 +528,7 @@ const lv_image_dsc_t campaign_list_set_up_icon =
     .data_size = 6400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_SET_UP_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_SET_UP_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_stagger_icon =
@@ -540,7 +540,7 @@ const lv_image_dsc_t campaign_list_stagger_icon =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_STAGGER_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_STAGGER_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_time_icon =
@@ -552,7 +552,7 @@ const lv_image_dsc_t campaign_list_time_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_TIME_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_TIME_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_time_icon2 =
@@ -564,7 +564,7 @@ const lv_image_dsc_t campaign_list_time_icon2 =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_TIME_ICON2_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_TIME_ICON2_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_training_stress_icon =
@@ -576,7 +576,7 @@ const lv_image_dsc_t campaign_list_training_stress_icon =
     .data_size = 25600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_TRAINING_STRESS_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_TRAINING_STRESS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t campaign_list_treat_icon =
@@ -588,7 +588,7 @@ const lv_image_dsc_t campaign_list_treat_icon =
     .data_size = 12720,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CAMPAIGN_LIST_TREAT_ICON_BIN + 8
+    .data = (uint8_t *)CAMPAIGN_LIST_TREAT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t cc_alarm =
@@ -600,7 +600,7 @@ const lv_image_dsc_t cc_alarm =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_ALARM_BIN + 8
+    .data = (uint8_t *)CC_ALARM_BIN + 8
 };
 
 const lv_image_dsc_t cc_bat =
@@ -612,7 +612,7 @@ const lv_image_dsc_t cc_bat =
     .data_size = 680,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_BAT_BIN + 8
+    .data = (uint8_t *)CC_BAT_BIN + 8
 };
 
 const lv_image_dsc_t cc_bright =
@@ -624,7 +624,7 @@ const lv_image_dsc_t cc_bright =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_BRIGHT_BIN + 8
+    .data = (uint8_t *)CC_BRIGHT_BIN + 8
 };
 
 const lv_image_dsc_t cc_bt =
@@ -636,7 +636,7 @@ const lv_image_dsc_t cc_bt =
     .data_size = 1176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_BT_BIN + 8
+    .data = (uint8_t *)CC_BT_BIN + 8
 };
 
 const lv_image_dsc_t cc_dnd =
@@ -648,7 +648,7 @@ const lv_image_dsc_t cc_dnd =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_DND_BIN + 8
+    .data = (uint8_t *)CC_DND_BIN + 8
 };
 
 const lv_image_dsc_t cc_everbright =
@@ -660,7 +660,7 @@ const lv_image_dsc_t cc_everbright =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_EVERBRIGHT_BIN + 8
+    .data = (uint8_t *)CC_EVERBRIGHT_BIN + 8
 };
 
 const lv_image_dsc_t cc_findphone =
@@ -672,7 +672,7 @@ const lv_image_dsc_t cc_findphone =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_FINDPHONE_BIN + 8
+    .data = (uint8_t *)CC_FINDPHONE_BIN + 8
 };
 
 const lv_image_dsc_t cc_setting =
@@ -684,7 +684,7 @@ const lv_image_dsc_t cc_setting =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_SETTING_BIN + 8
+    .data = (uint8_t *)CC_SETTING_BIN + 8
 };
 
 const lv_image_dsc_t cc_torch =
@@ -696,7 +696,7 @@ const lv_image_dsc_t cc_torch =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_TORCH_BIN + 8
+    .data = (uint8_t *)CC_TORCH_BIN + 8
 };
 
 const lv_image_dsc_t cc_unmute =
@@ -708,7 +708,7 @@ const lv_image_dsc_t cc_unmute =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_UNMUTE_BIN + 8
+    .data = (uint8_t *)CC_UNMUTE_BIN + 8
 };
 
 const lv_image_dsc_t cc_water =
@@ -720,7 +720,7 @@ const lv_image_dsc_t cc_water =
     .data_size = 50176,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CC_WATER_BIN + 8
+    .data = (uint8_t *)CC_WATER_BIN + 8
 };
 
 const lv_image_dsc_t clk01_slider_bg =
@@ -732,7 +732,7 @@ const lv_image_dsc_t clk01_slider_bg =
     .data_size = 12160,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK01_SLIDER_BG_BIN + 8
+    .data = (uint8_t *)CLK01_SLIDER_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk01_step =
@@ -744,7 +744,7 @@ const lv_image_dsc_t clk01_step =
     .data_size = 2704,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK01_STEP_BIN + 8
+    .data = (uint8_t *)CLK01_STEP_BIN + 8
 };
 
 const lv_image_dsc_t clk02_bg =
@@ -756,7 +756,7 @@ const lv_image_dsc_t clk02_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK02_BG_BIN + 8
+    .data = (uint8_t *)CLK02_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk02_power =
@@ -768,7 +768,7 @@ const lv_image_dsc_t clk02_power =
     .data_size = 1536,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK02_POWER_BIN + 8
+    .data = (uint8_t *)CLK02_POWER_BIN + 8
 };
 
 const lv_image_dsc_t clk02_step =
@@ -780,7 +780,7 @@ const lv_image_dsc_t clk02_step =
     .data_size = 3844,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK02_STEP_BIN + 8
+    .data = (uint8_t *)CLK02_STEP_BIN + 8
 };
 
 const lv_image_dsc_t clk03_bg =
@@ -792,7 +792,7 @@ const lv_image_dsc_t clk03_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK03_BG_BIN + 8
+    .data = (uint8_t *)CLK03_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk03_slider =
@@ -804,7 +804,7 @@ const lv_image_dsc_t clk03_slider =
     .data_size = 13920,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK03_SLIDER_BIN + 8
+    .data = (uint8_t *)CLK03_SLIDER_BIN + 8
 };
 
 const lv_image_dsc_t clk04_bg =
@@ -816,7 +816,7 @@ const lv_image_dsc_t clk04_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK04_BG_BIN + 8
+    .data = (uint8_t *)CLK04_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk04_heart_icon =
@@ -828,7 +828,7 @@ const lv_image_dsc_t clk04_heart_icon =
     .data_size = 2112,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK04_HEART_ICON_BIN + 8
+    .data = (uint8_t *)CLK04_HEART_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk04_weather =
@@ -840,7 +840,7 @@ const lv_image_dsc_t clk04_weather =
     .data_size = 3840,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK04_WEATHER_BIN + 8
+    .data = (uint8_t *)CLK04_WEATHER_BIN + 8
 };
 
 const lv_image_dsc_t clk05_bat_icon =
@@ -852,7 +852,7 @@ const lv_image_dsc_t clk05_bat_icon =
     .data_size = 3300,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_BAT_ICON_BIN + 8
+    .data = (uint8_t *)CLK05_BAT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk05_bat_prg =
@@ -864,7 +864,7 @@ const lv_image_dsc_t clk05_bat_prg =
     .data_size = 16256,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_BAT_PRG_BIN + 8
+    .data = (uint8_t *)CLK05_BAT_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk05_bg =
@@ -876,7 +876,7 @@ const lv_image_dsc_t clk05_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK05_BG_BIN + 8
+    .data = (uint8_t *)CLK05_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk05_hr_icon =
@@ -888,7 +888,7 @@ const lv_image_dsc_t clk05_hr_icon =
     .data_size = 3360,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_HR_ICON_BIN + 8
+    .data = (uint8_t *)CLK05_HR_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk05_kcal_icon =
@@ -900,7 +900,7 @@ const lv_image_dsc_t clk05_kcal_icon =
     .data_size = 4200,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_KCAL_ICON_BIN + 8
+    .data = (uint8_t *)CLK05_KCAL_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk05_kcal_prg =
@@ -912,7 +912,7 @@ const lv_image_dsc_t clk05_kcal_prg =
     .data_size = 61504,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_KCAL_PRG_BIN + 8
+    .data = (uint8_t *)CLK05_KCAL_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk05_step_icon =
@@ -924,7 +924,7 @@ const lv_image_dsc_t clk05_step_icon =
     .data_size = 5168,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_STEP_ICON_BIN + 8
+    .data = (uint8_t *)CLK05_STEP_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk05_step_prg =
@@ -936,7 +936,7 @@ const lv_image_dsc_t clk05_step_prg =
     .data_size = 61504,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK05_STEP_PRG_BIN + 8
+    .data = (uint8_t *)CLK05_STEP_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk06_bat_icon =
@@ -948,7 +948,7 @@ const lv_image_dsc_t clk06_bat_icon =
     .data_size = 352,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_BAT_ICON_BIN + 8
+    .data = (uint8_t *)CLK06_BAT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk06_bg =
@@ -960,7 +960,7 @@ const lv_image_dsc_t clk06_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK06_BG_BIN + 8
+    .data = (uint8_t *)CLK06_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk06_circle =
@@ -972,7 +972,7 @@ const lv_image_dsc_t clk06_circle =
     .data_size = 4096,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_CIRCLE_BIN + 8
+    .data = (uint8_t *)CLK06_CIRCLE_BIN + 8
 };
 
 const lv_image_dsc_t clk06_hour =
@@ -984,7 +984,7 @@ const lv_image_dsc_t clk06_hour =
     .data_size = 13520,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_HOUR_BIN + 8
+    .data = (uint8_t *)CLK06_HOUR_BIN + 8
 };
 
 const lv_image_dsc_t clk06_kcal_icon =
@@ -996,7 +996,7 @@ const lv_image_dsc_t clk06_kcal_icon =
     .data_size = 1216,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_KCAL_ICON_BIN + 8
+    .data = (uint8_t *)CLK06_KCAL_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk06_minut =
@@ -1008,7 +1008,7 @@ const lv_image_dsc_t clk06_minut =
     .data_size = 7872,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_MINUT_BIN + 8
+    .data = (uint8_t *)CLK06_MINUT_BIN + 8
 };
 
 const lv_image_dsc_t clk06_sec =
@@ -1020,7 +1020,7 @@ const lv_image_dsc_t clk06_sec =
     .data_size = 17600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_SEC_BIN + 8
+    .data = (uint8_t *)CLK06_SEC_BIN + 8
 };
 
 const lv_image_dsc_t clk06_step_icon =
@@ -1032,7 +1032,7 @@ const lv_image_dsc_t clk06_step_icon =
     .data_size = 1936,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_STEP_ICON_BIN + 8
+    .data = (uint8_t *)CLK06_STEP_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk06_weather_icon =
@@ -1044,7 +1044,7 @@ const lv_image_dsc_t clk06_weather_icon =
     .data_size = 6400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK06_WEATHER_ICON_BIN + 8
+    .data = (uint8_t *)CLK06_WEATHER_ICON_BIN + 8
 };
 
 const lv_image_dsc_t clk07_bg =
@@ -1056,7 +1056,7 @@ const lv_image_dsc_t clk07_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK07_BG_BIN + 8
+    .data = (uint8_t *)CLK07_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk08_bg =
@@ -1068,7 +1068,7 @@ const lv_image_dsc_t clk08_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK08_BG_BIN + 8
+    .data = (uint8_t *)CLK08_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk08_hr_prg =
@@ -1080,7 +1080,7 @@ const lv_image_dsc_t clk08_hr_prg =
     .data_size = 100584,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK08_HR_PRG_BIN + 8
+    .data = (uint8_t *)CLK08_HR_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk09_hour =
@@ -1092,7 +1092,7 @@ const lv_image_dsc_t clk09_hour =
     .data_size = 960,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK09_HOUR_BIN + 8
+    .data = (uint8_t *)CLK09_HOUR_BIN + 8
 };
 
 const lv_image_dsc_t clk09_min =
@@ -1104,7 +1104,7 @@ const lv_image_dsc_t clk09_min =
     .data_size = 3360,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK09_MIN_BIN + 8
+    .data = (uint8_t *)CLK09_MIN_BIN + 8
 };
 
 const lv_image_dsc_t clk09_time =
@@ -1116,7 +1116,7 @@ const lv_image_dsc_t clk09_time =
     .data_size = 46656,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK09_TIME_BIN + 8
+    .data = (uint8_t *)CLK09_TIME_BIN + 8
 };
 
 const lv_image_dsc_t clk10_heart =
@@ -1128,7 +1128,7 @@ const lv_image_dsc_t clk10_heart =
     .data_size = 4896,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK10_HEART_BIN + 8
+    .data = (uint8_t *)CLK10_HEART_BIN + 8
 };
 
 const lv_image_dsc_t clk10_location =
@@ -1140,7 +1140,7 @@ const lv_image_dsc_t clk10_location =
     .data_size = 4680,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK10_LOCATION_BIN + 8
+    .data = (uint8_t *)CLK10_LOCATION_BIN + 8
 };
 
 const lv_image_dsc_t clk10_power =
@@ -1152,7 +1152,7 @@ const lv_image_dsc_t clk10_power =
     .data_size = 4320,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK10_POWER_BIN + 8
+    .data = (uint8_t *)CLK10_POWER_BIN + 8
 };
 
 const lv_image_dsc_t clk10_step =
@@ -1164,7 +1164,7 @@ const lv_image_dsc_t clk10_step =
     .data_size = 7052,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK10_STEP_BIN + 8
+    .data = (uint8_t *)CLK10_STEP_BIN + 8
 };
 
 const lv_image_dsc_t clk11_bg =
@@ -1176,7 +1176,7 @@ const lv_image_dsc_t clk11_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK11_BG_BIN + 8
+    .data = (uint8_t *)CLK11_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk12_bg =
@@ -1188,7 +1188,7 @@ const lv_image_dsc_t clk12_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK12_BG_BIN + 8
+    .data = (uint8_t *)CLK12_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk12_circle =
@@ -1200,7 +1200,7 @@ const lv_image_dsc_t clk12_circle =
     .data_size = 1296,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_CIRCLE_BIN + 8
+    .data = (uint8_t *)CLK12_CIRCLE_BIN + 8
 };
 
 const lv_image_dsc_t clk12_heart =
@@ -1212,7 +1212,7 @@ const lv_image_dsc_t clk12_heart =
     .data_size = 2700,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_HEART_BIN + 8
+    .data = (uint8_t *)CLK12_HEART_BIN + 8
 };
 
 const lv_image_dsc_t clk12_hour =
@@ -1224,7 +1224,7 @@ const lv_image_dsc_t clk12_hour =
     .data_size = 5760,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_HOUR_BIN + 8
+    .data = (uint8_t *)CLK12_HOUR_BIN + 8
 };
 
 const lv_image_dsc_t clk12_kcar =
@@ -1236,7 +1236,7 @@ const lv_image_dsc_t clk12_kcar =
     .data_size = 1840,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_KCAR_BIN + 8
+    .data = (uint8_t *)CLK12_KCAR_BIN + 8
 };
 
 const lv_image_dsc_t clk12_min =
@@ -1248,7 +1248,7 @@ const lv_image_dsc_t clk12_min =
     .data_size = 5184,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_MIN_BIN + 8
+    .data = (uint8_t *)CLK12_MIN_BIN + 8
 };
 
 const lv_image_dsc_t clk12_sec =
@@ -1260,7 +1260,7 @@ const lv_image_dsc_t clk12_sec =
     .data_size = 8800,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_SEC_BIN + 8
+    .data = (uint8_t *)CLK12_SEC_BIN + 8
 };
 
 const lv_image_dsc_t clk12_step =
@@ -1272,7 +1272,7 @@ const lv_image_dsc_t clk12_step =
     .data_size = 3844,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK12_STEP_BIN + 8
+    .data = (uint8_t *)CLK12_STEP_BIN + 8
 };
 
 const lv_image_dsc_t clk13_calendar =
@@ -1284,7 +1284,7 @@ const lv_image_dsc_t clk13_calendar =
     .data_size = 2116,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK13_CALENDAR_BIN + 8
+    .data = (uint8_t *)CLK13_CALENDAR_BIN + 8
 };
 
 const lv_image_dsc_t clk13_weather =
@@ -1296,7 +1296,7 @@ const lv_image_dsc_t clk13_weather =
     .data_size = 6624,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK13_WEATHER_BIN + 8
+    .data = (uint8_t *)CLK13_WEATHER_BIN + 8
 };
 
 const lv_image_dsc_t clk14_bat =
@@ -1308,7 +1308,7 @@ const lv_image_dsc_t clk14_bat =
     .data_size = 3500,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_BAT_BIN + 8
+    .data = (uint8_t *)CLK14_BAT_BIN + 8
 };
 
 const lv_image_dsc_t clk14_bg =
@@ -1320,7 +1320,7 @@ const lv_image_dsc_t clk14_bg =
     .data_size = 379456,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK14_BG_BIN + 8
+    .data = (uint8_t *)CLK14_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk14_circle_01 =
@@ -1332,7 +1332,7 @@ const lv_image_dsc_t clk14_circle_01 =
     .data_size = 3136,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_CIRCLE_01_BIN + 8
+    .data = (uint8_t *)CLK14_CIRCLE_01_BIN + 8
 };
 
 const lv_image_dsc_t clk14_circle_02 =
@@ -1344,7 +1344,7 @@ const lv_image_dsc_t clk14_circle_02 =
     .data_size = 576,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_CIRCLE_02_BIN + 8
+    .data = (uint8_t *)CLK14_CIRCLE_02_BIN + 8
 };
 
 const lv_image_dsc_t clk14_hour =
@@ -1356,7 +1356,7 @@ const lv_image_dsc_t clk14_hour =
     .data_size = 4592,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_HOUR_BIN + 8
+    .data = (uint8_t *)CLK14_HOUR_BIN + 8
 };
 
 const lv_image_dsc_t clk14_kcal_prg =
@@ -1368,7 +1368,7 @@ const lv_image_dsc_t clk14_kcal_prg =
     .data_size = 99072,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_KCAL_PRG_BIN + 8
+    .data = (uint8_t *)CLK14_KCAL_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk14_kcal_prg2 =
@@ -1380,7 +1380,7 @@ const lv_image_dsc_t clk14_kcal_prg2 =
     .data_size = 99072,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_KCAL_PRG2_BIN + 8
+    .data = (uint8_t *)CLK14_KCAL_PRG2_BIN + 8
 };
 
 const lv_image_dsc_t clk14_kcar =
@@ -1392,7 +1392,7 @@ const lv_image_dsc_t clk14_kcar =
     .data_size = 7708,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_KCAR_BIN + 8
+    .data = (uint8_t *)CLK14_KCAR_BIN + 8
 };
 
 const lv_image_dsc_t clk14_min =
@@ -1404,7 +1404,7 @@ const lv_image_dsc_t clk14_min =
     .data_size = 5040,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_MIN_BIN + 8
+    .data = (uint8_t *)CLK14_MIN_BIN + 8
 };
 
 const lv_image_dsc_t clk14_sec =
@@ -1416,7 +1416,7 @@ const lv_image_dsc_t clk14_sec =
     .data_size = 3120,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_SEC_BIN + 8
+    .data = (uint8_t *)CLK14_SEC_BIN + 8
 };
 
 const lv_image_dsc_t clk14_sports =
@@ -1428,7 +1428,7 @@ const lv_image_dsc_t clk14_sports =
     .data_size = 24640,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK14_SPORTS_BIN + 8
+    .data = (uint8_t *)CLK14_SPORTS_BIN + 8
 };
 
 const lv_image_dsc_t clk15_alarm =
@@ -1440,7 +1440,7 @@ const lv_image_dsc_t clk15_alarm =
     .data_size = 3600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_ALARM_BIN + 8
+    .data = (uint8_t *)CLK15_ALARM_BIN + 8
 };
 
 const lv_image_dsc_t clk15_bat =
@@ -1452,7 +1452,7 @@ const lv_image_dsc_t clk15_bat =
     .data_size = 1200,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_BAT_BIN + 8
+    .data = (uint8_t *)CLK15_BAT_BIN + 8
 };
 
 const lv_image_dsc_t clk15_bat_prg =
@@ -1464,7 +1464,7 @@ const lv_image_dsc_t clk15_bat_prg =
     .data_size = 11264,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_BAT_PRG_BIN + 8
+    .data = (uint8_t *)CLK15_BAT_PRG_BIN + 8
 };
 
 const lv_image_dsc_t clk15_bg =
@@ -1476,7 +1476,7 @@ const lv_image_dsc_t clk15_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK15_BG_BIN + 8
+    .data = (uint8_t *)CLK15_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk15_bluetooth =
@@ -1488,7 +1488,7 @@ const lv_image_dsc_t clk15_bluetooth =
     .data_size = 3480,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_BLUETOOTH_BIN + 8
+    .data = (uint8_t *)CLK15_BLUETOOTH_BIN + 8
 };
 
 const lv_image_dsc_t clk15_disturb =
@@ -1500,7 +1500,7 @@ const lv_image_dsc_t clk15_disturb =
     .data_size = 3600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_DISTURB_BIN + 8
+    .data = (uint8_t *)CLK15_DISTURB_BIN + 8
 };
 
 const lv_image_dsc_t clk15_heart =
@@ -1512,7 +1512,7 @@ const lv_image_dsc_t clk15_heart =
     .data_size = 2024,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_HEART_BIN + 8
+    .data = (uint8_t *)CLK15_HEART_BIN + 8
 };
 
 const lv_image_dsc_t clk15_kcal =
@@ -1524,7 +1524,7 @@ const lv_image_dsc_t clk15_kcal =
     .data_size = 1840,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_KCAL_BIN + 8
+    .data = (uint8_t *)CLK15_KCAL_BIN + 8
 };
 
 const lv_image_dsc_t clk15_point =
@@ -1536,7 +1536,7 @@ const lv_image_dsc_t clk15_point =
     .data_size = 36,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_POINT_BIN + 8
+    .data = (uint8_t *)CLK15_POINT_BIN + 8
 };
 
 const lv_image_dsc_t clk15_step =
@@ -1548,7 +1548,7 @@ const lv_image_dsc_t clk15_step =
     .data_size = 2916,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_STEP_BIN + 8
+    .data = (uint8_t *)CLK15_STEP_BIN + 8
 };
 
 const lv_image_dsc_t clk15_weather =
@@ -1560,7 +1560,7 @@ const lv_image_dsc_t clk15_weather =
     .data_size = 6624,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK15_WEATHER_BIN + 8
+    .data = (uint8_t *)CLK15_WEATHER_BIN + 8
 };
 
 const lv_image_dsc_t clk16_bat =
@@ -1572,7 +1572,7 @@ const lv_image_dsc_t clk16_bat =
     .data_size = 432,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK16_BAT_BIN + 8
+    .data = (uint8_t *)CLK16_BAT_BIN + 8
 };
 
 const lv_image_dsc_t clk16_heart =
@@ -1584,7 +1584,7 @@ const lv_image_dsc_t clk16_heart =
     .data_size = 1088,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK16_HEART_BIN + 8
+    .data = (uint8_t *)CLK16_HEART_BIN + 8
 };
 
 const lv_image_dsc_t clk16_sports =
@@ -1596,7 +1596,7 @@ const lv_image_dsc_t clk16_sports =
     .data_size = 10260,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK16_SPORTS_BIN + 8
+    .data = (uint8_t *)CLK16_SPORTS_BIN + 8
 };
 
 const lv_image_dsc_t clk16_weather =
@@ -1608,7 +1608,7 @@ const lv_image_dsc_t clk16_weather =
     .data_size = 2784,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK16_WEATHER_BIN + 8
+    .data = (uint8_t *)CLK16_WEATHER_BIN + 8
 };
 
 const lv_image_dsc_t clk17_alarm =
@@ -1620,7 +1620,7 @@ const lv_image_dsc_t clk17_alarm =
     .data_size = 2116,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK17_ALARM_BIN + 8
+    .data = (uint8_t *)CLK17_ALARM_BIN + 8
 };
 
 const lv_image_dsc_t clk17_bat =
@@ -1632,7 +1632,7 @@ const lv_image_dsc_t clk17_bat =
     .data_size = 2048,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK17_BAT_BIN + 8
+    .data = (uint8_t *)CLK17_BAT_BIN + 8
 };
 
 const lv_image_dsc_t clk17_bat_bg =
@@ -1644,7 +1644,7 @@ const lv_image_dsc_t clk17_bat_bg =
     .data_size = 2048,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK17_BAT_BG_BIN + 8
+    .data = (uint8_t *)CLK17_BAT_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk17_bg =
@@ -1656,7 +1656,7 @@ const lv_image_dsc_t clk17_bg =
     .data_size = 823280,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = CLK17_BG_BIN + 8
+    .data = (uint8_t *)CLK17_BG_BIN + 8
 };
 
 const lv_image_dsc_t clk17_weather =
@@ -1668,7 +1668,7 @@ const lv_image_dsc_t clk17_weather =
     .data_size = 3200,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = CLK17_WEATHER_BIN + 8
+    .data = (uint8_t *)CLK17_WEATHER_BIN + 8
 };
 
 const lv_image_dsc_t func_list_activity_icon =
@@ -1680,7 +1680,7 @@ const lv_image_dsc_t func_list_activity_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_ACTIVITY_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_ACTIVITY_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_alarm_icon =
@@ -1692,7 +1692,7 @@ const lv_image_dsc_t func_list_alarm_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_ALARM_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_ALARM_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_alipay_icon =
@@ -1704,7 +1704,7 @@ const lv_image_dsc_t func_list_alipay_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_ALIPAY_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_ALIPAY_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_breathe_icon =
@@ -1716,7 +1716,7 @@ const lv_image_dsc_t func_list_breathe_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_BREATHE_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_BREATHE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_cameras_icon =
@@ -1728,7 +1728,7 @@ const lv_image_dsc_t func_list_cameras_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_CAMERAS_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_CAMERAS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_card_bag_icon =
@@ -1740,7 +1740,7 @@ const lv_image_dsc_t func_list_card_bag_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_CARD_BAG_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_CARD_BAG_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_climatic_icon =
@@ -1752,7 +1752,7 @@ const lv_image_dsc_t func_list_climatic_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_CLIMATIC_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_CLIMATIC_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_compass_icon =
@@ -1764,7 +1764,7 @@ const lv_image_dsc_t func_list_compass_icon =
     .data_size = 38416,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_COMPASS_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_COMPASS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_contacts_icon =
@@ -1776,7 +1776,7 @@ const lv_image_dsc_t func_list_contacts_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_CONTACTS_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_CONTACTS_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_counter_icon =
@@ -1788,7 +1788,7 @@ const lv_image_dsc_t func_list_counter_icon =
     .data_size = 38416,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_COUNTER_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_COUNTER_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_count_down_icon =
@@ -1800,7 +1800,7 @@ const lv_image_dsc_t func_list_count_down_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_COUNT_DOWN_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_COUNT_DOWN_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_drink_icon =
@@ -1812,7 +1812,7 @@ const lv_image_dsc_t func_list_drink_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_DRINK_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_DRINK_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_find_icon =
@@ -1824,7 +1824,7 @@ const lv_image_dsc_t func_list_find_icon =
     .data_size = 38416,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_FIND_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_FIND_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_heart_rate_icon =
@@ -1836,7 +1836,7 @@ const lv_image_dsc_t func_list_heart_rate_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_HEART_RATE_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_HEART_RATE_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_movement_icon =
@@ -1848,7 +1848,7 @@ const lv_image_dsc_t func_list_movement_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_MOVEMENT_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_MOVEMENT_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_music_icon =
@@ -1860,7 +1860,7 @@ const lv_image_dsc_t func_list_music_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_MUSIC_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_MUSIC_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_physiology_icon =
@@ -1872,7 +1872,7 @@ const lv_image_dsc_t func_list_physiology_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_PHYSIOLOGY_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_PHYSIOLOGY_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_record_icon =
@@ -1884,7 +1884,7 @@ const lv_image_dsc_t func_list_record_icon =
     .data_size = 38416,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_RECORD_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_RECORD_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_setting_icon =
@@ -1896,7 +1896,7 @@ const lv_image_dsc_t func_list_setting_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_SETTING_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_SETTING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_sleep_icon =
@@ -1908,7 +1908,7 @@ const lv_image_dsc_t func_list_sleep_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_SLEEP_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_SLEEP_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_spo2_icon =
@@ -1920,7 +1920,7 @@ const lv_image_dsc_t func_list_spo2_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_SPO2_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_SPO2_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_sports_record_icon =
@@ -1932,7 +1932,7 @@ const lv_image_dsc_t func_list_sports_record_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_SPORTS_RECORD_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_SPORTS_RECORD_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_stopwatch_icon =
@@ -1944,7 +1944,7 @@ const lv_image_dsc_t func_list_stopwatch_icon =
     .data_size = 40800,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_STOPWATCH_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_STOPWATCH_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_stresses_icon =
@@ -1956,7 +1956,7 @@ const lv_image_dsc_t func_list_stresses_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_STRESSES_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_STRESSES_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_surveying_icon =
@@ -1968,7 +1968,7 @@ const lv_image_dsc_t func_list_surveying_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_SURVEYING_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_SURVEYING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_telephones_icon =
@@ -1980,7 +1980,7 @@ const lv_image_dsc_t func_list_telephones_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_TELEPHONES_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_TELEPHONES_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_torch_icon =
@@ -1992,7 +1992,7 @@ const lv_image_dsc_t func_list_torch_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_TORCH_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_TORCH_ICON_BIN + 8
 };
 
 const lv_image_dsc_t func_list_wechat_pay_icon =
@@ -2004,7 +2004,7 @@ const lv_image_dsc_t func_list_wechat_pay_icon =
     .data_size = 40000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = FUNC_LIST_WECHAT_PAY_ICON_BIN + 8
+    .data = (uint8_t *)FUNC_LIST_WECHAT_PAY_ICON_BIN + 8
 };
 
 const lv_image_dsc_t grey_cal =
@@ -2016,7 +2016,7 @@ const lv_image_dsc_t grey_cal =
     .data_size = 2976,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = GREY_CAL_BIN + 8
+    .data = (uint8_t *)GREY_CAL_BIN + 8
 };
 
 const lv_image_dsc_t music_middle =
@@ -2028,7 +2028,7 @@ const lv_image_dsc_t music_middle =
     .data_size = 9000,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_MIDDLE_BIN + 8
+    .data = (uint8_t *)MUSIC_MIDDLE_BIN + 8
 };
 
 const lv_image_dsc_t music_mobile =
@@ -2040,7 +2040,7 @@ const lv_image_dsc_t music_mobile =
     .data_size = 1836,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_MOBILE_BIN + 8
+    .data = (uint8_t *)MUSIC_MOBILE_BIN + 8
 };
 
 const lv_image_dsc_t music_next =
@@ -2052,7 +2052,7 @@ const lv_image_dsc_t music_next =
     .data_size = 6364,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_NEXT_BIN + 8
+    .data = (uint8_t *)MUSIC_NEXT_BIN + 8
 };
 
 const lv_image_dsc_t music_prev =
@@ -2064,7 +2064,7 @@ const lv_image_dsc_t music_prev =
     .data_size = 6364,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_PREV_BIN + 8
+    .data = (uint8_t *)MUSIC_PREV_BIN + 8
 };
 
 const lv_image_dsc_t music_sound_01 =
@@ -2076,7 +2076,7 @@ const lv_image_dsc_t music_sound_01 =
     .data_size = 4224,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_SOUND_01_BIN + 8
+    .data = (uint8_t *)MUSIC_SOUND_01_BIN + 8
 };
 
 const lv_image_dsc_t music_sound_03 =
@@ -2088,7 +2088,7 @@ const lv_image_dsc_t music_sound_03 =
     .data_size = 5120,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = MUSIC_SOUND_03_BIN + 8
+    .data = (uint8_t *)MUSIC_SOUND_03_BIN + 8
 };
 
 const lv_image_dsc_t rectangle_215 =
@@ -2100,7 +2100,7 @@ const lv_image_dsc_t rectangle_215 =
     .data_size = 28224,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = RECTANGLE_215_BIN + 8
+    .data = (uint8_t *)RECTANGLE_215_BIN + 8
 };
 
 const lv_image_dsc_t rectangle_216 =
@@ -2112,7 +2112,7 @@ const lv_image_dsc_t rectangle_216 =
     .data_size = 28224,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = RECTANGLE_216_BIN + 8
+    .data = (uint8_t *)RECTANGLE_216_BIN + 8
 };
 
 const lv_image_dsc_t setting_about =
@@ -2124,7 +2124,7 @@ const lv_image_dsc_t setting_about =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_ABOUT_BIN + 8
+    .data = (uint8_t *)SETTING_ABOUT_BIN + 8
 };
 
 const lv_image_dsc_t setting_about_70 =
@@ -2136,7 +2136,7 @@ const lv_image_dsc_t setting_about_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_ABOUT_70_BIN + 8
+    .data = (uint8_t *)SETTING_ABOUT_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_bg01 =
@@ -2148,7 +2148,7 @@ const lv_image_dsc_t setting_bg01 =
     .data_size = 181888,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_BG01_BIN + 8
+    .data = (uint8_t *)SETTING_BG01_BIN + 8
 };
 
 const lv_image_dsc_t setting_bg02 =
@@ -2160,7 +2160,7 @@ const lv_image_dsc_t setting_bg02 =
     .data_size = 181888,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_BG02_BIN + 8
+    .data = (uint8_t *)SETTING_BG02_BIN + 8
 };
 
 const lv_image_dsc_t setting_bg03 =
@@ -2172,7 +2172,7 @@ const lv_image_dsc_t setting_bg03 =
     .data_size = 181888,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_BG03_BIN + 8
+    .data = (uint8_t *)SETTING_BG03_BIN + 8
 };
 
 const lv_image_dsc_t setting_dial =
@@ -2184,7 +2184,7 @@ const lv_image_dsc_t setting_dial =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_DIAL_BIN + 8
+    .data = (uint8_t *)SETTING_DIAL_BIN + 8
 };
 
 const lv_image_dsc_t setting_dial_70 =
@@ -2196,7 +2196,7 @@ const lv_image_dsc_t setting_dial_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_DIAL_70_BIN + 8
+    .data = (uint8_t *)SETTING_DIAL_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_display_brightness =
@@ -2208,7 +2208,7 @@ const lv_image_dsc_t setting_display_brightness =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_DISPLAY_BRIGHTNESS_BIN + 8
+    .data = (uint8_t *)SETTING_DISPLAY_BRIGHTNESS_BIN + 8
 };
 
 const lv_image_dsc_t setting_display_brightness_70 =
@@ -2220,7 +2220,7 @@ const lv_image_dsc_t setting_display_brightness_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_DISPLAY_BRIGHTNESS_70_BIN + 8
+    .data = (uint8_t *)SETTING_DISPLAY_BRIGHTNESS_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_group_1000002289 =
@@ -2232,7 +2232,7 @@ const lv_image_dsc_t setting_group_1000002289 =
     .data_size = 4264,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_GROUP_1000002289_BIN + 8
+    .data = (uint8_t *)SETTING_GROUP_1000002289_BIN + 8
 };
 
 const lv_image_dsc_t setting_group_1000002290 =
@@ -2244,7 +2244,7 @@ const lv_image_dsc_t setting_group_1000002290 =
     .data_size = 4264,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_GROUP_1000002290_BIN + 8
+    .data = (uint8_t *)SETTING_GROUP_1000002290_BIN + 8
 };
 
 const lv_image_dsc_t setting_icon =
@@ -2256,7 +2256,7 @@ const lv_image_dsc_t setting_icon =
     .data_size = 2116,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_ICON_BIN + 8
+    .data = (uint8_t *)SETTING_ICON_BIN + 8
 };
 
 const lv_image_dsc_t setting_icon_1 =
@@ -2268,7 +2268,7 @@ const lv_image_dsc_t setting_icon_1 =
     .data_size = 8464,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_ICON_1_BIN + 8
+    .data = (uint8_t *)SETTING_ICON_1_BIN + 8
 };
 
 const lv_image_dsc_t setting_power_saving_mode =
@@ -2280,7 +2280,7 @@ const lv_image_dsc_t setting_power_saving_mode =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_POWER_SAVING_MODE_BIN + 8
+    .data = (uint8_t *)SETTING_POWER_SAVING_MODE_BIN + 8
 };
 
 const lv_image_dsc_t setting_power_saving_mode_70 =
@@ -2292,7 +2292,7 @@ const lv_image_dsc_t setting_power_saving_mode_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_POWER_SAVING_MODE_70_BIN + 8
+    .data = (uint8_t *)SETTING_POWER_SAVING_MODE_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_preference =
@@ -2304,7 +2304,7 @@ const lv_image_dsc_t setting_preference =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_PREFERENCE_BIN + 8
+    .data = (uint8_t *)SETTING_PREFERENCE_BIN + 8
 };
 
 const lv_image_dsc_t setting_preference_70 =
@@ -2316,7 +2316,7 @@ const lv_image_dsc_t setting_preference_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_PREFERENCE_70_BIN + 8
+    .data = (uint8_t *)SETTING_PREFERENCE_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_rectangle_26706 =
@@ -2328,7 +2328,7 @@ const lv_image_dsc_t setting_rectangle_26706 =
     .data_size = 32400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_RECTANGLE_26706_BIN + 8
+    .data = (uint8_t *)SETTING_RECTANGLE_26706_BIN + 8
 };
 
 const lv_image_dsc_t setting_rectangle_26707 =
@@ -2340,7 +2340,7 @@ const lv_image_dsc_t setting_rectangle_26707 =
     .data_size = 32400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_RECTANGLE_26707_BIN + 8
+    .data = (uint8_t *)SETTING_RECTANGLE_26707_BIN + 8
 };
 
 const lv_image_dsc_t setting_rectangle_39 =
@@ -2352,7 +2352,7 @@ const lv_image_dsc_t setting_rectangle_39 =
     .data_size = 149408,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_RECTANGLE_39_BIN + 8
+    .data = (uint8_t *)SETTING_RECTANGLE_39_BIN + 8
 };
 
 const lv_image_dsc_t setting_rectangle_39_1 =
@@ -2364,7 +2364,7 @@ const lv_image_dsc_t setting_rectangle_39_1 =
     .data_size = 149408,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_RECTANGLE_39_1_BIN + 8
+    .data = (uint8_t *)SETTING_RECTANGLE_39_1_BIN + 8
 };
 
 const lv_image_dsc_t setting_rectangle_39_2 =
@@ -2376,7 +2376,7 @@ const lv_image_dsc_t setting_rectangle_39_2 =
     .data_size = 149408,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_RECTANGLE_39_2_BIN + 8
+    .data = (uint8_t *)SETTING_RECTANGLE_39_2_BIN + 8
 };
 
 const lv_image_dsc_t setting_single_choice =
@@ -2388,7 +2388,7 @@ const lv_image_dsc_t setting_single_choice =
     .data_size = 5184,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SINGLE_CHOICE_BIN + 8
+    .data = (uint8_t *)SETTING_SINGLE_CHOICE_BIN + 8
 };
 
 const lv_image_dsc_t setting_single_choice_1 =
@@ -2400,7 +2400,7 @@ const lv_image_dsc_t setting_single_choice_1 =
     .data_size = 5184,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SINGLE_CHOICE_1_BIN + 8
+    .data = (uint8_t *)SETTING_SINGLE_CHOICE_1_BIN + 8
 };
 
 const lv_image_dsc_t setting_sos =
@@ -2412,7 +2412,7 @@ const lv_image_dsc_t setting_sos =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SOS_BIN + 8
+    .data = (uint8_t *)SETTING_SOS_BIN + 8
 };
 
 const lv_image_dsc_t setting_sos_70 =
@@ -2424,7 +2424,7 @@ const lv_image_dsc_t setting_sos_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SOS_70_BIN + 8
+    .data = (uint8_t *)SETTING_SOS_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_sound_vibration =
@@ -2436,7 +2436,7 @@ const lv_image_dsc_t setting_sound_vibration =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SOUND_VIBRATION_BIN + 8
+    .data = (uint8_t *)SETTING_SOUND_VIBRATION_BIN + 8
 };
 
 const lv_image_dsc_t setting_sound_vibration_70 =
@@ -2448,7 +2448,7 @@ const lv_image_dsc_t setting_sound_vibration_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SOUND_VIBRATION_70_BIN + 8
+    .data = (uint8_t *)SETTING_SOUND_VIBRATION_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_systems_updates =
@@ -2460,7 +2460,7 @@ const lv_image_dsc_t setting_systems_updates =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SYSTEMS_UPDATES_BIN + 8
+    .data = (uint8_t *)SETTING_SYSTEMS_UPDATES_BIN + 8
 };
 
 const lv_image_dsc_t setting_systems_updates_70 =
@@ -2472,7 +2472,7 @@ const lv_image_dsc_t setting_systems_updates_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_SYSTEMS_UPDATES_70_BIN + 8
+    .data = (uint8_t *)SETTING_SYSTEMS_UPDATES_70_BIN + 8
 };
 
 const lv_image_dsc_t setting_usage_guidelines =
@@ -2484,7 +2484,7 @@ const lv_image_dsc_t setting_usage_guidelines =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_USAGE_GUIDELINES_BIN + 8
+    .data = (uint8_t *)SETTING_USAGE_GUIDELINES_BIN + 8
 };
 
 const lv_image_dsc_t setting_workout_settings =
@@ -2496,7 +2496,7 @@ const lv_image_dsc_t setting_workout_settings =
     .data_size = 14400,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_WORKOUT_SETTINGS_BIN + 8
+    .data = (uint8_t *)SETTING_WORKOUT_SETTINGS_BIN + 8
 };
 
 const lv_image_dsc_t setting_workout_settings_70 =
@@ -2508,7 +2508,7 @@ const lv_image_dsc_t setting_workout_settings_70 =
     .data_size = 19600,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = SETTING_WORKOUT_SETTINGS_70_BIN + 8
+    .data = (uint8_t *)SETTING_WORKOUT_SETTINGS_70_BIN + 8
 };
 
 const lv_image_dsc_t vector =
@@ -2520,6 +2520,6 @@ const lv_image_dsc_t vector =
     .data_size = 1408,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = 0,
-    .data = VECTOR_BIN + 8
+    .data = (uint8_t *)VECTOR_BIN + 8
 };
 
