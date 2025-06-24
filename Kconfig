@@ -31,6 +31,8 @@ menu "LVGL configuration"
 				prompt "LVGL demo app"
 				default REALTEK_BUILD_GUI_410_502_SQUARELINE_DEMO
 
+				config REALTEK_BUILD_LVGL_SIMPLE_DEMO
+					bool "GUI LVGL Simple demo Benchmark"
 				config REALTEK_BUILD_GUI_410_502_SQUARELINE_DEMO
 					bool "GUI 410_502 LVGL Squareline demo"
 				config REALTEK_BUILD_GUI_410_502_LVGL_DEMO

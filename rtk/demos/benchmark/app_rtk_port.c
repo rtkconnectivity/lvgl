@@ -16,11 +16,11 @@
 #include "platform_utils.h"
 
 #include "lvgl.h"
+#include "lv_demos.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
 
-#include "ui.h"
 
 /*********************
  *      DEFINES
@@ -202,7 +202,7 @@ static void lvgl_demo_run(void *p)
 
     DBG_DIRECT("LVGL start \n");
 
-    ui_init();
+    lv_demo_benchmark();
     while (1)
     {
         // lv_obj_invalidate(lv_screen_active());

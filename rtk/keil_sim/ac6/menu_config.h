@@ -205,15 +205,6 @@
 
 // </e>
 
-// <e> HoneyGUI Enable Legacy RTK GUI
-#define CONFIG_REALTEK_BUILD_LEGACY_RTK_GUI     0
-
-#if (CONFIG_REALTEK_BUILD_LEGACY_RTK_GUI == 1)
-#endif
-
-// </e>
-
-
 // </h>
 
 // <<< end of configuration section >>>

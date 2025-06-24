@@ -36,12 +36,16 @@
 // </c>
 
 // <o> LVGL_DEMO_APP
-// <0=> LVGL_SIMPLE_DEMO
+// <0=> LVGL_BENCHMARK
 // <1=> LVGL_WATCH_DEMO
-#define LVGL_DEMO_APP     1
+// <2=> LVGL_SQUARELINE_DEMO
+#define LVGL_DEMO_APP     2
 
 #if (LVGL_DEMO_APP == 0)
 #define CONFIG_REALTEK_BUILD_LVGL_SIMPLE_DEMO
+#ifndef CONFIG_REALTEK_BUILD_LVGL_DEMO_APP
+#define CONFIG_REALTEK_BUILD_LVGL_DEMO_APP
+#endif
 #elif (LVGL_DEMO_APP == 1)
 #define CONFIG_REALTEK_BUILD_GUI_410_502_LVGL_DEMO
 #elif (LVGL_DEMO_APP == 2)
@@ -58,21 +62,6 @@
 // <c> Enalbe ARM2D APP
 #define CONFIG_REALTEK_BUILD_ARM2D_DEMO_APP
 // </c>
-#endif
-// </e>
-
-// <e> Enable Legacy RTK GUI
-#define CONFIG_REALTEK_BUILD_LEGACY_RTK_GUI     0
-
-#if (CONFIG_REALTEK_BUILD_LEGACY_RTK_GUI == 1)
-#endif
-// </e>
-
-// <e> h.264 decoder
-#define CONFIG_REALTEK_H264_DECODER     0
-
-#if (CONFIG_REALTEK_H264_DECODER == 1)
-#define CONFIG_REALTEK_H264BSD
 #endif
 // </e>
 
