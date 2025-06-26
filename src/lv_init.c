@@ -82,6 +82,10 @@
     #include "libs\rle\lv_idu.h"
 #endif
 
+#if LV_USE_RTK_JPU
+#include "libs\jpu\lv_jpu.h"
+#endif
+
 /*********************
  *      DEFINES
  *********************/
@@ -362,6 +366,10 @@ void lv_init(void)
 
 #if LV_USE_RTK_IDU
     lv_rtk_idu_init();
+#endif
+
+#if LV_USE_RTK_JPU
+    lv_jpu_init();
 #endif
 
     /*Make FFMPEG last because the last converter will be checked first and

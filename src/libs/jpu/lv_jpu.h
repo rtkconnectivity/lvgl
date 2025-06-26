@@ -14,7 +14,7 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "../../lv_conf_internal.h"
-#if LV_USE_JPU
+#if LV_USE_RTK_JPU
 
 /*********************
  *      DEFINES

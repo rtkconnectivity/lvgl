@@ -198,7 +198,7 @@ static void lvgl_demo_run(void *p)
 #endif
     lv_port_disp_init();
     lv_port_indev_init();
-    // lv_port_fs_init();
+    lv_port_fs_init();
 
     DBG_DIRECT("LVGL start \n");
 

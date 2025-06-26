@@ -8,12 +8,16 @@
  *********************/
 #include "../../draw/lv_image_decoder_private.h"
 #include "../../../lvgl.h"
-#if LV_USE_JPU
+
+// #define  LV_JPU_DEBUG 1
+
+#if LV_USE_RTK_JPU || LV_JPU_DEBUG
 
 #include "lv_jpu.h"
 #include <stdio.h>
 #include "../../core/lv_global.h"
-// #include "rtl_hal_jpu.h"
+#include "string.h"
+#include "rtl_hal_jpu.h"
 
 /*********************
  *      DEFINES
@@ -57,13 +61,6 @@ const int JPEG_LITTLE_ENDIAN_TAG = 0x4949;
 /**********************
  *      MACROS
  **********************/
-/*
-#define TRANS_32_VALUE(big_endian, data) big_endian ? \
-    ((*(data) << 24) | (*((data) + 1) << 16) | (*((data) + 2) << 8) | *((data) + 3)) : \
-    (*(data) | (*((data) + 1) << 8) | (*((data) + 2) << 16) | (*((data) + 3) << 24))
-#define TRANS_16_VALUE(big_endian, data) big_endian ? \
-    ((*(data) << 8) | *((data) + 1)) : (*(data) | (*((data) + 1) << 8))
-*/
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -80,6 +77,7 @@ void lv_jpu_init(void)
     lv_image_decoder_set_close_cb(dec, decoder_close);
 
     dec->name = DECODER_NAME;
+    LV_LOG_INFO("JPU Decoder init");
 }
 
 void lv_jpu_deinit(void)
@@ -139,7 +137,7 @@ static lv_result_t decoder_info(lv_image_decoder_t *decoder, lv_image_decoder_ds
             }
             return LV_RESULT_INVALID;
         }
-
+        LV_LOG_INFO("JPU Decoder info");
 
         if (!get_jpeg_head_info(src, src_type, &width, &height))
         {
@@ -147,32 +145,48 @@ static lv_result_t decoder_info(lv_image_decoder_t *decoder, lv_image_decoder_ds
         }
 
         /*Save the data in the header*/
+#if LV_COLOR_DEPTH==16
+        header->cf = LV_COLOR_FORMAT_RGB565;
+        header->stride = 2;
+#elif LV_COLOR_DEPTH==32
         header->cf = LV_COLOR_FORMAT_RGB888;
+        header->stride = 3;
+#endif
         header->w = width;
         header->h = height;
+        header->stride *= header->w;
 
         return LV_RESULT_OK;
     }
     else if (dsc->src_type == LV_IMAGE_SRC_VARIABLE)
     {
-        const uint8_t *src = dsc->src;
-        memcpy(&jpg_signature, src, sizeof(jpg_signature));
+        const lv_image_dsc_t *src_dsc = (const lv_image_dsc_t *)dsc->src;
+        const uint8_t *data = src_dsc->data;
+        memcpy((void *)&jpg_signature, data, sizeof(jpg_signature));
 
         if (!IS_JPEG_SIGNATURE(jpg_signature))
         {
             return LV_RESULT_INVALID;
         }
+        LV_LOG_INFO("JPU Decoder info");
 
 
-        if (!get_jpeg_head_info(src, src_type, &width, &height))
+        if (!get_jpeg_head_info(data, src_type, &width, &height))
         {
             return LV_RESULT_INVALID;
         }
 
         /*Save the data in the header*/
+#if LV_COLOR_DEPTH==16
+        header->cf = LV_COLOR_FORMAT_RGB565;
+        header->stride = 2;
+#elif LV_COLOR_DEPTH==32
         header->cf = LV_COLOR_FORMAT_RGB888;
+        header->stride = 3;
+#endif
         header->w = width;
         header->h = height;
+        header->stride *= header->w;
 
         return LV_RESULT_OK;
     }
@@ -192,6 +206,9 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 {
     LV_UNUSED(decoder); /*Unused*/
 
+    LV_LOG_INFO("jpu decoder_open\n");
+    // cache check
+
     /*If it's a JPEG file...*/
     if (dsc->src_type == LV_IMAGE_SRC_FILE)
     {
@@ -202,6 +219,8 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         lv_fs_res_t res = lv_fs_open(&f, fn, LV_FS_MODE_RD);
         uint8_t *file_data = NULL;
         uint8_t *img_data = NULL;
+        uint32_t f_sz = 0;
+
         if (res != LV_FS_RES_OK)
         {
             //DBG_DIRECT(" %s %d\n", __FUNCTION__, __LINE__);
@@ -211,7 +230,6 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         do
         {
             LV_LOG_INFO("load img into ram! %s\n", fn);
-            uint32_t f_sz = 0;
             uint32_t rd_sz = 0;
             res = lv_fs_seek(&f, 0, LV_FS_SEEK_END);
             if (res != LV_FS_RES_OK) {break;}
@@ -220,7 +238,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 
             file_data = lv_malloc(f_sz + 7);
             LV_ASSERT_MALLOC(file_data);
-            img_data = (((uint32_t)file_data + 7) >> 3) << 3;
+            img_data = (uint8_t *)((((uint32_t)file_data + 7) >> 3) << 3);
             res = lv_fs_seek(&f, 0, LV_FS_SEEK_SET);
             if (res != LV_FS_RES_OK)
             {
@@ -245,9 +263,10 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         }
 
         // start decode
-#if 0
+#if 1
         JPU_DEC_PARAM dec_param;
         uint8_t *output = NULL;
+        uint32_t output_size = 0;
         JPU_ERROR err;
 
         memset(&dec_param, 0, sizeof(JPU_DEC_PARAM));
@@ -260,13 +279,16 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 #elif LV_COLOR_DEPTH==32
         dec_param.rgbType = JPU_RGB888;
 #endif
-        err = hal_jpu_decode(&dec_param, &output);
+        LV_LOG_INFO("data 0x%x, %d", dec_param.data, dec_param.size);
+        hal_jpu_mem_init(lv_malloc, lv_free);
+        err = hal_jpu_decode(&dec_param, &output, &output_size);
         if (err != JPU_SUCCESS)
         {
             LV_LOG_WARN("decode jpeg file failed, err: %d", err);
+            lv_free((void *)file_data);
             return LV_RESULT_INVALID;
         }
-        lv_mem_free((void *)file_data);
+        lv_free((void *)file_data);
 
         JPU_OUTPUT_INFO *info = NULL;
         info = hal_jpu_get_output();
@@ -277,7 +299,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         LV_ASSERT_MALLOC(draw_buf);
         if (draw_buf == NULL) { return LV_RESULT_INVALID; }
 
-#if 0
+#if 1
         draw_buf->header.w = info->alignedWidth;
         draw_buf->header.h = info->alignedHeight;
         if (dec_param.rgbType == JPU_RGB565)
@@ -318,6 +340,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (entry == NULL)
         {
             lv_draw_buf_destroy(decoded);
+            hal_jpu_fb_clean();
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
@@ -325,7 +348,8 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
     }
     else if (dsc->src_type == LV_IMAGE_SRC_VARIABLE)
     {
-        const uint8_t *img_data = dsc->src;
+        const lv_image_dsc_t *src_dsc = (const lv_image_dsc_t *)dsc->src;
+        const uint8_t *img_data = src_dsc->data;
         const uint8_t *pop = img_data;
         uint32_t img_size = 0;
 
@@ -341,9 +365,11 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 
 
         // start decode
-#if 0
+        LV_LOG_INFO("start dec");
+#if 1
         JPU_DEC_PARAM dec_param;
         uint8_t *output = NULL;
+        uint32_t output_size = 0;
         JPU_ERROR err;
 
         memset(&dec_param, 0, sizeof(JPU_DEC_PARAM));
@@ -356,7 +382,9 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 #elif LV_COLOR_DEPTH==32
         dec_param.rgbType = JPU_RGB888;
 #endif
-        err = hal_jpu_decode(&dec_param, &output);
+        LV_LOG_INFO("data 0x%x, %d", dec_param.data, dec_param.size);
+        hal_jpu_mem_init(lv_malloc, lv_free);
+        err = hal_jpu_decode(&dec_param, &output, &output_size);
         if (err != JPU_SUCCESS)
         {
             LV_LOG_WARN("decode jpeg file failed, err: %d", err);
@@ -365,6 +393,8 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
 
         JPU_OUTPUT_INFO *info = NULL;
         info = hal_jpu_get_output();
+        LV_LOG_INFO("decode jpeg sucess  w %d h %d", info->alignedWidth, info->alignedHeight);
+
 #endif
 
 
@@ -372,7 +402,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         LV_ASSERT_MALLOC(draw_buf);
         if (draw_buf == NULL) { return LV_RESULT_INVALID; }
 
-#if 0
+#if 1
         draw_buf->header.w = info->alignedWidth;
         draw_buf->header.h = info->alignedHeight;
         if (dec_param.rgbType == JPU_RGB565)
@@ -413,9 +443,12 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (entry == NULL)
         {
             lv_draw_buf_destroy(decoded);
+            hal_jpu_fb_clean();
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
+        LV_LOG_INFO("JPU add cache");
+
         return LV_RESULT_OK;    /*If not returned earlier then it failed*/
     }
 
@@ -430,10 +463,35 @@ static void decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *d
     LV_UNUSED(decoder); /*Unused*/
 
     if (dsc->args.no_cache ||
-        !lv_image_cache_is_enabled()) { lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded); }
+        !lv_image_cache_is_enabled())
+    {
+        LV_LOG_INFO("JPU close");
+        lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded);
+        hal_jpu_fb_clean();
+    }
 }
 
-
+static bool align_jpeg_size(uint32_t *width, uint32_t *height, uint32_t format)
+{
+    if (format == 420 || format == 422)
+    {
+        *width = ((*width + 15) >> 4) << 4;
+    }
+    else
+    {
+        *width = ((*width + 7) >> 3) << 3;
+    }
+    if (format == 420)
+    {
+        *height = ((*height + 15) >> 4) << 4;
+    }
+    else
+    {
+        *height = ((*height + 7) >> 3) << 3;
+    }
+    LV_LOG_INFO("align w %d h %d", *width, *height);
+    return true;
+}
 static bool get_jpeg_header_size(const uint8_t *data, uint32_t size, uint32_t *width,
                                  uint32_t *height, uint32_t *format)
 {
@@ -444,10 +502,10 @@ static bool get_jpeg_header_size(const uint8_t *data, uint32_t size, uint32_t *w
         {
             if (*(pdata + 1) == 0xc0) // sof
             {
-                uint16_t *pd16 = pdata + 2 + 2 + 1; // 0xffc0, len(2), Accuracy(1)
+                uint16_t *pd16 = (uint16_t *)(pdata + 2 + 2 + 1); // 0xffc0, len(2), Accuracy(1)
                 *height = 0xffff & (*pd16 << 8) | (*pd16 >> 8);                    // height (2)
                 *width = 0xffff & (*(pd16 + 1) << 8) | (*(pd16 + 1) >> 8);               // width (2)
-                uint8_t *pcomp_num = pdata + 2 + 2 + 1 + 2 * 2;
+                uint8_t *pcomp_num = (uint8_t *)(pdata + 2 + 2 + 1 + 2 * 2);
                 if (*pcomp_num == 1)
                 {
                     *format = 400;
@@ -516,7 +574,7 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
             uint32_t rn;
             uint8_t sof_sz = 19;
 
-            memset(data, 0, sizeof(data));
+            memset((void *)data, 0, sizeof(data));
             // do overlap reading (sof size)
             res = lv_fs_seek(&f, round * (data_size - sof_sz), LV_FS_SEEK_SET);
             if (res != LV_FS_RES_OK)
@@ -549,6 +607,7 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
                         {
                             LV_LOG_INFO("read jpeg size w %d h %d format %d", *width, *height, format);
                             lv_fs_close(&f);
+                            align_jpeg_size(width, height, format);
                             return true;
                         }
                         else
@@ -578,6 +637,7 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
         const uint8_t *pdata = src;
         if (get_jpeg_header_size(pdata, 3 * 512, width, height, &format))
         {
+            align_jpeg_size(width, height, format);
             LV_LOG_INFO("read jpeg size w %d h %d format %d", *width, *height, format);
         }
     }
