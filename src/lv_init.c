@@ -86,6 +86,9 @@
 #include "libs\jpu\lv_jpu.h"
 #endif
 
+#if LV_USE_DRAW_RTK
+    #include "draw\rtk\lv_draw_rtk.h"
+#endif
 /*********************
  *      DEFINES
  *********************/
@@ -257,6 +260,10 @@ void lv_init(void)
 
 #if LV_USE_DRAW_PPE_RTL87x2G || LV_USE_DRAW_PPE_RTL8773E
     lv_draw_ppe_init();
+#endif
+
+#if LV_USE_DRAW_RTK
+    lv_draw_rtk_init();
 #endif
 
     lv_obj_style_init();
