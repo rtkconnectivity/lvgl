@@ -9,7 +9,7 @@
 #include "blend/lv_draw_sw_blend_private.h"
 #include "../lv_draw_label_private.h"
 #include "../sw/lv_draw_sw.h"
-#if LV_USE_DRAW_RTK
+#if LV_USE_DRAW_RTK || 1
 
 #include "../../display/lv_display.h"
 #include "../../misc/lv_math.h"
@@ -122,7 +122,10 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_unit_t *draw_unit,
                 const lv_font_t *font = g_dsc->resolved_font;
                 lv_font_fmt_txt_dsc_t *fdsc = (lv_font_fmt_txt_dsc_t *)font->dsc;
                 uint32_t gid = g_dsc->gid.index;
+                if(!gid) return ;
                 const lv_font_fmt_txt_glyph_dsc_t *gdsc = &fdsc->glyph_dsc[gid];
+                int32_t gsize = (int32_t) gdsc->box_w * gdsc->box_h;
+                if(gsize == 0) return ;
 
                 lv_color32_t font_color;
                 font_color.blue = glyph_draw_dsc->color.blue;
