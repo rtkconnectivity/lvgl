@@ -6,10 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "blend/lv_draw_sw_blend_private.h"
+#include "../sw/blend/lv_draw_sw_blend_private.h"
 #include "../lv_draw_label_private.h"
 #include "../sw/lv_draw_sw.h"
-#if LV_USE_DRAW_RTK || 1
+#if LV_USE_DRAW_RTK
 
 #include "../../display/lv_display.h"
 #include "../../misc/lv_math.h"

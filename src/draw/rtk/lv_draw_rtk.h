@@ -13,18 +13,19 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "../../lv_draw.h"
+#include "../lv_draw.h"
+
 #if LV_USE_DRAW_RTK
 
-#include "../../../misc/lv_area.h"
-#include "../../../misc/lv_color.h"
-#include "../../../display/lv_display.h"
-#include "../../../osal/lv_os.h"
+#include "../../misc/lv_area.h"
+#include "../../misc/lv_color.h"
+#include "../../display/lv_display.h"
+#include "../../osal/lv_os.h"
 
-#include "../../lv_draw_rect.h"
-#include "../../lv_draw_image.h"
-#include "../../sw/lv_draw_sw_utils.h"
-#include "lv_draw_label.h"
+#include "../lv_draw_rect.h"
+#include "../lv_draw_image.h"
+#include "../sw/lv_draw_sw_utils.h"
+#include "../lv_draw_label.h"
 
 /*********************
  *      DEFINES
