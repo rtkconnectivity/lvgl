@@ -368,7 +368,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
         ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
         PPE_Finish();
-        PPE_Mask(&source, recolor_value, &recolor_rect, NULL);
+        PPE_Mask(&source, recolor_value, &recolor_rect);
     }
 
     lv_area_move(&constraint_area, -draw_unit->target_layer->buf_area.x1,
@@ -573,7 +573,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                             uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
                             ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
                             PPE_Finish();
-                            PPE_Mask(&source, recolor_value, &recolor_rect, NULL);
+                            PPE_Mask(&source, recolor_value, &recolor_rect);
                         }
                     }
                     else
@@ -758,7 +758,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         {
             uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
             ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-            PPE_Mask(&source, recolor_value, &recolor_rect, NULL);
+            PPE_Mask(&source, recolor_value, &recolor_rect);
         }
         ppe_get_identity(&pre_trans);
         pre_trans.m[0][2] = image_area.x1 * -1.0f;

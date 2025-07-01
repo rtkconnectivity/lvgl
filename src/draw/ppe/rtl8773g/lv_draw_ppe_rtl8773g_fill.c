@@ -306,7 +306,7 @@ static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_
 //    DBG_DIRECT("buff address %x, draw start address %x, %s", target.address, draw_start, draw_start%64?"not aligned":"aligned");
 //    uint32_t time1 = sys_timestamp_get_us();
     PPE_Finish();
-    PPE_ERR err = PPE_Mask(&target, ppe_color, &draw_rect, (ppe_rect_t *)NULL);
+    PPE_ERR err = PPE_Mask(&target, ppe_color, &draw_rect);
 //    uint32_t time2 = sys_timestamp_get_us();
 //    DBG_DIRECT("PPE fill time %d", time2 - time1);
     LV_PROFILER_DRAW_END;

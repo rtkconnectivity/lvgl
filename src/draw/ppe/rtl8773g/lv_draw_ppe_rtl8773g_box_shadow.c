@@ -721,7 +721,7 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             PPE_Finish();
             lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
                          draw_unit->target_layer->buf_area.y1);
-            PPE_Mask(&target, color, (ppe_rect_t *)&clip_area_sub, NULL);
+            PPE_Mask(&target, color, (ppe_rect_t *)&clip_area_sub);
             blend_area.x1 = clip_area_sub.x1;
             blend_area.x2 = clip_area_sub.x2;
 //            for(y = clip_area_sub.y1; y <= clip_area_sub.y2; y++) {
