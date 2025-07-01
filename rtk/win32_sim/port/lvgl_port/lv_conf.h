@@ -318,6 +318,8 @@
 
 #define LV_USE_DRAW_PPE_RTL8773E 0
 
+#define LV_USE_DRAW_PPE_RTL8773G 0
+
 #define LV_USE_DRAW_RTK 1
 
 #define LV_USE_RTK_IDU 1

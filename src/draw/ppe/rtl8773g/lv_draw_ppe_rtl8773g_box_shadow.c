@@ -6,22 +6,22 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "../../misc/lv_area_private.h"
-#include "lv_draw_sw_mask_private.h"
-#include "../lv_draw_private.h"
-#include "lv_draw_sw.h"
+#include "../../../misc/lv_area_private.h"
+#include "../../sw/lv_draw_sw_mask_private.h"
+#include "../../lv_draw_private.h"
+#include "../../sw/lv_draw_sw.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 #include "lv_ppe_rtl8773g_utils.h"
 
 #if LV_DRAW_SW_COMPLEX
 
-#include "blend/lv_draw_sw_blend_private.h"
-#include "../../core/lv_global.h"
-#include "../../misc/lv_math.h"
-#include "../../core/lv_refr.h"
-#include "../../misc/lv_assert.h"
-#include "../../stdlib/lv_string.h"
-#include "../lv_draw_mask.h"
+#include "../../sw/blend/lv_draw_sw_blend_private.h"
+#include "../../../core/lv_global.h"
+#include "../../../misc/lv_math.h"
+#include "../../../core/lv_refr.h"
+#include "../../../misc/lv_assert.h"
+#include "../../../stdlib/lv_string.h"
+#include "../../lv_draw_mask.h"
 
 /*********************
  *      DEFINES

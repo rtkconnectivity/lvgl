@@ -317,6 +317,19 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/draw/ppe/rtl8773e/lv_draw_ppe_rtl8773e_img.c
     ${LVGL_DIR}/src/draw/ppe/rtl8773e/lv_ppe_rtl8773e_utils.c
 
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_ppe_rtl8773g_utils.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_fill.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_img.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_letter.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_mask_rect.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_support.c
+    ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_box_shadow.c
+
+    ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk.c
+    ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk_letter.c
+    ${LVGL_DIR}/src/draw/rtk/font_rendering_utils.c
+
     ${LVGL_DIR}/src/libs/jpu/lv_jpu.c
 
     ${LVGL_DIR}/src/libs/rle/lv_idu.c

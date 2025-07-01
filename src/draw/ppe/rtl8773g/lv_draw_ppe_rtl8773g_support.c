@@ -6,22 +6,22 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_draw_sw_private.h"
-#include "../lv_draw_private.h"
+#include "../../sw/lv_draw_sw_private.h"
+#include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 #include "lv_draw_ppe_rtl8773g.h"
 #if LV_USE_DRAW_SW
 
-#include "../../core/lv_refr.h"
-#include "../../display/lv_display_private.h"
-#include "../../stdlib/lv_string.h"
-#include "../../core/lv_global.h"
+#include "../../../core/lv_refr.h"
+#include "../../../display/lv_display_private.h"
+#include "../../../stdlib/lv_string.h"
+#include "../../../core/lv_global.h"
 
 #if LV_USE_VECTOR_GRAPHIC && LV_USE_THORVG
 #if LV_USE_THORVG_EXTERNAL
 #include <thorvg_capi.h>
 #else
-#include "../../libs/thorvg/thorvg_capi.h"
+#include "../../../libs/thorvg/thorvg_capi.h"
 #endif
 #endif
 

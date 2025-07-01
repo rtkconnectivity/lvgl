@@ -78,6 +78,10 @@
     #include "lv_draw_ppe_rtl8773e.h"
 #endif
 
+#if LV_USE_DRAW_PPE_RTL8773G
+    #include "lv_draw_ppe_rtl8773g.h"
+#endif
+
 #if LV_USE_RTK_IDU
     #include "libs\rle\lv_idu.h"
 #endif
@@ -258,7 +262,7 @@ void lv_init(void)
     lv_windows_platform_init();
 #endif
 
-#if LV_USE_DRAW_PPE_RTL87x2G || LV_USE_DRAW_PPE_RTL8773E
+#if LV_USE_DRAW_PPE_RTL87x2G || LV_USE_DRAW_PPE_RTL8773E || LV_USE_DRAW_PPE_RTL8773G
     lv_draw_ppe_init();
 #endif
 

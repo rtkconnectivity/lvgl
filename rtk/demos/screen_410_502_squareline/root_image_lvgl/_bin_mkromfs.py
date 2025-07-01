@@ -209,14 +209,14 @@ class Folder(object):
                 if (data_addr + 8) % pad_len != 0:
                     add_data = b'\0' * (pad_len - (data_addr + 8) % pad_len)
                 data_addr = data_addr + len(add_data)
-                # H_FILE_IF = (H_FILE_IF + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) + 
+                # H_FILE_IF = (H_FILE_IF + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) +
                 #                '(void *)(resource_root + ' + '0x%08x' % data_addr + ' - ' + '0x%08x' % BASE_ADDR + ')' + '\n')
-                
-                H_FILE_IF = (H_FILE_IF + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) + 
-                               '(void *)(resource_root + ' + '0x%08x' % (data_addr - BASE_ADDR) + ')' + '\n')
 
-                H_FILE_ELSE = (H_FILE_ELSE + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) + 
-                               '(void *)(' + '0x%08x' % data_addr + ')' + '\n')
+                H_FILE_IF = (H_FILE_IF + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) +
+                               ' (void *)(resource_root + ' + '0x%08x' % (data_addr - BASE_ADDR) + ')' + '\n')
+
+                H_FILE_ELSE = (H_FILE_ELSE + '#define   ' + '%-40s' % (str(c._name).replace('.', '_').upper()) +
+                               ' (void *)(' + '0x%08x' % data_addr + ')' + '\n')
             # pad the data to 4 bytes boundary
 
             data = add_data + data
@@ -276,14 +276,14 @@ def get_bin_data(tree, base_addr):
     #     data += b'\0' * (pad_len - len(data) % pad_len)
 
     tree_data, file_addr1, file_addr2 = tree.bin_data(v_len)
-	
+
     H_FILE += '#if defined _WIN32\n'
     H_FILE += 'extern unsigned char resource_root[];\n\n'
     H_FILE += file_addr1
     H_FILE += '\n#else\n'
     H_FILE += file_addr2
     H_FILE += '\n#endif\n'
-	
+
     return (data + tree_data), H_FILE
 
 if __name__ == '__main__':

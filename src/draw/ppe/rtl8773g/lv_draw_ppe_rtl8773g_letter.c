@@ -6,26 +6,26 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "blend/lv_draw_sw_blend_private.h"
-#include "../lv_draw_label_private.h"
-#include "lv_draw_sw.h"
+#include "../../sw/blend/lv_draw_sw_blend_private.h"
+#include "../../lv_draw_label_private.h"
+#include "../../sw/lv_draw_sw.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 
-#include "../../display/lv_display.h"
-#include "../../misc/lv_math.h"
-#include "../../misc/lv_assert.h"
-#include "../../misc/lv_area.h"
-#include "../../misc/lv_style.h"
-#include "../../font/lv_font.h"
-#include "../../core/lv_refr_private.h"
-#include "../../stdlib/lv_string.h"
+#include "../../../display/lv_display.h"
+#include "../../../misc/lv_math.h"
+#include "../../../misc/lv_assert.h"
+#include "../../../misc/lv_area.h"
+#include "../../../misc/lv_style.h"
+#include "../../../font/lv_font.h"
+#include "../../../core/lv_refr_private.h"
+#include "../../../stdlib/lv_string.h"
 
-#include "lv_draw_private.h"
-#include "../../font/lv_font.h"
-#include "lv_font_fmt_txt_private.h"
+#include "../../lv_draw_private.h"
+#include "../../../font/lv_font.h"
+#include "../../../font/lv_font_fmt_txt_private.h"
+#include "../../../misc/lv_area_private.h"
 #include "lv_draw_ppe_rtl8773g.h"
 #include "lv_ppe_rtl8773g_utils.h"
-#include "lv_area_private.h"
 #include "string.h"
 /*********************
  *      DEFINES
