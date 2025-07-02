@@ -56,8 +56,6 @@ void ui_Goal_screen_init(void)
 {
     ui_Goal = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Goal, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Goal, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Goal, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_style_bg_color(ui_Goal, lv_color_hex(0xFF0000), LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Goal, 255, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -69,7 +67,6 @@ void ui_Goal_screen_init(void)
     lv_obj_set_flex_flow(ui_Campaign_List_group2, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_Campaign_List_group2, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_Campaign_List_group2, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_Campaign_List_group2, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Campaign_List_group2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Campaign_List_group2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Campaign_List_group2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -113,8 +110,12 @@ void ui_Goal_screen_init(void)
     lv_obj_set_height(ui_goal_group1, 114);
     lv_obj_set_x(ui_goal_group1, 0);
     lv_obj_set_y(ui_goal_group1, 0);
+    lv_obj_set_style_bg_color(ui_goal_group1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_goal_group1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_goal_group1, &campaign_list_rectangle_01,
                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_goal_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_goal_group1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_goal_group1, UI_COMP_SETTING_GROUP_GOAL_ICON),
                      &campaign_list_time_icon);
@@ -140,6 +141,8 @@ void ui_Goal_screen_init(void)
     lv_obj_set_style_bg_opa(ui_Aimless_group2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_Aimless_group2, &campaign_list_rectangle_03,
                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_Aimless_group2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Aimless_group2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_x(ui_comp_get_child(ui_Aimless_group2, UI_COMP_SETTING_GROUP_LINE), 0);
     lv_obj_set_y(ui_comp_get_child(ui_Aimless_group2, UI_COMP_SETTING_GROUP_LINE), 56);
@@ -167,11 +170,12 @@ void ui_Goal_screen_init(void)
     lv_obj_set_height(ui_calorimetric_group3, 113);
     lv_obj_set_x(ui_calorimetric_group3, 0);
     lv_obj_set_y(ui_calorimetric_group3, 0);
-    lv_obj_set_style_radius(ui_calorimetric_group3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_calorimetric_group3, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_calorimetric_group3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_calorimetric_group3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_calorimetric_group3,
                                   &campaign_list_rectangle_02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_calorimetric_group3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_calorimetric_group3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_x(ui_comp_get_child(ui_calorimetric_group3, UI_COMP_SETTING_GROUP_LINE), 0);
     lv_obj_set_y(ui_comp_get_child(ui_calorimetric_group3, UI_COMP_SETTING_GROUP_LINE), 59);

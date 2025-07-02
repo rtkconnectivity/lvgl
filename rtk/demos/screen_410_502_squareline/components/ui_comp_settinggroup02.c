@@ -40,11 +40,6 @@ lv_obj_t * ui_settinggroup02_create(lv_obj_t * comp_parent)
     lv_obj_set_y(cui_dial_group, -51);
     lv_obj_set_align(cui_dial_group, LV_ALIGN_CENTER);
     lv_obj_remove_flag(cui_dial_group, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_radius(cui_dial_group, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(cui_dial_group, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(cui_dial_group, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(cui_dial_group, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(cui_dial_group, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_t * cui_dial_icon_70;
     cui_dial_icon_70 = lv_image_create(cui_dial_group);

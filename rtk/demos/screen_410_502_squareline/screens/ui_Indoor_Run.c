@@ -58,8 +58,6 @@ void ui_Indoor_Run_screen_init(void)
 {
     ui_Indoor_Run = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Indoor_Run, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Indoor_Run, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Indoor_Run, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_style_bg_color(ui_Indoor_Run, lv_color_hex(0xFF0000), LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Indoor_Run, 255, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -73,7 +71,6 @@ void ui_Indoor_Run_screen_init(void)
     lv_obj_set_flex_flow(ui_Campaign_List_group6, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_Campaign_List_group6, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_Campaign_List_group6, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_Campaign_List_group6, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Campaign_List_group6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Campaign_List_group6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Campaign_List_group6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);

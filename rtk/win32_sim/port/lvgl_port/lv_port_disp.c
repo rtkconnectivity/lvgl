@@ -138,12 +138,22 @@ static void disp_flush(lv_display_t *disp_drv, const lv_area_t *area, uint8_t *p
 {
     if (disp_flush_enabled)
     {
-        /*if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_PARTIAL)*/
-        // port_direct_draw_bitmap_to_lcd(area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1, (const uint8_t *)px_map);
-
-        /*if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_DIRECT)*/
-        /*if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_FULL)*/
-        port_direct_draw_bitmap_to_lcd(0, 0, MY_DISP_HOR_RES, MY_DISP_VER_RES, (const uint8_t *)px_map);
+        if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_PARTIAL)
+        {
+            port_direct_draw_bitmap_to_lcd(area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1,
+                                           (const uint8_t *)px_map);
+        }
+        else if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_DIRECT)
+        {
+            if (lv_disp_flush_is_last(disp_drv))
+            {
+                port_direct_draw_bitmap_to_lcd(0, 0, MY_DISP_HOR_RES, MY_DISP_VER_RES, (const uint8_t *)px_map);
+            }
+        }
+        else if (disp_drv->render_mode == LV_DISPLAY_RENDER_MODE_FULL)
+        {
+            port_direct_draw_bitmap_to_lcd(0, 0, MY_DISP_HOR_RES, MY_DISP_VER_RES, (const uint8_t *)px_map);
+        }
     }
 
     /*IMPORTANT!!!

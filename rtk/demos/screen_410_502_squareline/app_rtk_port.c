@@ -164,7 +164,7 @@ static void lv_tick(void *pxTimer)
 
 static uint32_t sys_tick_get(void)
 {
-    return read_cpu_counter() / (CPU_FREQ / 1000);
+    return sys_timestamp_get();
 }
 #if LV_USE_PROFILER == 1
 static uint32_t my_get_tick_cb(void)

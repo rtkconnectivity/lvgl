@@ -100,7 +100,6 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_flex_flow(ui_Campaign_List_group, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_Campaign_List_group, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_Campaign_List_group, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_Campaign_List_group, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Campaign_List_group, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Campaign_List_group, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Campaign_List_group, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -144,8 +143,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_x(ui_OutdoorRungroup3, -5);
     lv_obj_set_y(ui_OutdoorRungroup3, -51);
     lv_obj_remove_flag(ui_OutdoorRungroup3, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
+    lv_obj_set_style_radius(ui_OutdoorRungroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_OutdoorRungroup3, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_OutdoorRungroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup3,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup3, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_outdoor_run_icon);
@@ -166,10 +170,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_x(ui_OutdoorRungroup2, -5);
     lv_obj_set_y(ui_OutdoorRungroup2, -52);
     lv_obj_remove_flag(ui_OutdoorRungroup2, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
+    lv_obj_set_style_radius(ui_OutdoorRungroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup2, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup2,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup2, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_indoor_run_icon);
@@ -191,10 +198,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup4, 114);
     lv_obj_set_x(ui_OutdoorRungroup4, 86);
     lv_obj_set_y(ui_OutdoorRungroup4, 72);
+    lv_obj_set_style_radius(ui_OutdoorRungroup4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup4, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup4,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup4, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup4, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_outdoor_walk_icon);
@@ -212,10 +222,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup5, 114);
     lv_obj_set_x(ui_OutdoorRungroup5, -5);
     lv_obj_set_y(ui_OutdoorRungroup5, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup5, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup5,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup5, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup5, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_indoor_walk_icon);
@@ -233,10 +246,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup6, 114);
     lv_obj_set_x(ui_OutdoorRungroup6, -5);
     lv_obj_set_y(ui_OutdoorRungroup6, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup6, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup6, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup6,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup6, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_outdoor_cycle_icon);
@@ -254,10 +270,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup7, 114);
     lv_obj_set_x(ui_OutdoorRungroup7, -5);
     lv_obj_set_y(ui_OutdoorRungroup7, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup7, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup7, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup7,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup7, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup7, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_open_water_swimming_icon);
@@ -275,10 +294,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup8, 114);
     lv_obj_set_x(ui_OutdoorRungroup8, -5);
     lv_obj_set_y(ui_OutdoorRungroup8, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup8, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup8, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup8, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup8,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup8, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup8, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup8, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_pool_swimming_icon);
@@ -296,10 +318,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup9, 114);
     lv_obj_set_x(ui_OutdoorRungroup9, -5);
     lv_obj_set_y(ui_OutdoorRungroup9, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup9, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup9, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup9,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup9, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup9, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_jump_rope_icon);
@@ -317,10 +342,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup10, 114);
     lv_obj_set_x(ui_OutdoorRungroup10, -5);
     lv_obj_set_y(ui_OutdoorRungroup10, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup10, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup10, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup10, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup10,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup10, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup10, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_mountaineering_icon);
@@ -338,10 +366,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup11, 114);
     lv_obj_set_x(ui_OutdoorRungroup11, -5);
     lv_obj_set_y(ui_OutdoorRungroup11, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup11, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup11, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup11, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup11,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup11, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup11, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup11, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_hiking_icon);
@@ -359,10 +390,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup12, 114);
     lv_obj_set_x(ui_OutdoorRungroup12, -5);
     lv_obj_set_y(ui_OutdoorRungroup12, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup12, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup12, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup12, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup12,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup12, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup12, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup12, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_cross_country_run_icon);
@@ -381,10 +415,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup13, 114);
     lv_obj_set_x(ui_OutdoorRungroup13, -5);
     lv_obj_set_y(ui_OutdoorRungroup13, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup13, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup13, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup13, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup13,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup13, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup13, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup13, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_elliptical_machine_icon);
@@ -402,10 +439,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup14, 114);
     lv_obj_set_x(ui_OutdoorRungroup14, -5);
     lv_obj_set_y(ui_OutdoorRungroup14, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup14, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup14, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup14, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup14,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup14, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup14, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup14, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_rowing_machine_icon);
@@ -423,10 +463,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup15, 114);
     lv_obj_set_x(ui_OutdoorRungroup15, -5);
     lv_obj_set_y(ui_OutdoorRungroup15, -51);
+    lv_obj_set_style_radius(ui_OutdoorRungroup15, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_OutdoorRungroup15, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup15, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup15,
                                   &campaign_list_rectangle_01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup15, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup15, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup15, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_free_training_icon);
@@ -444,10 +487,13 @@ void ui_Campaign_List_screen_init(void)
     lv_obj_set_height(ui_OutdoorRungroup16, 113);
     lv_obj_set_x(ui_OutdoorRungroup16, -5);
     lv_obj_set_y(ui_OutdoorRungroup16, -51);
-    lv_obj_set_style_bg_color(ui_OutdoorRungroup16, lv_color_hex(0x181818), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui_OutdoorRungroup16, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_OutdoorRungroup16, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_OutdoorRungroup16, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_OutdoorRungroup16,
                                   &campaign_list_rectangle_02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_OutdoorRungroup16, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_OutdoorRungroup16, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_OutdoorRungroup16, UI_COMP_OUTDOOR_RUN_GROUP1_OUTDOOR_RUN_ICON1),
                      &campaign_list_custom_icon);

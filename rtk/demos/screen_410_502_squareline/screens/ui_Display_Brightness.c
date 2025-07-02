@@ -25,6 +25,10 @@ lv_obj_t * ui_Panel36;
 lv_obj_t * ui_dialgroup1;
 lv_obj_t * ui_dialgroup12;
 lv_obj_t * ui_Switch4;
+lv_obj_t * ui_lin_3;
+lv_obj_t * ui_Label107;
+lv_obj_t * ui_dial_txt_group1;
+lv_obj_t * ui_dial_txt4;
 lv_obj_t * ui_dialgroup13;
 lv_obj_t * ui_Panel37;
 lv_obj_t * ui_dial_txt1;
@@ -38,16 +42,6 @@ void ui_event_Primary_status_bar2(lv_event_t * e)
         _ui_screen_change(&ui_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_setting_screen_init);
     }
 }
-int32_t light_calue;
-uint32_t event_loadvalue;
-void ui_event_brightbar_set_value(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-    int32_t *light = lv_event_get_user_data(e);
-
-    lv_bar_set_value(ui_Bar3, *light, true);
-    LV_LOG_USER("light: %d", *light);
-}
 
 void ui_event_Image38(lv_event_t * e)
 {
@@ -56,9 +50,6 @@ void ui_event_Image38(lv_event_t * e)
     if(event_code == LV_EVENT_SHORT_CLICKED) {
         _ui_bar_increment(ui_Bar3, 10, LV_ANIM_ON);
     }
-    light_calue = 80;
-    // lv_obj_send_event(ui_Bar3, event_loadvalue, &light_calue);
-
 }
 
 void ui_event_Image37(lv_event_t * e)
@@ -85,11 +76,6 @@ void ui_Display_Brightness_screen_init(void)
 {
     ui_Display_Brightness = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Display_Brightness, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Display_Brightness, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Display_Brightness, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_set_style_bg_color(ui_Display_Brightness, lv_color_hex(0xFF0000), LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Display_Brightness, 255, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
 
     ui_setting_group1 = lv_obj_create(ui_Display_Brightness);
     lv_obj_set_width(ui_setting_group1, lv_pct(100));
@@ -98,7 +84,6 @@ void ui_Display_Brightness_screen_init(void)
     lv_obj_set_flex_flow(ui_setting_group1, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_setting_group1, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_setting_group1, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_setting_group1, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_setting_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_setting_group1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_setting_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -284,12 +269,34 @@ void ui_Display_Brightness_screen_init(void)
     lv_obj_set_x(ui_dialgroup1, -5);
     lv_obj_set_y(ui_dialgroup1, -47);
     lv_obj_remove_flag(ui_dialgroup1, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
+    lv_obj_set_style_radius(ui_dialgroup1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup1, &setting_bg01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_dialgroup12 = ui_dialgroup1_create(ui_setting_group2);
-    lv_obj_set_x(ui_dialgroup12, -5);
-    lv_obj_set_y(ui_dialgroup12, -47);
+    lv_obj_add_flag(ui_comp_get_child(ui_dialgroup1, UI_COMP_DIALGROUP1_LABEL107), LV_OBJ_FLAG_EVENT_BUBBLE);     /// Flags
+
+    lv_obj_add_flag(ui_comp_get_child(ui_dialgroup1, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1),
+                    LV_OBJ_FLAG_EVENT_BUBBLE);     /// Flags
+
+    lv_obj_add_flag(ui_comp_get_child(ui_dialgroup1, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1_DIAL_TXT1),
+                    LV_OBJ_FLAG_EVENT_BUBBLE);    /// Flags
+
+    ui_dialgroup12 = lv_obj_create(ui_setting_group2);
+    lv_obj_set_width(ui_dialgroup12, 410);
+    lv_obj_set_height(ui_dialgroup12, 120);
+    lv_obj_set_x(ui_dialgroup12, 27);
+    lv_obj_set_y(ui_dialgroup12, 39);
+    lv_obj_set_align(ui_dialgroup12, LV_ALIGN_CENTER);
+    lv_obj_remove_flag(ui_dialgroup12, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_dialgroup12, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup12, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup12, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup12, &setting_bg03, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup12, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup12, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Switch4 = lv_switch_create(ui_dialgroup12);
     lv_obj_set_width(ui_Switch4, 72);
@@ -303,28 +310,52 @@ void ui_Display_Brightness_screen_init(void)
     lv_obj_set_style_bg_color(ui_Switch4, lv_color_hex(0xD9D9D9), LV_PART_KNOB | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Switch4, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
 
-    lv_obj_move_to_index(ui_Switch4, 0);
-    lv_obj_set_style_bg_color(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_LIN_3), lv_color_hex(0x333333),
-                              LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_LIN_3), 0,
-                            LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_lin_3 = lv_obj_create(ui_dialgroup12);
+    lv_obj_set_width(ui_lin_3, 382);
+    lv_obj_set_height(ui_lin_3, 2);
+    lv_obj_set_x(ui_lin_3, 0);
+    lv_obj_set_y(ui_lin_3, 14);
+    lv_obj_set_align(ui_lin_3, LV_ALIGN_BOTTOM_MID);
+    lv_obj_remove_flag(ui_lin_3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_lin_3, lv_color_hex(0x333333), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_lin_3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_lin_3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_lin_3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_text_color(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_LABEL107), lv_color_hex(0x2094FA),
-                                LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_LABEL107), 0,
-                              LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Label107 = lv_label_create(ui_dialgroup12);
+    lv_obj_set_width(ui_Label107, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label107, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label107, 12);
+    lv_obj_set_y(ui_Label107, 49);
+    lv_label_set_text(ui_Label107, "5 Seconds");
+    lv_obj_set_style_text_color(ui_Label107, lv_color_hex(0x2094FA), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Label107, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_Label107, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Label107, &ui_font_HONORS_28, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_width(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1), 280);
-    lv_obj_set_height(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1), 70);
-    lv_obj_set_x(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1), -44);
-    lv_obj_set_y(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1), 4);
+    ui_dial_txt_group1 = lv_obj_create(ui_dialgroup12);
+    lv_obj_set_width(ui_dial_txt_group1, 280);
+    lv_obj_set_height(ui_dial_txt_group1, 70);
+    lv_obj_set_x(ui_dial_txt_group1, -44);
+    lv_obj_set_y(ui_dial_txt_group1, 4);
+    lv_obj_set_align(ui_dial_txt_group1, LV_ALIGN_CENTER);
+    lv_obj_remove_flag(ui_dial_txt_group1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_dial_txt_group1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dial_txt_group1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dial_txt_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dial_txt_group1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_label_set_text(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1_DIAL_TXT1),
-                      "Turn The Wrist \nBright Screen");
-    lv_obj_set_style_text_letter_space(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1_DIAL_TXT1), 0,
-                                       LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_line_space(ui_comp_get_child(ui_dialgroup12, UI_COMP_DIALGROUP1_DIAL_TXT_GROUP1_DIAL_TXT1), 1,
-                                     LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_dial_txt4 = lv_label_create(ui_dial_txt_group1);
+    lv_obj_set_width(ui_dial_txt4, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_dial_txt4, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_dial_txt4, -10);
+    lv_obj_set_y(ui_dial_txt4, -20);
+    lv_label_set_long_mode(ui_dial_txt4, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_label_set_text(ui_dial_txt4, "Turn The Wrist \nBright Screen");
+    lv_obj_set_style_text_letter_space(ui_dial_txt4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_line_space(ui_dial_txt4, 1, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_dial_txt4, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_dial_txt4, &ui_font_HONOR_M_32, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_dialgroup13 = lv_obj_create(ui_setting_group2);
     lv_obj_set_width(ui_dialgroup13, 410);
@@ -365,8 +396,6 @@ void ui_Display_Brightness_screen_init(void)
     lv_obj_add_event_cb(ui_Primary_status_bar2, ui_event_Primary_status_bar2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Image38, ui_event_Image38, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Image37, ui_event_Image37, LV_EVENT_ALL, NULL);
-    event_loadvalue = lv_event_register_id();
-    lv_obj_add_event_cb(ui_Bar3, ui_event_brightbar_set_value, event_loadvalue, &light_calue);
     lv_obj_add_event_cb(ui_dialgroup1, ui_event_dialgroup1_dialgroup1, LV_EVENT_ALL, NULL);
 
 }
@@ -396,6 +425,10 @@ void ui_Display_Brightness_screen_destroy(void)
     ui_dialgroup1 = NULL;
     ui_dialgroup12 = NULL;
     ui_Switch4 = NULL;
+    ui_lin_3 = NULL;
+    ui_Label107 = NULL;
+    ui_dial_txt_group1 = NULL;
+    ui_dial_txt4 = NULL;
     ui_dialgroup13 = NULL;
     ui_Panel37 = NULL;
     ui_dial_txt1 = NULL;

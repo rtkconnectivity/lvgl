@@ -65,8 +65,6 @@ void ui_Music_screen_init(void)
 {
     ui_Music = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_Music, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Music, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Music, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_style_bg_color(ui_Music, lv_color_hex(0xFF0000), LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Music, 255, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -78,7 +76,6 @@ void ui_Music_screen_init(void)
     lv_obj_set_flex_flow(ui_Campaign_List_group10, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_Campaign_List_group10, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_Campaign_List_group10, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_Campaign_List_group10, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Campaign_List_group10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Campaign_List_group10, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Campaign_List_group10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -192,7 +189,7 @@ void ui_Music_screen_init(void)
     lv_obj_set_x(ui_music_Singer_txt, -11);
     lv_obj_set_y(ui_music_Singer_txt, -8);
     lv_label_set_long_mode(ui_music_Singer_txt, LV_LABEL_LONG_SCROLL_CIRCULAR);
-    lv_label_set_text(ui_music_Singer_txt, "I Will Always Love You - GOGO.BY   Galaxy Distribution");
+    lv_label_set_text(ui_music_Singer_txt, "‌I Will Always Love You - GOGO.BY   Galaxy Distribution");
     lv_obj_set_style_text_color(ui_music_Singer_txt, lv_color_hex(0x909090), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_music_Singer_txt, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_music_Singer_txt, &ui_font_HONORS_28, LV_PART_MAIN | LV_STATE_DEFAULT);

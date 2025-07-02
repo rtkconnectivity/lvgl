@@ -63,8 +63,6 @@ void ui_setting_screen_init(void)
 {
     ui_setting = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_setting, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_setting, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_setting, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_set_style_bg_color(ui_setting, lv_color_hex(0xFF0000), LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_setting, 255, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -76,7 +74,6 @@ void ui_setting_screen_init(void)
     lv_obj_set_flex_flow(ui_setting_group01, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_setting_group01, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_scrollbar_mode(ui_setting_group01, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_style_radius(ui_setting_group01, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_setting_group01, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_setting_group01, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_setting_group01, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -119,7 +116,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup02 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup02, -5);
     lv_obj_set_y(ui_dialgroup02, -51);
+    lv_obj_set_style_radius(ui_dialgroup02, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup02, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup02, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup02, &setting_bg01, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup02, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup02, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup02, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_dial_70);
@@ -128,13 +130,12 @@ void ui_setting_screen_init(void)
     lv_obj_set_x(ui_dialgroup2, -5);
     lv_obj_set_y(ui_dialgroup2, -51);
     lv_obj_remove_flag(ui_dialgroup2, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
+    lv_obj_set_style_radius(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup2, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_row(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_column(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup2, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_display_brightness_70);
@@ -155,7 +156,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup3 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup3, -5);
     lv_obj_set_y(ui_dialgroup3, -51);
+    lv_obj_set_style_radius(ui_dialgroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup3, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup3, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup3, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup3, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup3, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_sound_vibration_70);
@@ -172,7 +178,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup4 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup4, -5);
     lv_obj_set_y(ui_dialgroup4, -51);
+    lv_obj_set_style_radius(ui_dialgroup4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup4, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup4, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup4, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup4, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup4, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_preference_70);
@@ -189,7 +200,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup5 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup5, -5);
     lv_obj_set_y(ui_dialgroup5, -51);
+    lv_obj_set_style_radius(ui_dialgroup5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup5, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup5, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup5, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup5, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup5, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_power_saving_mode_70);
@@ -212,7 +228,12 @@ void ui_setting_screen_init(void)
     lv_obj_set_x(ui_dialgroup6, -5);
     lv_obj_set_y(ui_dialgroup6, -51);
     lv_obj_remove_flag(ui_dialgroup6, LV_OBJ_FLAG_GESTURE_BUBBLE);      /// Flags
+    lv_obj_set_style_radius(ui_dialgroup6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup6, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup6, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup6, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup6, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup6, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_workout_settings_70);
@@ -234,7 +255,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup7 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup7, -5);
     lv_obj_set_y(ui_dialgroup7, -51);
+    lv_obj_set_style_radius(ui_dialgroup7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup7, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup7, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup7, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup7, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup7, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_sos_70);
@@ -256,7 +282,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup8 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup8, -5);
     lv_obj_set_y(ui_dialgroup8, -51);
+    lv_obj_set_style_radius(ui_dialgroup8, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup8, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup8, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup8, &setting_bg02, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup8, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup8, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup8, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_systems_updates_70);
@@ -278,7 +309,12 @@ void ui_setting_screen_init(void)
     ui_dialgroup9 = ui_dialgroup02_create(ui_setting_group001);
     lv_obj_set_x(ui_dialgroup9, -5);
     lv_obj_set_y(ui_dialgroup9, -51);
+    lv_obj_set_style_radius(ui_dialgroup9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_dialgroup9, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_dialgroup9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_image_src(ui_dialgroup9, &setting_bg03, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_dialgroup9, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_dialgroup9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_image_set_src(ui_comp_get_child(ui_dialgroup9, UI_COMP_DIALGROUP02_DIAL_ICON_2),
                      &setting_about_70);

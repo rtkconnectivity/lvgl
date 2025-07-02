@@ -63,8 +63,6 @@ void ui_clk_08_screen_init(void)
 {
     ui_clk_08 = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_clk_08, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_clk_08, lv_color_hex(0x2C2C2C), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_clk_08, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_clk08_bg_group1 = lv_obj_create(ui_clk_08);
     lv_obj_set_width(ui_clk08_bg_group1, 410);
