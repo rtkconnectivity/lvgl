@@ -71,15 +71,15 @@
 #endif
 
 #if LV_USE_DRAW_PPE_RTL87x2G
-    #include "lv_draw_ppe_rtl87x2g.h"
+    #include "draw/ppe/rtl87x2g/lv_draw_ppe_rtl87x2g.h"
 #endif
 
 #if LV_USE_DRAW_PPE_RTL8773E
-    #include "lv_draw_ppe_rtl8773e.h"
+    #include "draw/ppe/rtl8773e/lv_draw_ppe_rtl8773e.h"
 #endif
 
 #if LV_USE_DRAW_PPE_RTL8773G
-    #include "lv_draw_ppe_rtl8773g.h"
+    #include "draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.h"
 #endif
 
 #if LV_USE_RTK_IDU
