@@ -186,7 +186,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
 
-
 //    DBG_DIRECT("%s src ft %d dst ft %d", compressed?"compressed":"uncompressed", source.format, target.format);
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
@@ -227,7 +226,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     {
         int16_t target_x = constraint_area.x1 - draw_unit->target_layer->buf_area.x1;
         int16_t target_y = constraint_area.y1 - draw_unit->target_layer->buf_area.y1;
-        lv_area_move(&constraint_area, -coords->x1, -coords->y1);
         uint32_t length = lv_area_get_width(&constraint_area) * pixel_byte;
         uint32_t height = lv_area_get_height(&constraint_area);
         if (img_dsc->header.stride != 0)
@@ -242,31 +240,32 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
         if (compressed)
         {
-            IDU_decode_range range = {.start_column = constraint_area.x1,
-                                      .end_column = constraint_area.x2,
-                                      .start_line = constraint_area.y1,
-                                      .end_line = constraint_area.y2,
-                                      .target_stride = dst_stride
-                                     };
-            IDU_DMA_Config dma_cfg;
-            dma_cfg.output_buf = (uint32_t *)dst_addr;
-            dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
-            dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-            IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
-            if (err_code == IDU_SUCCESS)
+            if (length == dst_stride || length % 4 == 0)
             {
-                LV_PROFILER_DRAW_END;
-                return;
+                IDU_decode_range range = {.start_column = constraint_area.x1 - coords->x1,
+                                          .end_column = constraint_area.x2 - coords->x1,
+                                          .start_line = constraint_area.y1 - coords->y1,
+                                          .end_line = constraint_area.y2 - coords->y1,
+                                          .target_stride = dst_stride
+                                         };
+                IDU_DMA_Config dma_cfg;
+                dma_cfg.output_buf = (uint32_t *)dst_addr;
+                dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
+                dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
+                PPE_Finish();
+                IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
+                if (err_code == IDU_SUCCESS)
+                {
+
+                    LV_PROFILER_DRAW_END;
+                    return;
+                }
             }
-//            else
-//            {
-//                DBG_DIRECT("err code %d", err_code);
-//                DBG_DIRECT("range x %d -> %d, y %d -> %d",constraint_area.x1, constraint_area.x2, constraint_area.y1, constraint_area.y2);
-//            }
         }
         else
         {
-            uint32_t src_addr = source.address + (source.stride * constraint_area.y1 + constraint_area.x1) *
+            uint32_t src_addr = source.address + (source.stride * (constraint_area.y1 - coords->y1) +
+                                                  (constraint_area.x1 - coords->x1)) *
                                 pixel_byte;
             lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
             LV_PROFILER_DRAW_END;
@@ -389,14 +388,10 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
             cache_buffer = NULL;
         }
     }
-    if (img_dsc->header.flags & LV_IMAGE_FLAGS_USER4)
-    {
-        method = PPE_BLEND_BYPASS;
-    }
+
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
                                    method);
 //    PPE_Finish();
-//
 //    uint32_t ppe2 = sys_timestamp_get_us();
 //    DBG_DIRECT("PPE consume %d us || %d ms", ppe2 - ppe1, (ppe2 - ppe1) / 1000);
     cache_buffer = pic_buffer;

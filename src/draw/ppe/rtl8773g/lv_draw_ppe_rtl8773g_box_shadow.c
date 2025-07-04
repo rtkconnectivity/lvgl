@@ -130,14 +130,15 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
 
     /*Create a radius mask to clip remove shadow on the bg area*/
 
-//    lv_draw_sw_mask_radius_param_t mask_rout_param;
-//    void * masks[2] = {0};
-//    if(!simple) {
-//        lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_area, 0, true);
-//        masks[0] = &mask_rout_param;
-//    }
+    lv_draw_sw_mask_radius_param_t mask_rout_param;
+    void *masks[2] = {0};
+    if (!simple)
+    {
+        lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_area, 0, true);
+        masks[0] = &mask_rout_param;
+    }
 
-//    lv_opa_t * mask_buf = lv_malloc(lv_area_get_width(&shadow_area));
+    lv_opa_t *mask_buf = lv_malloc(lv_area_get_width(&core_area) * lv_area_get_height(&core_area));
     lv_area_t blend_area;
     lv_area_t clip_area_sub;
     lv_opa_t *sh_buf_tmp;
@@ -196,6 +197,7 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
     source.const_color = shadow_color;
+    source.high_quality = false;
 
     ppe_matrix_t inverse, mat;
     /*Draw the corners if they are on the current clip area and not fully covered by the bg*/
@@ -717,25 +719,39 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
         int32_t w = lv_area_get_width(&clip_area_sub);
         if (w > 0)
         {
-            uint32_t color = lv_ppe_get_color(dsc->color, dsc->opa);
-            PPE_Finish();
-            lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                         draw_unit->target_layer->buf_area.y1);
-            PPE_Mask(&target, color, (ppe_rect_t *)&clip_area_sub);
-            blend_area.x1 = clip_area_sub.x1;
-            blend_area.x2 = clip_area_sub.x2;
-//            for(y = clip_area_sub.y1; y <= clip_area_sub.y2; y++) {
-//                blend_area.y1 = y;
-//                blend_area.y2 = y;
-
-//                lv_memset(mask_buf, 0xff, w);
-//                blend_dsc.mask_res = lv_draw_sw_mask_apply(masks, mask_buf, clip_area_sub.x1, y, w);
-//                lv_draw_sw_blend(draw_unit, &blend_dsc);
-//            }
+            if (!simple_sub)
+            {
+                for (y = clip_area_sub.y1; y <= clip_area_sub.y2; y++)
+                {
+                    lv_memset(mask_buf, 0xff, w);
+                    lv_draw_sw_mask_apply(masks, mask_buf + w * (y - clip_area_sub.y1), clip_area_sub.x1, y, w);
+                }
+                ppe_get_identity(&inverse);
+                inverse.m[0][2] = -clip_area_sub.x1;
+                inverse.m[1][2] = -clip_area_sub.y1;
+                source.address = (uint32_t)mask_buf;
+                source.width = w;
+                source.height = clip_area_sub.y2 - clip_area_sub.y1 + 1;
+                source.stride = w;
+                PPE_Finish();
+                PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
+                                               PPE_BLEND_PREMULTIPLY);
+            }
+            else
+            {
+                uint32_t color = lv_ppe_get_color(dsc->color, dsc->opa);
+                PPE_Finish();
+                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
+                             draw_unit->target_layer->buf_area.y1);
+                PPE_Mask(&target, color, (ppe_rect_t *)&clip_area_sub);
+                blend_area.x1 = clip_area_sub.x1;
+                blend_area.x2 = clip_area_sub.x2;
+            }
         }
     }
     PPE_Finish();
     lv_free(sh_buf);
+    lv_free(mask_buf);
 }
 
 /**********************
