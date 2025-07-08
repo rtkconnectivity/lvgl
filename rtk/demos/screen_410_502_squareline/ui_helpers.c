@@ -48,20 +48,75 @@ void _ui_slider_set_property(lv_obj_t * target, int id, int val)
     if(id == _UI_SLIDER_PROPERTY_VALUE) lv_slider_set_value(target, val, LV_ANIM_OFF);
 }
 
+void _ui_delate_useless_screen(lv_obj_t *act_scr, lv_obj_t *dst_scr)
+{
+    lv_obj_t **screen_ptrs[] = {
+        &ui_clk_01,
+        &ui_clk_02,
+        &ui_clk_03,
+        &ui_clk_04,
+        &ui_clk_05,
+        &ui_clk_06,
+        &ui_clk_07,
+        &ui_clk_08,
+        &ui_clk_09,
+        &ui_clk_10,
+        &ui_clk_11,
+        &ui_clk_12,
+        &ui_clk_13,
+        &ui_clk_14,
+        &ui_clk_15,
+        &ui_clk_16,
+        &ui_clk_17,
+        &ui_Feature_List,
+        &ui_Campaign_List,
+        &ui_setting_,
+        &ui_Goal,
+        &ui_time_setting,
+        &ui_calorimetric,
+        &ui_reminders,
+        &ui_interval_alert,
+        &ui_Indoor_Run,
+        &ui_Campaign_Countdown,
+        &ui_Indoor_Run_data_,
+        &ui_Campaign_Pause,
+        &ui_Music,
+        &ui_Motion_Recording,
+        &ui_Outdoor_Run_00,
+        &ui_Outdoor_Run_01,
+        &ui_Outdoor_Run_02,
+        &ui_Outdoor_Run_03,
+        &ui_Outdoor_Run_04,
+        &ui_Outdoor_Run_05,
+        &ui_control_center,
+        &ui_setting,
+        &ui_Display_Brightness,
+        &ui_Interval_Time,
+        &ui_workout_setting,
+    };
 
+    for (int i = 0; i < sizeof(screen_ptrs)/sizeof(screen_ptrs[0]); i++) {
+        lv_obj_t *screen = *screen_ptrs[i];
+        if (screen && screen != act_scr && screen != dst_scr) {
+            _ui_screen_delete(screen_ptrs[i]);
+        }
+    }
+}
 void _ui_screen_change(lv_obj_t ** target, lv_screen_load_anim_t fademode, int spd, int delay,
                        void (*target_init)(void))
 {
-    if(*target == NULL)
+    // if(*target == NULL)
         target_init();
-    lv_screen_load_anim(*target, fademode, spd, delay, false);
+    lv_anim_delete_all();
+    // _ui_delate_useless_screen(lv_screen_active(), *target);
+    lv_screen_load_anim(*target, fademode, spd, delay, true);
 }
 
 void _ui_screen_delete(lv_obj_t ** target)
 {
-    if(*target == NULL) {
+    if(*target != NULL) {
         lv_obj_delete(*target);
-        target = NULL;
+        *target = NULL;
     }
 }
 
