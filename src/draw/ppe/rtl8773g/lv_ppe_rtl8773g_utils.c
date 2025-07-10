@@ -306,6 +306,11 @@ uint8_t lv_acc_get_low_speed_channel(void)
 void lv_acc_dma_copy(uint32_t length, uint32_t height, uint32_t src_stride,
                      uint32_t dst_stride, uint8_t *src, uint8_t *dst)
 {
+    for (int i = 0; i < height; i++)
+    {
+        memcpy(dst + dst_stride * i, src + src_stride * i, length);
+    }
+    return;
     bool use_LLI = true;
     if ((length == src_stride && length == dst_stride) || height == 1)
     {

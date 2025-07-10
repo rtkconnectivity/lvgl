@@ -230,11 +230,11 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         uint32_t height = lv_area_get_height(&constraint_area);
         if (img_dsc->header.stride != 0)
         {
-            src_stride = img_dsc->header.stride / pixel_byte;
+            src_stride = img_dsc->header.stride;
         }
         else
         {
-            src_stride = img_dsc->header.w;
+            src_stride = img_dsc->header.w * pixel_byte;
         }
         uint32_t dst_stride = target.width * pixel_byte;
         uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
@@ -256,7 +256,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
                 IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
                 if (err_code == IDU_SUCCESS)
                 {
-
                     LV_PROFILER_DRAW_END;
                     return;
                 }
@@ -496,6 +495,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     source.win_x_max = target.win_x_max;
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
+    source.const_color = 0xFFFFFFFF;
     PPE_BLEND_METHOD method = PPE_BLEND_PREMULTIPLY;
     if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
         draw_dsc->opa >= LV_OPA_MAX)
@@ -520,6 +520,45 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                     uint16_t draw_h = lv_area_get_height(&clipped_img_area);
                     uint16_t image_x = clipped_img_area.x1 - tile_area.x1;
                     uint16_t image_y = clipped_img_area.y1 - tile_area.y1;
+                    if (draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+                        target.format == source.format && \
+                        (target.format == PPE_RGB565 || target.format == PPE_RGB888))
+                    {
+                        uint32_t length = draw_w * pixel_byte;
+                        uint32_t dst_stride = target.width * pixel_byte;
+                        uint32_t target_x = clipped_img_area.x1 - draw_unit->target_layer->buf_area.x1;
+                        uint32_t target_y = clipped_img_area.y1 - draw_unit->target_layer->buf_area.y1;
+                        uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
+                        if (compressed)
+                        {
+                            if (length == dst_stride || length % 4 == 0)
+                            {
+                                IDU_decode_range range = {.start_column = image_x,
+                                                          .end_column = image_x + draw_w - 1,
+                                                          .start_line = image_y,
+                                                          .end_line = image_y + draw_h - 1,
+                                                          .target_stride = dst_stride
+                                                         };
+                                IDU_DMA_Config dma_cfg;
+                                dma_cfg.output_buf = (uint32_t *)dst_addr;
+                                dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
+                                dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
+                                PPE_Finish();
+                                IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
+                                if (err_code == IDU_SUCCESS)
+                                {
+                                    goto skip_ppe;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            uint32_t src_addr = source.address + (source.stride * image_y + image_x) * pixel_byte;
+                            lv_acc_dma_copy(length, draw_h, source.stride * pixel_byte, dst_stride, (uint8_t *)src_addr,
+                                            (uint8_t *)dst_addr);
+                            goto skip_ppe;
+                        }
+                    }
                     if (last_image_x != image_x || last_image_y != image_y || last_image_w != draw_w ||
                         last_image_h != draw_h)
                     {
@@ -594,7 +633,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                                                    method);
                 }
             }
-
+skip_ppe:
             tile_area.x1 += img_w;
             tile_area.x2 += img_w;
         }
