@@ -340,7 +340,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (entry == NULL)
         {
             lv_draw_buf_destroy(decoded);
-            hal_jpu_fb_clean();
+            hal_jpu_fb_clean(decoded->data);
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
@@ -373,7 +373,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         JPU_ERROR err;
 
         memset(&dec_param, 0, sizeof(JPU_DEC_PARAM));
-        dec_param.data = img_data;
+        dec_param.data = (uint8_t *)img_data;
         dec_param.size = img_size;
         dec_param.packedFormat = PACKED_FORMAT_422_YUYV;
         dec_param.useWrapper = 1;
@@ -394,7 +394,6 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         JPU_OUTPUT_INFO *info = NULL;
         info = hal_jpu_get_output();
         LV_LOG_INFO("decode jpeg sucess  w %d h %d", info->alignedWidth, info->alignedHeight);
-
 #endif
 
 
@@ -443,7 +442,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (entry == NULL)
         {
             lv_draw_buf_destroy(decoded);
-            hal_jpu_fb_clean();
+            hal_jpu_fb_clean(decoded->data);
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
@@ -467,7 +466,7 @@ static void decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *d
     {
         LV_LOG_INFO("JPU close");
         lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded);
-        hal_jpu_fb_clean();
+        hal_jpu_fb_clean(dsc->decoded->data);
     }
 }
 

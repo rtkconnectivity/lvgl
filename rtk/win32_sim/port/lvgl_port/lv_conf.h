@@ -831,7 +831,7 @@
 /** API for memory-mapped file access. */
 #define LV_USE_FS_MEMFS 0
 #if LV_USE_FS_MEMFS
-#define LV_FS_MEMFS_LETTER '\0'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
+#define LV_FS_MEMFS_LETTER 'M'     /**< Set an upper cased letter on which the drive will accessible (e.g. 'A') */
 #endif
 
 /** API for LittleFs. */
@@ -879,6 +879,9 @@
 #define LV_GIF_CACHE_DECODE_DATA 0
 #endif
 
+/** RTK AVI decoder.
+ *  Dependencies: JPEG decoder. */
+#define LV_USE_AVI 0
 
 /** Decode bin images to RAM */
 #define LV_BIN_DECODER_RAM_LOAD 0
