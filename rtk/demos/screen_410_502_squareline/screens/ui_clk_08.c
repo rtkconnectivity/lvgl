@@ -6,7 +6,6 @@
 #include "../ui.h"
 
 lv_obj_t * ui_clk_08;
-lv_obj_t * ui_clk08_bg_group1;
 lv_obj_t * ui_clk07_bg1;
 lv_obj_t * ui_heart_rate;
 lv_obj_t * ui_steps;
@@ -64,18 +63,7 @@ void ui_clk_08_screen_init(void)
     ui_clk_08 = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_clk_08, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_clk08_bg_group1 = lv_obj_create(ui_clk_08);
-    lv_obj_set_width(ui_clk08_bg_group1, 410);
-    lv_obj_set_height(ui_clk08_bg_group1, 502);
-    lv_obj_set_align(ui_clk08_bg_group1, LV_ALIGN_CENTER);
-    lv_obj_remove_flag(ui_clk08_bg_group1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_radius(ui_clk08_bg_group1, 100, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_clk08_bg_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_clk08_bg_group1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui_clk08_bg_group1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_clk08_bg_group1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_clk07_bg1 = lv_image_create(ui_clk08_bg_group1);
+    ui_clk07_bg1 = lv_image_create(ui_clk_08);
     lv_image_set_src(ui_clk07_bg1, &clk08_bg);
     lv_obj_set_width(ui_clk07_bg1, LV_SIZE_CONTENT);   /// 410
     lv_obj_set_height(ui_clk07_bg1, LV_SIZE_CONTENT);    /// 502
@@ -131,11 +119,6 @@ void ui_clk_08_screen_init(void)
     lv_obj_set_y(ui_Image9, 116);
     lv_obj_add_flag(ui_Image9, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_remove_flag(ui_Image9, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Image9, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Image9, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_color(ui_Image9, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_image_recolor(ui_Image9, lv_color_hex(0x313131), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_image_recolor_opa(ui_Image9, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_clk08_spo2 = lv_obj_create(ui_clk_08);
     lv_obj_set_width(ui_clk08_spo2, 167);
@@ -356,7 +339,6 @@ void ui_clk_08_screen_destroy(void)
 
     // NULL screen variables
     ui_clk_08 = NULL;
-    ui_clk08_bg_group1 = NULL;
     ui_clk07_bg1 = NULL;
     ui_heart_rate = NULL;
     ui_steps = NULL;

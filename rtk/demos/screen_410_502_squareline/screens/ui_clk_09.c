@@ -6,7 +6,6 @@
 #include "../ui.h"
 
 lv_obj_t * ui_clk_09;
-lv_obj_t * ui_clk09_bg_group2;
 lv_obj_t * ui_Panel3;
 lv_obj_t * ui_Label30;
 lv_obj_t * ui_Panel10;
@@ -54,16 +53,9 @@ void ui_clk_09_screen_init(void)
 {
     ui_clk_09 = lv_obj_create(NULL);
     lv_obj_remove_flag(ui_clk_09, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_clk09_bg_group2 = lv_obj_create(ui_clk_09);
-    lv_obj_set_width(ui_clk09_bg_group2, 410);
-    lv_obj_set_height(ui_clk09_bg_group2, 502);
-    lv_obj_set_align(ui_clk09_bg_group2, LV_ALIGN_CENTER);
-    lv_obj_remove_flag(ui_clk09_bg_group2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_clk09_bg_group2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_clk09_bg_group2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui_clk09_bg_group2, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui_clk09_bg_group2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui_clk_09, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_clk_09, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_clk_09, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Panel3 = lv_obj_create(ui_clk_09);
     lv_obj_set_width(ui_Panel3, 240);
@@ -94,6 +86,7 @@ void ui_clk_09_screen_init(void)
     lv_obj_set_y(ui_Panel10, -36);
     lv_obj_set_align(ui_Panel10, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel10, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_radius(ui_Panel10, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Panel10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Panel10, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Panel10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -240,7 +233,7 @@ void ui_clk_09_screen_init(void)
     lv_obj_set_y(ui_Panel8, 174);
     lv_obj_set_align(ui_Panel8, LV_ALIGN_CENTER);
     lv_obj_remove_flag(ui_Panel8, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_radius(ui_Panel8, 500, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui_Panel8, 56, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_Panel8, lv_color_hex(0x252525), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Panel8, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(ui_Panel8, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -288,7 +281,6 @@ void ui_clk_09_screen_destroy(void)
 
     // NULL screen variables
     ui_clk_09 = NULL;
-    ui_clk09_bg_group2 = NULL;
     ui_Panel3 = NULL;
     ui_Label30 = NULL;
     ui_Panel10 = NULL;
