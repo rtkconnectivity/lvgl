@@ -110,7 +110,6 @@ static void return_gesture_cb(lv_event_t *e)
     else if (code == LV_EVENT_RELEASED)
     {
         // Re-enable scrolling of the parent object
-        lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
         if (!release_flag)
         {
             lv_coord_t drag_x = point.x - pressed_x;
@@ -121,6 +120,8 @@ static void return_gesture_cb(lv_event_t *e)
             }
             if (has_flag)
             {
+                // Re-enable scrolling of the parent object
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                 lv_obj_add_flag(img, LV_OBJ_FLAG_HIDDEN);
                 has_flag = 0;
             }

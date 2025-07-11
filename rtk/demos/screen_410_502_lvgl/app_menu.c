@@ -9,6 +9,7 @@
 #include <math.h>
 #include "lvgl.h"
 #include "app_main.h"
+#include "lv_card.h"
 
 /*********************
  *      DEFINES
@@ -32,7 +33,7 @@ typedef struct
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-lv_obj_t *scr_app_menu;
+lv_obj_t *scr_app_menu = NULL;
 
 /**********************
  *  STATIC VARIABLES
@@ -52,7 +53,8 @@ static const app_item_t app_list[] =
     {"Heart Rate", &ui_clock_heartrate_icon},
 };
 
-static int16_t page_menu_y_his = 0;
+static int16_t card_view_offset = 0;
+static lv_timer_t *timer = NULL;
 
 /**********************
  *  GLOBAL VARIABLES
@@ -73,12 +75,16 @@ static void exit_menu(void)
     custom_screen_change(&tileview, &scr_app_menu, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
                          NULL, true);
     enter_menu_flag = false;
+    lv_timer_delete(timer);
 }
 
 static void enter_app_cb(lv_event_t *e)
 {
+    if (!custom_judge_short_click()) { return; }
+
     lv_obj_t *obj = lv_event_get_target(e);
-    uint8_t index = lv_obj_get_index(obj);
+    CardData *card_data = (CardData *)lv_event_get_user_data(e);
+    uint8_t index = card_data->index;
     index %= (APP_COUNT / 2);
     switch (index)
     {
@@ -115,60 +121,45 @@ static void enter_app_cb(lv_event_t *e)
     default:
         break;
     }
-}
-
-// Update button positions based on scroll
-static void update_button_pos(lv_obj_t *page, lv_coord_t scroll_y)
-{
-    // Calculate the position of each button
-    for (int i = 0; i < APP_COUNT; i++)
+    if (timer)
     {
-        lv_obj_t *btn = lv_obj_get_child(page, i);
-        if (btn == NULL)
-        {
-            continue;
-        }
-
-        lv_coord_t base_y = i * (ITEM_HEIGHT + ITEM_INTERVAL) - scroll_y;
-        // Calculate the offset relative to the screen center
-        lv_coord_t diff_y = base_y + ITEM_HEIGHT / 2 - SCREEN_HEIGHT / 2;
-        diff_y = LV_ABS(diff_y);
-
-        /*Get the x of diff_y on a circle.*/
-        int32_t x;
-        int32_t r = SCREEN_WIDTH;
-        /*If diff_y is out of the circle use the last point of the circle (the radius)*/
-        if (diff_y >= r)
-        {
-            x = r;
-        }
-        else
-        {
-            /*Use Pythagoras theorem to get x from radius and y*/
-            uint32_t x_sqr = r * r - diff_y * diff_y;
-            lv_sqrt_res_t res;
-            lv_sqrt(x_sqr, &res, 0x8000);   /*Use lvgl's built in sqrt root function*/
-            x = r - res.i;
-        }
-
-        /*Translate the item by the calculated X coordinate*/
-        lv_obj_set_x(btn, x + OFFSET_X);
-
-        /*Use some opacity with larger translations*/
-        // lv_opa_t opa = lv_map(x, 0, r, LV_OPA_TRANSP, LV_OPA_COVER);
-        // lv_obj_set_style_opa(btn, LV_OPA_COVER - opa, 0);
+        lv_timer_delete(timer);
     }
 }
 
-// Page scroll event callback
-static void page_event_cb(lv_event_t *e)
+
+static void card_design(lv_obj_t *card, void *param)
 {
-    lv_obj_t *page = lv_event_get_target(e);
-    lv_coord_t scroll_y = lv_obj_get_scroll_y(page);
-    page_menu_y_his = scroll_y;
-    update_button_pos(page, page_menu_y_his);
+    lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+    lv_obj_set_style_border_width(card, 0, 0);
+    lv_obj_set_style_pad_all(card, 0, 0);
+
+    CardData *card_data = lv_obj_get_user_data(card);
+    uint16_t index = card_data->index;
+    lv_obj_t *bg = lv_image_create(card);
+    lv_image_set_src(bg, &menu_bar_bg);
+    lv_obj_set_pos(bg, 0, 0);
+    lv_obj_add_flag(bg, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(bg, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_remove_flag(bg, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_event_cb(bg, (lv_event_cb_t)enter_app_cb, LV_EVENT_SHORT_CLICKED, card_data);
+
+    lv_obj_t *img = lv_img_create(bg);
+    lv_image_set_src(img, app_list[index].icon);
+    lv_obj_align(img, LV_ALIGN_LEFT_MID, 20, 0);
+
+    lv_obj_t *label = lv_label_create(bg);
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+    custom_set_label_without_pos(label, app_list[index].name, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                 &SourceHanSansSC_size24_bits1_font);
 }
 
+static void timer_cb(lv_timer_t *timer)
+{
+    lv_obj_t *card_view = (lv_obj_t *)lv_timer_get_user_data(timer);
+    CardViewData *view_data = lv_obj_get_user_data(card_view);
+    card_view_offset = view_data->offset;
+}
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -180,42 +171,16 @@ void lv_app_menu_init(void)
     lv_obj_set_style_bg_color(scr_app_menu, lv_color_hex(0x0), 0);
     lv_obj_set_style_bg_opa(scr_app_menu, LV_OPA_COVER, 0);
 
-    lv_obj_t *page = lv_obj_create(scr_app_menu);
-    lv_obj_set_style_border_width(page, 0, LV_PART_MAIN); // No border
-    lv_obj_set_style_bg_color(page, lv_color_make(0, 0, 0), 0);
-    lv_obj_set_style_bg_opa(page, LV_OPA_COVER, 0);
-    lv_obj_set_style_pad_all(page, 0, 0);
-    lv_obj_set_size(page, SCREEN_WIDTH, SCREEN_HEIGHT);
-    lv_obj_set_pos(page, 0, 0);
-    lv_obj_add_flag(page, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_flag(page, LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_set_scrollbar_mode(page, LV_SCROLLBAR_MODE_OFF);
-    lv_obj_set_scroll_dir(page, LV_DIR_VER);
-    lv_obj_add_event_cb(page, page_event_cb, LV_EVENT_SCROLL, NULL);
-
-    // Add all APP items
-    for (uint32_t i = 0; i < APP_COUNT; i++)
-    {
-        lv_obj_t *bg = lv_image_create(page);
-        lv_image_set_src(bg, &menu_bar_bg);
-        lv_obj_set_pos(bg, 0, 0);
-        lv_obj_set_pos(bg, 0, (ITEM_HEIGHT + ITEM_INTERVAL) * i);
-        lv_obj_clear_flag(bg, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_add_flag(bg, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_add_event_cb(bg, (lv_event_cb_t)enter_app_cb, LV_EVENT_CLICKED, NULL);
-
-        lv_obj_t *img = lv_img_create(bg);
-        lv_img_set_src(img, app_list[i].icon);
-        lv_obj_align(img, LV_ALIGN_LEFT_MID, 20, 0);
-
-        lv_obj_t *label = lv_label_create(bg);
-        lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-        custom_set_label_without_pos(label, app_list[i].name, lv_color_hex(0xFFFFFF), UINT8_MAX,
-                                     &SourceHanSansSC_size24_bits1_font);
-    }
-    lv_obj_scroll_to_y(page, page_menu_y_his, LV_ANIM_OFF);
-    update_button_pos(page, page_menu_y_his);
+    lv_coord_t card_height = ITEM_HEIGHT;
+    lv_coord_t card_space = ITEM_INTERVAL;
+    lv_coord_t stack_loction = 0;
+    lv_obj_t *card_view = lv_card_view_create(scr_app_menu, CARD_CIRCLE, card_height, card_space,
+                                              stack_loction, APP_COUNT, card_design, NULL);
+    lv_card_view_set_offset(card_view, card_view_offset);
 
     custom_return_create(scr_app_menu, exit_menu);
     enter_menu_flag = true;
+
+    timer = lv_timer_create(timer_cb, 20, card_view);
+    lv_timer_set_repeat_count(timer, -1);
 }

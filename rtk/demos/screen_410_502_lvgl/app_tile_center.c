@@ -58,13 +58,13 @@ lv_image_dsc_t const *text_num_array[11] =
 
 const char *day[7] =
 {
-    "SUN",
-    "MON",
-    "TUE",
-    "WED",
-    "THU",
-    "FRI",
-    "SAT"
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
 };
 
 const char *month[12] =

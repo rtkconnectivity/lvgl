@@ -21,7 +21,7 @@
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *clock_big, *clock_small;
+static lv_obj_t *clock_circle, *clock_tab;
 
 /**********************
  *   STATIC FUNCTIONS
@@ -29,27 +29,27 @@ static lv_obj_t *clock_big, *clock_small;
 static void timer_cb(lv_timer_t *timer)
 {
     {
-        lv_obj_t *hour_decimal = lv_obj_get_child(clock_big, 0);
+        lv_obj_t *hour_decimal = lv_obj_get_child(clock_circle, 0);
         lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
-        lv_obj_t *hour_singel = lv_obj_get_child(clock_big, 1);
+        lv_obj_t *hour_singel = lv_obj_get_child(clock_circle, 1);
         lv_image_set_src(hour_singel, text_num_array[watch_time.tm_hour % 10]);
-        lv_obj_t *minute_decimal = lv_obj_get_child(clock_big, 2);
+        lv_obj_t *minute_decimal = lv_obj_get_child(clock_circle, 2);
         lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
-        lv_obj_t *minute_singel = lv_obj_get_child(clock_big, 3);
+        lv_obj_t *minute_singel = lv_obj_get_child(clock_circle, 3);
         lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
-        lv_obj_t *date_label = lv_obj_get_child(clock_big, -1);
+        lv_obj_t *date_label = lv_obj_get_child(clock_circle, -1);
         char content[10];
         sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
                 day[watch_time.tm_wday]);
         lv_label_set_text(date_label, content);
     }
     {
-        lv_obj_t *date_label = lv_obj_get_child(clock_small, 0);
+        lv_obj_t *date_label = lv_obj_get_child(clock_tab, 0);
         char date_content[10];
         sprintf(date_content, "%s %d\n", day[watch_time.tm_wday], watch_time.tm_mday);
         lv_label_set_text(date_label, date_content);
 
-        lv_obj_t *time_label = lv_obj_get_child(clock_small, 1);
+        lv_obj_t *time_label = lv_obj_get_child(clock_tab, 1);
         char time_content[10];
         sprintf(time_content, "%02d:%02d", watch_time.tm_hour, watch_time.tm_min);
         lv_label_set_text(time_label, time_content);
@@ -94,17 +94,17 @@ static void scr_tile_down_event_cb(lv_event_t *e)
         lv_obj_add_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
     }
 
-    if (clock_big && clock_small)
+    if (clock_circle && clock_tab)
     {
-        if (view_data->offset_y < -150)
+        if (view_data->offset < 32)
         {
-            lv_obj_add_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_remove_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-            lv_obj_remove_flag(clock_big, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(clock_small, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
         }
     }
 
@@ -275,78 +275,40 @@ static void create_snapshot_cb(lv_event_t *e)
     lv_obj_remove_event_cb(tileview, (lv_event_cb_t)create_snapshot_cb);
 }
 
-/**********************
- *   GLOBAL FUNCTIONS
- **********************/
-void lv_tile_down_init(void)
+static void card_design(lv_obj_t *card, void *param)
 {
-    // date & time big one
+    CardData *card_data = lv_obj_get_user_data(card);
+    lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
+    lv_obj_set_style_border_width(card, 0, 0);
+    lv_obj_set_style_pad_all(card, 0, 0);
+    switch (card_data->index)
     {
-        clock_big = lv_image_create(scr_tile_down);
-        lv_image_set_src(clock_big, &ui_card_clockcircle);
-        lv_obj_set_pos(clock_big, 38, 30);
-
-        uint16_t x = 185;
-        uint16_t y = 60;
-        uint16_t interval = 26;
-        lv_obj_t *hour_decimal = lv_image_create(clock_big);
-        lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
-        lv_obj_set_pos(hour_decimal, x, y);
-        lv_image_set_scale(hour_decimal, 0.7 * LV_SCALE_NONE);
-
-        lv_obj_t *hour_single = lv_image_create(clock_big);
-        lv_image_set_src(hour_single, text_num_array[watch_time.tm_hour % 10]);
-        lv_obj_set_pos(hour_single, x + interval, y);
-        lv_image_set_scale(hour_single, 0.7 * LV_SCALE_NONE);
-
-        lv_obj_t *minute_decimal = lv_image_create(clock_big);
-        lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
-        lv_obj_set_pos(minute_decimal, x + interval * 2 + 17, y);
-        lv_image_set_scale(minute_decimal, 0.7 * LV_SCALE_NONE);
-
-        lv_obj_t *minute_singel = lv_image_create(clock_big);
-        lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
-        lv_obj_set_pos(minute_singel, x + interval * 3 + 17, y);
-        lv_image_set_scale(minute_singel, 0.7 * LV_SCALE_NONE);
-
-        lv_obj_t *colon = lv_image_create(clock_big);
-        lv_image_set_src(colon, text_num_array[10]);
-        lv_obj_set_pos(colon, x + interval * 2 + 5, y + 5);
-        lv_image_set_scale(colon, 0.7 * LV_SCALE_NONE);
-
-        char content[20];
-        sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
-                day[watch_time.tm_wday]);
-        lv_obj_t *date_label = lv_label_create(clock_big);
-        lv_obj_set_pos(date_label, 0, 42);
-        custom_set_label_without_pos(date_label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
-                                     &SourceHanSansSC_size24_bits1_font);
-    }
-
-    //card
-    {
-        lv_coord_t card_width = 400;
-        lv_coord_t card_height = 167; //image_height + card_space
-        lv_obj_t *card_view = lv_create_card_view(scr_tile_down, REDUCTION, 300, card_height);
-
-        // Add cards
+    case 0:
         {
-            lv_obj_t *card = lv_create_card(card_view, 3, card_width, card_height);
-            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
-            lv_obj_set_style_border_width(card, 0, 0);
-            lv_obj_set_style_pad_all(card, 0, 0);
             lv_obj_t *img = lv_image_create(card);
-            lv_image_set_src(img, &ui_card_appview);
-            lv_obj_align(img, LV_ALIGN_TOP_MID, 0, 5);
-            lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
-            lv_obj_add_event_cb(img, (lv_event_cb_t)enter_app_menu_cb, LV_EVENT_SHORT_CLICKED, NULL);
+            lv_image_set_src(img, &ui_card_calendar);
+            lv_obj_set_align(img, LV_ALIGN_CENTER);
         }
+        break;
+    case 1:
         {
-            lv_obj_t *card = lv_create_card(card_view, 2, card_width, card_height);
-            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
-            lv_obj_set_style_border_width(card, 0, 0);
-            lv_obj_set_style_pad_all(card, 0, 0);
+            lv_obj_add_event_cb(card, (lv_event_cb_t)enter_weather_cb, LV_EVENT_SHORT_CLICKED, NULL);
+
+            lv_obj_t *container = lv_obj_create(card);
+            lv_obj_remove_style_all(container);
+            lv_obj_set_align(container, LV_ALIGN_CENTER);
+            lv_obj_set_style_border_width(container, 0, 0);
+            lv_obj_set_style_pad_all(container, 0, 0);
+            lv_obj_set_size(container, 400, 157);
+            lv_obj_remove_flag(container, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_add_flag(container, LV_OBJ_FLAG_EVENT_BUBBLE);
+            create_weather_card(container);
+
+            lv_obj_add_event_cb(tileview, (lv_event_cb_t)create_snapshot_cb, LV_EVENT_VALUE_CHANGED, container);
+        }
+        break;
+    case 2:
+        {
             lv_obj_t *img = lv_image_create(card);
             lv_image_set_src(img, &ui_card_bg);
             lv_obj_set_align(img, LV_ALIGN_CENTER);
@@ -371,53 +333,94 @@ void lv_tile_down_init(void)
             lv_obj_add_flag(img_app, LV_OBJ_FLAG_EVENT_BUBBLE);
             lv_obj_add_event_cb(img_app, (lv_event_cb_t)enter_activity_cb, LV_EVENT_SHORT_CLICKED, NULL);
         }
+        break;
+    case 3:
         {
-            lv_obj_t *card = lv_create_card(card_view, 1, card_width, card_height);
-            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
-            lv_obj_set_style_border_width(card, 0, 0);
-            lv_obj_set_style_pad_all(card, 0, 0);
-            lv_obj_add_event_cb(card, (lv_event_cb_t)enter_weather_cb, LV_EVENT_SHORT_CLICKED, NULL);
-
-            lv_obj_t *container = lv_obj_create(card);
-            lv_obj_remove_style_all(container);
-            lv_obj_set_style_border_width(container, 0, 0);
-            lv_obj_set_style_pad_all(container, 0, 0);
-            lv_obj_set_size(container, card_width, card_height - 10); // - card_sapce
-            lv_obj_remove_flag(container, LV_OBJ_FLAG_SCROLLABLE);
-            lv_obj_add_flag(container, LV_OBJ_FLAG_EVENT_BUBBLE);
-            create_weather_card(container);
-
-            lv_obj_add_event_cb(tileview, (lv_event_cb_t)create_snapshot_cb, LV_EVENT_VALUE_CHANGED, container);
-        }
-        {
-            lv_obj_t *card = lv_create_card(card_view, 0, card_width, card_height);
-            lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
-            lv_obj_set_style_border_width(card, 0, 0);
-            lv_obj_set_style_pad_all(card, 0, 0);
             lv_obj_t *img = lv_image_create(card);
-            lv_image_set_src(img, &ui_card_calendar);
-            lv_obj_set_align(img, LV_ALIGN_CENTER);
+            lv_image_set_src(img, &ui_card_appview);
+            lv_obj_align(img, LV_ALIGN_TOP_MID, 0, 0);
+            lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
+            lv_obj_add_event_cb(img, (lv_event_cb_t)enter_app_menu_cb, LV_EVENT_SHORT_CLICKED, NULL);
         }
-        lv_obj_add_event_cb(scr_tile_down, scr_tile_down_event_cb, LV_EVENT_ALL, card_view);
+        break;
+    default:
+        break;
+    }
+}
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
+void lv_tile_down_init(void)
+{
+    // date & time big one
+    {
+        clock_circle = lv_image_create(scr_tile_down);
+        lv_image_set_src(clock_circle, &ui_card_clockcircle);
+        lv_obj_set_pos(clock_circle, 38, 30);
+
+        uint16_t x = 185;
+        uint16_t y = 60;
+        uint16_t interval = 26;
+        lv_obj_t *hour_decimal = lv_image_create(clock_circle);
+        lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
+        lv_obj_set_pos(hour_decimal, x, y);
+        lv_image_set_scale(hour_decimal, 0.7 * LV_SCALE_NONE);
+
+        lv_obj_t *hour_single = lv_image_create(clock_circle);
+        lv_image_set_src(hour_single, text_num_array[watch_time.tm_hour % 10]);
+        lv_obj_set_pos(hour_single, x + interval, y);
+        lv_image_set_scale(hour_single, 0.7 * LV_SCALE_NONE);
+
+        lv_obj_t *minute_decimal = lv_image_create(clock_circle);
+        lv_image_set_src(minute_decimal, text_num_array[watch_time.tm_min / 10]);
+        lv_obj_set_pos(minute_decimal, x + interval * 2 + 17, y);
+        lv_image_set_scale(minute_decimal, 0.7 * LV_SCALE_NONE);
+
+        lv_obj_t *minute_singel = lv_image_create(clock_circle);
+        lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
+        lv_obj_set_pos(minute_singel, x + interval * 3 + 17, y);
+        lv_image_set_scale(minute_singel, 0.7 * LV_SCALE_NONE);
+
+        lv_obj_t *colon = lv_image_create(clock_circle);
+        lv_image_set_src(colon, text_num_array[10]);
+        lv_obj_set_pos(colon, x + interval * 2 + 5, y + 5);
+        lv_image_set_scale(colon, 0.7 * LV_SCALE_NONE);
+
+        char content[20];
+        sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
+                day[watch_time.tm_wday]);
+        lv_obj_t *date_label = lv_label_create(clock_circle);
+        lv_obj_set_pos(date_label, 0, 42);
+        custom_set_label_without_pos(date_label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
+                                     &SourceHanSansSC_size24_bits1_font);
     }
 
+    //card
+    lv_coord_t card_height = 157;
+    lv_coord_t card_space = 5;
+    lv_coord_t stack_loction = 0;
+    lv_obj_t *card_view = lv_card_view_create(scr_tile_down, CARD_STACK, card_height, card_space,
+                                              stack_loction, 4, card_design, NULL);
+    lv_card_view_set_offset(card_view, 300);
     // date & time small one
     {
-        clock_small = lv_image_create(scr_tile_down);
-        lv_image_set_src(clock_small, &option_bar_bg);
-        lv_obj_set_align(clock_small, LV_ALIGN_TOP_MID);
-        lv_obj_remove_flag(clock_small, LV_OBJ_FLAG_CLICKABLE);
+        clock_tab = lv_image_create(scr_tile_down);
+        lv_image_set_src(clock_tab, &option_bar_bg);
+        lv_obj_set_align(clock_tab, LV_ALIGN_TOP_MID);
+        lv_obj_remove_flag(clock_tab, LV_OBJ_FLAG_CLICKABLE);
 
         char content[10];
         sprintf(content, "%s %d\n", day[watch_time.tm_wday], watch_time.tm_mday);
-        lv_obj_t *date_label = lv_label_create(clock_small);
+        lv_obj_t *date_label = lv_label_create(clock_tab);
         lv_obj_set_pos(date_label, 15, 30);
         custom_set_label_without_pos(date_label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
                                      &SourceHanSansSC_size24_bits1_font);
         lv_obj_remove_flag(date_label, LV_OBJ_FLAG_CLICKABLE);
 
         sprintf(content, "%02d:%02d", watch_time.tm_hour, watch_time.tm_min);
-        lv_obj_t *time_label = lv_label_create(clock_small);
+        lv_obj_t *time_label = lv_label_create(clock_tab);
         lv_obj_set_pos(time_label, 280, 30);
         custom_set_label_without_pos(time_label, content, lv_color_hex(0xFFFFFF), UINT8_MAX,
                                      &SourceHanSansSC_size24_bits1_font);
@@ -425,4 +428,5 @@ void lv_tile_down_init(void)
     }
     lv_timer_t *timer = lv_timer_create(timer_cb, 30000, scr_tile_center);
     lv_timer_set_repeat_count(timer, -1);
+    lv_obj_add_event_cb(scr_tile_down, scr_tile_down_event_cb, LV_EVENT_ALL, card_view);
 }
