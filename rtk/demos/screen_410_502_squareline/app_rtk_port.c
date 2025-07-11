@@ -52,9 +52,9 @@
 #endif
 
 #ifdef LV_USE_PSRAM_DRAW_BUF
-#include "lv_tlsf.h"
-#include "lv_types.h"
-#include "lv_draw_buf_private.h"
+#include "../../../src/stdlib/builtin/lv_tlsf.h"
+#include "../../../src/misc/lv_types.h"
+#include "../../../src/draw/lv_draw_buf_private.h"
 #endif
 
 /**********************

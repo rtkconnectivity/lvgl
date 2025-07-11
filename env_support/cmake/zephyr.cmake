@@ -334,6 +334,9 @@ target_sources(app PRIVATE
 
     ${LVGL_DIR}/src/libs/rle/lv_idu.c
     ${LVGL_DIR}/src/libs/rle/lv_rle.c
+
+    ${LVGL_DIR}/src/libs/avi/avidec.c
+    ${LVGL_DIR}/src/libs/avi/lv_avi.c
 )
 
 # zephyr_library_link_libraries(LVGL)
