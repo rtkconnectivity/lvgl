@@ -654,15 +654,15 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     LV_PROFILER_DRAW_BEGIN;
     lv_layer_t *layer = draw_unit->target_layer;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
-    lv_area_t area_rot;
     lv_area_t constraint_area;
 
     ppe_rect_t src_rect = {.x1 = 0, .y1 = 0, .x2 = img_dsc->header.w - 1, .y2 = img_dsc->header.h - 1};
     ppe_rect_t target_rect = {0};
     lv_display_t *disp = lv_display_get_default();
     ppe_buffer_t target, source;
-    target.width = disp->hor_res;
-    target.height = disp->ver_res;
+    memset(&target, 0, sizeof(ppe_buffer_t));
+    memset(&source, 0, sizeof(ppe_buffer_t));
+
     ppe_matrix_t ppe_mat, pre_trans;
     memcpy(&ppe_mat, matrix, sizeof(ppe_matrix_t));
     if (coords->x1 != 0 || coords->y1 != 0)
@@ -673,6 +673,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         ppe_mat_multiply(&ppe_mat, &pre_trans);
     }
     lv_ppe_get_area(&target_rect, &src_rect, &ppe_mat);
+
     bool compressed = false;
     if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area,
                            (lv_area_t *)&target_rect))
@@ -681,13 +682,12 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         return;
     }
 
-    memset(&target, 0, sizeof(ppe_buffer_t));
-    memset(&source, 0, sizeof(ppe_buffer_t));
-    if (img_dsc->header.cf == LV_COLOR_FORMAT_RAW)
+    bool transform = ppe_matrix_is_complex(&ppe_mat);
+
+    if (img_dsc->header.flags & LV_IMAGE_FLAGS_USER1)
     {
         compressed = true;
     }
-    target.format = PPE_ABGR8888;
     switch (draw_unit->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
@@ -703,6 +703,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         target.format = PPE_XRGB8888;
         break;
     default:
+        lv_draw_sw_image(draw_unit, draw_dsc, coords);
         LV_PROFILER_DRAW_END;
         return;
     }
@@ -723,6 +724,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
+    source.high_quality = false;
     if (img_dsc->header.stride != 0)
     {
         source.stride = img_dsc->header.stride / pixel_byte;
@@ -736,18 +738,68 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.win_x_max = target.win_x_max;
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
-
-    bool no_transform = lv_matrix_is_identity_or_translation(matrix);
+    source.const_color = 0xFFFFFFFF;
 
     if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
-        no_transform)
+        draw_dsc->opa == 0xFF && draw_dsc->rotation == 0)
     {
         method = PPE_BLEND_BYPASS;
     }
 
-    ppe_matrix_t inverse;
+    uint32_t src_stride = 0;
+    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+        target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
+    {
+        int16_t target_x = constraint_area.x1 - draw_unit->target_layer->buf_area.x1;
+        int16_t target_y = constraint_area.y1 - draw_unit->target_layer->buf_area.y1;
+        uint32_t length = lv_area_get_width(&constraint_area) * pixel_byte;
+        uint32_t height = lv_area_get_height(&constraint_area);
+        if (img_dsc->header.stride != 0)
+        {
+            src_stride = img_dsc->header.stride;
+        }
+        else
+        {
+            src_stride = img_dsc->header.w * pixel_byte;
+        }
+        uint32_t dst_stride = target.width * pixel_byte;
+        uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
+        if (compressed)
+        {
+            if (length == dst_stride || length % 4 == 0)
+            {
+                IDU_decode_range range = {.start_column = constraint_area.x1 - coords->x1,
+                                          .end_column = constraint_area.x2 - coords->x1,
+                                          .start_line = constraint_area.y1 - coords->y1,
+                                          .end_line = constraint_area.y2 - coords->y1,
+                                          .target_stride = dst_stride
+                                         };
+                IDU_DMA_Config dma_cfg;
+                dma_cfg.output_buf = (uint32_t *)dst_addr;
+                dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
+                dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
+                PPE_Finish();
+                IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
+                if (err_code == IDU_SUCCESS)
+                {
 
+                    LV_PROFILER_DRAW_END;
+                    return;
+                }
+            }
+        }
+        else
+        {
+            uint32_t src_addr = source.address + (source.stride * (constraint_area.y1 - coords->y1) +
+                                                  (constraint_area.x1 - coords->x1)) *
+                                pixel_byte;
+            lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
+            LV_PROFILER_DRAW_END;
+            return;
+        }
+    }
     ppe_rect_t image_area;
+    ppe_matrix_t inverse;
     memcpy(&inverse, &ppe_mat, sizeof(ppe_matrix_t));
     ppe_matrix_inverse(&inverse);
     if (!ppe_get_area(&image_area, (ppe_rect_t *)&constraint_area, &inverse, &source))
@@ -756,66 +808,91 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         return;
     }
 
-    uint8_t *pic_buffer = lv_ppe_get_buffer(0);
+    uint8_t *pic_buffer = NULL;
     uint16_t image_width = image_area.x2 - image_area.x1 + 1;
     uint16_t image_height = image_area.y2 - image_area.y1 + 1;
-    if (image_width * image_height * pixel_byte <= LV_PPE_MAX_BUFFER_SIZE)
+
+    if (!compressed)
     {
-        if (!compressed)
+        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1, &inverse);
+    }
+    else
+    {
+        if (image_width * image_height * pixel_byte <= LV_PPE_MAX_BUFFER_SIZE)
         {
-            uint32_t length = image_width * pixel_byte;
-            uint32_t height = image_height;
-            uint32_t src_stride = img_dsc->header.stride;
-            uint32_t dst_stride = length;
-            uint32_t src_addr = source.address + (source.stride * image_area.y1 + image_area.x1) * pixel_byte;
-            lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)pic_buffer);
+            pic_buffer = lv_ppe_get_buffer(0);
+            if (cache_buffer == pic_buffer)
+            {
+                PPE_Finish();
+            }
+
         }
         else
         {
-            IDU_decode_range range;
-            range.start_column = image_area.x1;
-            range.end_column = image_area.x2;
-            range.start_line = image_area.y1;
-            range.end_line = image_area.y2;
-            range.target_stride = image_width * pixel_byte;
-            IDU_DMA_config dma_cfg;
-            dma_cfg.output_buf = (uint32_t *)pic_buffer;
-            dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
-            dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-            IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+            pic_buffer = lv_malloc(image_width * image_height * pixel_byte + 4);
+            if (cache_buffer != lv_ppe_get_buffer(0))
+            {
+                if (cache_buffer != NULL)
+                {
+                    PPE_Finish();
+                    lv_free(cache_buffer);
+                    cache_buffer = NULL;
+                }
+            }
         }
+        IDU_decode_range range;
+        range.start_column = image_area.x1;
+        range.end_column = image_area.x2;
+        range.start_line = image_area.y1;
+        range.end_line = image_area.y2;
+        range.target_stride = image_width * pixel_byte;
+        IDU_DMA_config dma_cfg;
+        dma_cfg.output_buf = (uint32_t *)pic_buffer;
+        dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
+        dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
+        IDU_ERROR err_code = IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+        source.address = (uint32_t)pic_buffer;
         source.width = image_width;
         source.height = image_height;
         source.stride = image_width;
-        source.address = (uint32_t)pic_buffer;
-        if (draw_dsc->recolor_opa >= LV_OPA_MIN)
-        {
-            uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
-            ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-            PPE_Mask(&source, recolor_value, &recolor_rect);
-        }
         ppe_get_identity(&pre_trans);
         pre_trans.m[0][2] = image_area.x1 * -1.0f;
         pre_trans.m[1][2] = image_area.y1 * -1.0f;
         ppe_mat_multiply(&pre_trans, &inverse);
+
         ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1,
                       &pre_trans);
         memcpy(&inverse, &pre_trans, sizeof(float) * 9);
     }
-    else
+
+    if (draw_dsc->recolor_opa >= LV_OPA_MIN)
     {
-        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1, &inverse);
+        uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
+        ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
+        PPE_Finish();
+        PPE_Mask(&source, recolor_value, &recolor_rect);
     }
+
     lv_area_move(&constraint_area, -draw_unit->target_layer->buf_area.x1,
                  -draw_unit->target_layer->buf_area.y1);
-    if (draw_dsc->antialias)
+
+    if (draw_dsc->antialias && ppe_matrix_is_complex(&inverse))
     {
         source.high_quality = true;
     }
     PPE_Finish();
+    if (cache_buffer != lv_ppe_get_buffer(0))
+    {
+        if (cache_buffer != NULL)
+        {
+            lv_free(cache_buffer);
+            cache_buffer = NULL;
+        }
+    }
+
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
                                    method);
-    PPE_Finish();
+    cache_buffer = pic_buffer;
     if (err == PPE_SUCCESS)
     {
         LV_PROFILER_DRAW_END;
