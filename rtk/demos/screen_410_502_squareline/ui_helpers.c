@@ -102,14 +102,171 @@ void _ui_delate_useless_screen(lv_obj_t *act_scr, lv_obj_t *dst_scr)
         }
     }
 }
+static void lv_draw_buf_memcpy(void *dst, const void *src, size_t len)
+{
+    lv_memcpy(dst, src, len);
+}
+static void create_snapshot_copy(lv_obj_t *widget, lv_obj_t *img_snapshot, uint8_t *fb)
+{
+    lv_draw_buf_t *snapshot = (lv_draw_buf_t *)lv_image_get_src(img_snapshot);
+    if (snapshot)
+    {
+        lv_draw_buf_destroy(snapshot);
+    }
+    snapshot = lv_snapshot_create_draw_buf(widget, lv_display_get_color_format(NULL));
+    if (snapshot == NULL)
+    {
+        LV_LOG_WARN("create snapshot failed");
+        return;
+    }
+    lv_draw_buf_memcpy(snapshot->data, fb, snapshot->data_size);
+    lv_image_set_src(img_snapshot, snapshot);
+}
+static void update_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot)
+{
+    lv_draw_buf_t *snapshot = (lv_draw_buf_t *)lv_image_get_src(img_snapshot);
+    if (snapshot)
+    {
+        lv_draw_buf_destroy(snapshot);
+    }
+    snapshot = lv_snapshot_take(widget, lv_display_get_color_format(NULL));
+    if (snapshot == NULL)
+    {
+        LV_LOG_WARN("create snapshot failed");
+        return;
+    }
+    lv_image_set_src(img_snapshot, snapshot);
+}
+
+static void create_snapshot_normal(lv_obj_t *widget, lv_obj_t *img_snapshot)
+{
+    update_snapshot(widget, img_snapshot);
+}
+static lv_obj_t *create_snapshot_obj_directly(lv_obj_t *parent, lv_obj_t *target)
+{
+    lv_obj_t *snapshot = lv_image_create(parent);
+    lv_obj_set_size(snapshot, lv_obj_get_width(target), lv_obj_get_height(target));
+    lv_obj_update_layout(snapshot);
+
+    lv_area_t widget_area;
+    lv_obj_get_coords(target, &widget_area);
+    lv_area_t screen_area;
+    screen_area.x1 = 0;
+    screen_area.x2 = lv_display_get_horizontal_resolution(NULL) - 1;
+    screen_area.y1 = 0;
+    screen_area.y2 = lv_display_get_vertical_resolution(NULL) - 1;
+
+    lv_area_t img_snapshot_area;
+    lv_obj_get_coords(snapshot, &img_snapshot_area);
+
+    if (lv_area_is_equal(&widget_area, &screen_area) &&
+        lv_area_is_equal(&img_snapshot_area, &screen_area))
+    {
+        if (lv_display_get_default()->render_mode == LV_DISPLAY_RENDER_MODE_DIRECT ||
+            lv_display_get_default()->render_mode == LV_DISPLAY_RENDER_MODE_FULL)
+        {
+            uint8_t *fb = lv_display_get_buf_active(NULL)->data;
+            create_snapshot_copy(target, snapshot, fb);
+        }
+        else if (lv_display_get_user_data(NULL) != NULL)
+        {
+            uint8_t *fb = lv_display_get_user_data(NULL);
+            create_snapshot_copy(target, snapshot, fb);
+        }
+        LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
+        return snapshot;
+    }
+    create_snapshot_normal(target, snapshot);
+
+    // lv_obj_add_flag(target, LV_OBJ_FLAG_HIDDEN);
+    return snapshot;
+}
+static void delete_snapshot(lv_obj_t *img_snapshot)
+{
+    lv_draw_buf_t *snapshot = (lv_draw_buf_t *)lv_image_get_src(img_snapshot);
+    if (snapshot)
+    {
+        lv_draw_buf_destroy(snapshot);
+        // lv_image_set_src(img_snapshot, NULL);
+    }
+}
+static void snapshot_custom_cb_delete(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *img_snapshot = lv_event_get_current_target(e);
+    delete_snapshot(img_snapshot);
+}
+static void screen_change_cb(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *screen = lv_event_get_current_target(e);
+    if (code == LV_EVENT_SCREEN_LOAD_START)
+    {
+        // LV_LOG_USER("LV_EVENT_SCREEN_LOAD_START");
+        lv_obj_t *snapshot = create_snapshot_obj_directly(screen, screen);
+        lv_obj_add_event_cb(snapshot, snapshot_custom_cb_delete, LV_EVENT_DELETE, NULL);
+        lv_obj_set_user_data(screen, snapshot);
+        for (int i = 0; i < lv_obj_get_child_count(screen); i++)
+        {
+            lv_obj_t *obj = lv_obj_get_child(screen, i);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        lv_obj_remove_flag(snapshot, LV_OBJ_FLAG_HIDDEN);
+    }
+    else if (code == LV_EVENT_SCREEN_LOADED)
+    {
+        // LV_LOG_USER("LV_EVENT_SCREEN_LOADED");
+        lv_obj_t *snapshot = lv_obj_get_user_data(screen);
+        for (int i = 0; i < lv_obj_get_child_count(screen); i++)
+        {
+            lv_obj_t *obj = lv_obj_get_child(screen, i);
+            lv_obj_remove_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        lv_obj_delete(snapshot);
+    }
+    if (code == LV_EVENT_SCREEN_UNLOAD_START)
+    {
+        // LV_LOG_USER("LV_EVENT_SCREEN_UNLOAD_START");
+        lv_obj_t *snapshot = create_snapshot_obj_directly(screen, screen);
+        lv_obj_add_event_cb(snapshot, snapshot_custom_cb_delete, LV_EVENT_DELETE, NULL);
+        lv_obj_set_user_data(screen, snapshot);
+        for (int i = 0; i < lv_obj_get_child_count(screen); i++)
+        {
+            lv_obj_t *obj = lv_obj_get_child(screen, i);
+            lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        lv_obj_remove_flag(snapshot, LV_OBJ_FLAG_HIDDEN);
+    }
+    else if (code == LV_EVENT_SCREEN_UNLOADED)
+    {
+        // LV_LOG_USER("LV_EVENT_SCREEN_UNLOADED");
+        lv_obj_t *snapshot = lv_obj_get_user_data(screen);
+        lv_obj_delete(snapshot);
+    }
+}
+
+/*original code from squareline studio*/
+/*
 void _ui_screen_change(lv_obj_t ** target, lv_screen_load_anim_t fademode, int spd, int delay,
                        void (*target_init)(void))
 {
-    // if(*target == NULL)
+    if(*target == NULL)
         target_init();
+    lv_screen_load_anim(*target, fademode, spd, delay, false);
+}
+*/
+void _ui_screen_change(lv_obj_t ** target, lv_screen_load_anim_t fademode, int spd, int delay,
+                       void (*target_init)(void))
+{
+    target_init();
     lv_anim_delete_all();
-    // _ui_delate_useless_screen(lv_screen_active(), *target);
-    lv_screen_load_anim(*target, fademode, spd, delay, true);
+
+    lv_obj_add_event_cb(*target, screen_change_cb, LV_EVENT_SCREEN_LOAD_START, NULL);
+    lv_obj_add_event_cb(*target, screen_change_cb, LV_EVENT_SCREEN_LOADED, NULL);
+    lv_obj_add_event_cb(lv_screen_active(), screen_change_cb, LV_EVENT_SCREEN_UNLOAD_START, NULL);
+    lv_obj_add_event_cb(lv_screen_active(), screen_change_cb, LV_EVENT_SCREEN_UNLOADED, NULL);
+
+    lv_screen_load_anim(*target, fademode, 300, delay, true);
 }
 
 void _ui_screen_delete(lv_obj_t ** target)
