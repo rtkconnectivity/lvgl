@@ -25,7 +25,7 @@
 
 
 #ifdef CONFIG_SOC_SERIES_RTL87x3G
-#include "..\..\..\inc\rtl87x3g\platform\address_map.h"
+#include "..\..\..\rtl87x3g\platform\inc\address_map.h"
 #endif
 
 #ifdef CONFIG_SOC_SERIES_RTL87x3E
@@ -46,7 +46,7 @@ static void lvgl_demo_run(void *p)
 {
     lv_init();
 
-    lv_mem_add_pool((void *)SPIC1_MEM_BASE, 4*1024*1024);
+    lv_mem_add_pool((void *)SPIC1_MEM_BASE, 4 * 1024 * 1024);
 
 
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
