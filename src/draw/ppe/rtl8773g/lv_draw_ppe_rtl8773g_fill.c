@@ -130,19 +130,16 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 
     int32_t h;
 
-    blend_dsc.mask_buf = mask_buf;
+
     blend_dsc.mask_area = &blend_area;
     blend_dsc.opa = LV_OPA_COVER;
 
-    blend_area.y1 = bg_coords.y1;
-    blend_area.y2 = bg_coords.y1 + rout - 1;
+
 
     if (rout > 0)
     {
         if (lv_ppe_use_entire(draw_unit, lv_display_get_default()))
         {
-
-
             mask_buf = lv_malloc(clipped_w * rout);
             lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_coords, rout, false);
             mask_list[0] = &mask_rout_param;
@@ -151,13 +148,16 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                 int32_t top_y = bg_coords.y1 + h;
                 int32_t bottom_y = bg_coords.y2 - h;
                 if (top_y < clipped_coords.y1 && bottom_y > clipped_coords.y2) { continue; }  /*This line is clipped now*/
-                blend_dsc.mask_res = lv_draw_sw_mask_apply(mask_list, mask_buf, blend_area.x1, top_y, clipped_w);
                 lv_memset(mask_buf + clipped_w * h, opa, clipped_w);
-                blend_dsc.mask_res = lv_draw_sw_mask_apply(mask_list, mask_buf + clipped_w * h, blend_area.x1,
-                                                           top_y, clipped_w);
+                lv_draw_sw_mask_apply(mask_list, mask_buf + clipped_w * h, blend_area.x1,
+                                      top_y, clipped_w);
                 /* Initialize the mask to opa instead of 0xFF and blend with LV_OPA_COVER.
                  * It saves calculating the final opa in lv_draw_sw_blend*/
             }
+            blend_area.y1 = bg_coords.y1;
+            blend_area.y2 = bg_coords.y1 + rout - 1;
+            blend_area.x1 = clipped_coords.x1;
+            blend_area.x2 = clipped_coords.x2;
 
             uint32_t fill_color = lv_ppe_get_color(dsc->color, 0xFF);
             lv_area_t top_draw;
@@ -170,6 +170,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
             source.format = PPE_A8;
             source.opacity = 0xFF;
             source.const_color = fill_color;
+
             ppe_buffer_t target;
             memset(&target, 0, sizeof(ppe_buffer_t));
             target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
@@ -190,15 +191,12 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 
                 ppe_matrix_t inv;
                 ppe_get_identity(&inv);
-                inv.m[0][2] = -bg_coords.x1;
-                inv.m[1][2] = -bg_coords.y1;
-                ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1,
-                              &inv);
+                inv.m[0][2] = draw_unit->target_layer->buf_area.x1 - clipped_coords.x1;
+                inv.m[1][2] = draw_unit->target_layer->buf_area.y1 - bg_coords.y1;
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&top_draw,
                                                PPE_BLEND_PREMULTIPLY);
             }
-
             blend_area.y1 = bg_coords.y2 - rout + 1;
             blend_area.y2 = bg_coords.y2;
             lv_area_t bottom_draw;
@@ -215,7 +213,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                 ppe_get_identity(&inv);
                 inv.m[1][2] = rout - 1;
                 ppe_reflect(false, true, &inv);
-                ppe_translate(draw_unit->target_layer->buf_area.x1 - bg_coords.x1, \
+                ppe_translate(draw_unit->target_layer->buf_area.x1 - clipped_coords.x1, \
                               draw_unit->target_layer->buf_area.y1 - bg_coords.y2 + rout - 1, &inv);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&bottom_draw,
@@ -224,14 +222,11 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
         }
         else
         {
-
-
             mask_buf = lv_malloc(clipped_w);
             lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_coords, rout, false);
             mask_list[0] = &mask_rout_param;
-            mask_buf = lv_malloc(clipped_w);
-            lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_coords, rout, false);
-            mask_list[0] = &mask_rout_param;
+            blend_dsc.mask_buf = mask_buf;
+            PPE_Finish();
             for (h = 0; h < rout; h++)
             {
                 int32_t top_y = bg_coords.y1 + h;
