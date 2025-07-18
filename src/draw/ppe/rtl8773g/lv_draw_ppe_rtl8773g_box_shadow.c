@@ -721,37 +721,51 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
         {
             if (!simple_sub)
             {
+                lv_draw_sw_mask_res_t mask_res = LV_DRAW_SW_MASK_RES_FULL_COVER;
                 for (y = clip_area_sub.y1; y <= clip_area_sub.y2; y++)
                 {
-                    lv_memset(mask_buf, 0xff, w);
-                    lv_draw_sw_mask_apply(masks, mask_buf + w * (y - clip_area_sub.y1), clip_area_sub.x1, y, w);
+                    lv_memset(mask_buf + w * (y - clip_area_sub.y1), 0xff, w);
+                    lv_draw_sw_mask_res_t loop_res = lv_draw_sw_mask_apply(masks, mask_buf + w * (y - clip_area_sub.y1),
+                                                                           clip_area_sub.x1, y, w);
+                    if (loop_res != LV_DRAW_SW_MASK_RES_FULL_COVER)
+                    {
+                        mask_res = LV_DRAW_SW_MASK_RES_CHANGED;
+                    }
                 }
-                ppe_get_identity(&inverse);
-                inverse.m[0][2] = -clip_area_sub.x1;
-                inverse.m[1][2] = -clip_area_sub.y1;
-                source.address = (uint32_t)mask_buf;
-                source.width = w;
-                source.height = clip_area_sub.y2 - clip_area_sub.y1 + 1;
-                source.stride = w;
-                PPE_Finish();
-                PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
-                                               PPE_BLEND_PREMULTIPLY);
+                if (mask_res == LV_DRAW_SW_MASK_RES_FULL_COVER)
+                {
+                    PPE_Finish();
+                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
+                                 draw_unit->target_layer->buf_area.y1);
+                    PPE_Mask(&target, source.const_color, (ppe_rect_t *)&clip_area_sub);
+                }
+                else
+                {
+                    ppe_get_identity(&inverse);
+                    inverse.m[0][2] = -clip_area_sub.x1;
+                    inverse.m[1][2] = -clip_area_sub.y1;
+                    source.address = (uint32_t)mask_buf;
+                    source.width = w;
+                    source.height = clip_area_sub.y2 - clip_area_sub.y1 + 1;
+                    source.stride = w;
+                    PPE_Finish();
+                    PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
+                                                   PPE_BLEND_PREMULTIPLY);
+                }
             }
             else
             {
-                uint32_t color = lv_ppe_get_color(dsc->color, dsc->opa);
                 PPE_Finish();
                 lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
                              draw_unit->target_layer->buf_area.y1);
-                PPE_Mask(&target, color, (ppe_rect_t *)&clip_area_sub);
-                blend_area.x1 = clip_area_sub.x1;
-                blend_area.x2 = clip_area_sub.x2;
+                PPE_Mask(&target, source.const_color, (ppe_rect_t *)&clip_area_sub);
             }
         }
+
+        PPE_Finish();
+        lv_free(sh_buf);
+        lv_free(mask_buf);
     }
-    PPE_Finish();
-    lv_free(sh_buf);
-    lv_free(mask_buf);
 }
 
 /**********************
