@@ -22,7 +22,6 @@
 #include "../../../misc/lv_assert.h"
 #include "../../../stdlib/lv_string.h"
 #include "../../lv_draw_mask.h"
-
 /*********************
  *      DEFINES
  *********************/
@@ -235,8 +234,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -244,8 +243,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -253,8 +252,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             }
             else
             {
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
@@ -286,7 +285,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             ppe_get_identity(&inverse);
             inverse.m[1][2] = corner_size - 1;
             ppe_reflect(false, true, &inverse);
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
 
             if (!simple_sub)
             {
@@ -298,8 +298,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -307,8 +307,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -316,8 +316,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             }
             else
             {
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
@@ -345,7 +345,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
         {
             ppe_get_identity(&inverse);
             inverse.m[0][0] = 0;
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
 
             if (!simple_sub)
             {
@@ -357,8 +358,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -366,8 +367,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -376,8 +377,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             else
             {
                 PPE_Finish();
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
             }
@@ -401,7 +402,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             inverse.m[0][0] = 0;
             ppe_translate(0, corner_size - 1, &inverse);
             ppe_reflect(false, true, &inverse);
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
 
             if (!simple_sub)
             {
@@ -413,8 +415,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -422,8 +424,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -432,8 +434,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             else
             {
                 PPE_Finish();
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
             }
@@ -465,8 +467,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
         if (w > 0)
         {
             ppe_get_identity(&inverse);
-            inverse.m[0][2] = -blend_area.x1;
-            inverse.m[1][2] = -blend_area.y1;
+            inverse.m[0][2] = draw_unit->target_layer->buf_area.x1 - blend_area.x1;
+            inverse.m[1][2] = draw_unit->target_layer->buf_area.y1 - blend_area.y1;
             source.address = (uint32_t)sh_buf_tmp;
             source.stride = 0;
             source.height = blend_area.y2 - blend_area.y1 + 1;
@@ -480,8 +482,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -489,8 +491,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -498,8 +500,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             }
             else
             {
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
@@ -536,7 +538,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             ppe_get_identity(&inverse);
             ppe_translate(corner_size - 1, 0, &inverse);
             ppe_reflect(true, false, &inverse);
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
             source.address = (uint32_t)sh_buf_tmp;
             source.stride = 0;
             source.height = blend_area.y2 - blend_area.y1 + 1;
@@ -550,8 +553,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -559,8 +562,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -603,7 +606,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             ppe_get_identity(&inverse);
             inverse.m[0][2] = corner_size - 1;
             ppe_reflect(true, false, &inverse);
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
 
             if (!simple_sub)
             {
@@ -615,8 +619,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -624,8 +628,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -633,8 +637,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             }
             else
             {
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
@@ -666,7 +670,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             inverse.m[0][2] = corner_size - 1;
             inverse.m[1][2] = corner_size - 1;
             ppe_reflect(true, true, &inverse);
-            ppe_translate(-blend_area.x1, -blend_area.y1, &inverse);
+            ppe_translate(draw_unit->target_layer->buf_area.x1 - blend_area.x1,
+                          draw_unit->target_layer->buf_area.y1 - blend_area.y1, &inverse);
 
             if (!simple_sub)
             {
@@ -678,8 +683,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                     subtract_intersection(&clip_area_sub, &delete_area, sub_area, &area_cnt);
                     for (int i = 0; i < area_cnt; i++)
                     {
-                        lv_area_move(&sub_area[i], draw_unit->target_layer->buf_area.x1,
-                                     draw_unit->target_layer->buf_area.y1);
+                        lv_area_move(&sub_area[i], -draw_unit->target_layer->buf_area.x1,
+                                     -draw_unit->target_layer->buf_area.y1);
                         PPE_Finish();
                         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&sub_area[i],
                                                        PPE_BLEND_PREMULTIPLY);
@@ -687,8 +692,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -696,8 +701,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             }
             else
             {
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
@@ -735,19 +740,21 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 if (mask_res == LV_DRAW_SW_MASK_RES_FULL_COVER)
                 {
                     PPE_Finish();
-                    lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                                 draw_unit->target_layer->buf_area.y1);
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Mask(&target, source.const_color, (ppe_rect_t *)&clip_area_sub);
                 }
                 else
                 {
                     ppe_get_identity(&inverse);
-                    inverse.m[0][2] = -clip_area_sub.x1;
-                    inverse.m[1][2] = -clip_area_sub.y1;
+                    inverse.m[0][2] = draw_unit->target_layer->buf_area.x1 - clip_area_sub.x1;
+                    inverse.m[1][2] = draw_unit->target_layer->buf_area.y1 - clip_area_sub.y1;
                     source.address = (uint32_t)mask_buf;
                     source.width = w;
                     source.height = clip_area_sub.y2 - clip_area_sub.y1 + 1;
                     source.stride = w;
+                    lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                                 -draw_unit->target_layer->buf_area.y1);
                     PPE_Finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                    PPE_BLEND_PREMULTIPLY);
@@ -756,8 +763,8 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             else
             {
                 PPE_Finish();
-                lv_area_move(&clip_area_sub, draw_unit->target_layer->buf_area.x1,
-                             draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -draw_unit->target_layer->buf_area.x1,
+                             -draw_unit->target_layer->buf_area.y1);
                 PPE_Mask(&target, source.const_color, (ppe_rect_t *)&clip_area_sub);
             }
         }
