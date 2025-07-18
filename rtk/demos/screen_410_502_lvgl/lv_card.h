@@ -51,6 +51,9 @@ typedef struct
     int16_t stack_location;      // the distance from stack location to the screen bottom, only support CARD_STACK style
     uint8_t keep_card_num;       // Number of created notes.
     uint16_t created_card_index; // Index of the last created card.
+    int16_t speed;
+    int16_t record[5];
+    lv_timer_t *timer;           // Timer for inertial motion
 
     void (* card_design)(lv_obj_t *obj, void *param);
     void *design_param;
@@ -103,4 +106,4 @@ void lv_card_view_set_number(lv_obj_t *card_view, int16_t total_num);
 } /*extern "C"*/
 #endif
 
-#endif /*LV_CUSTOM_TILE_SLIDE_H*/
+#endif /*LV_CARD_H*/

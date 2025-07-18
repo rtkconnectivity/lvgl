@@ -27,6 +27,8 @@ extern const lv_image_dsc_t ui_clock_heartrate_icon;
 extern const lv_image_dsc_t ui_clock_music_icon;
 extern const lv_image_dsc_t ui_iwatch_icon;
 extern const lv_image_dsc_t ui_line_still;
+extern const lv_image_dsc_t ui_menu_card;
+extern const lv_image_dsc_t ui_menu_cellular;
 extern const lv_image_dsc_t ui_message_icon;
 extern const lv_image_dsc_t ui_person_icon;
 extern const lv_image_dsc_t w3w;

@@ -28,6 +28,33 @@ static lv_obj_t *clock_circle, *clock_tab;
  **********************/
 static void timer_cb(lv_timer_t *timer)
 {
+    lv_obj_t *card_view = lv_timer_get_user_data(timer);
+    CardViewData *view_data = lv_obj_get_user_data(card_view);
+    if (clock_circle && clock_tab)
+    {
+        if (view_data->offset < 32)
+        {
+            lv_obj_add_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_remove_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+            lv_obj_remove_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+
+    static uint16_t time_cnt = 0;
+    time_cnt++;
+    if (time_cnt < 300)
+    {
+        return;
+    }
+    else
+    {
+        time_cnt = 0;
+    }
+
     {
         lv_obj_t *hour_decimal = lv_obj_get_child(clock_circle, 0);
         lv_image_set_src(hour_decimal, text_num_array[watch_time.tm_hour / 10]);
@@ -93,21 +120,6 @@ static void scr_tile_down_event_cb(lv_event_t *e)
         lv_obj_add_flag(tileview, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_add_flag(cardview, LV_OBJ_FLAG_CLICKABLE);
     }
-
-    if (clock_circle && clock_tab)
-    {
-        if (view_data->offset < 32)
-        {
-            lv_obj_add_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_remove_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-            lv_obj_remove_flag(clock_circle, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
-        }
-    }
-
 }
 
 static void enter_music_cb(lv_event_t *e)
@@ -141,8 +153,17 @@ static void enter_activity_cb(lv_event_t *e)
 static void enter_app_menu_cb(lv_event_t *e)
 {
     if (!custom_judge_short_click()) { return; }
-    custom_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                         lv_app_menu_init, false);
+    extern bool is_card_menu;
+    if (is_card_menu)
+    {
+        custom_screen_change(&scr_app_menu_card, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_card_init, false);
+    }
+    else
+    {
+        custom_screen_change(&scr_app_menu_cellular, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_cellular_init, false);
+    }
 }
 
 static void create_weather_card(lv_obj_t *parent)
@@ -410,6 +431,7 @@ void lv_tile_down_init(void)
         lv_image_set_src(clock_tab, &option_bar_bg);
         lv_obj_set_align(clock_tab, LV_ALIGN_TOP_MID);
         lv_obj_remove_flag(clock_tab, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_flag(clock_tab, LV_OBJ_FLAG_HIDDEN);
 
         char content[10];
         sprintf(content, "%s %d\n", day[watch_time.tm_wday], watch_time.tm_mday);
@@ -426,7 +448,6 @@ void lv_tile_down_init(void)
                                      &SourceHanSansSC_size24_bits1_font);
         lv_obj_remove_flag(time_label, LV_OBJ_FLAG_CLICKABLE);
     }
-    lv_timer_t *timer = lv_timer_create(timer_cb, 30000, scr_tile_center);
-    lv_timer_set_repeat_count(timer, -1);
+    lv_timer_t *timer = lv_timer_create(timer_cb, 10, card_view);
     lv_obj_add_event_cb(scr_tile_down, scr_tile_down_event_cb, LV_EVENT_ALL, card_view);
 }

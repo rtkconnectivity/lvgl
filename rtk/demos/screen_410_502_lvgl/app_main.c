@@ -91,6 +91,12 @@ SLIDE_EFFECT global_slide = SCALE;
  **********************/
 void watch_demo_init(void)
 {
+    // lv_obj_t *example_card_stack(lv_obj_t *parent);
+    // example_card_stack(lv_screen_active());
+    // lv_obj_t *example_cellular(lv_obj_t *parent);
+    // example_cellular(lv_screen_active());
+    // return;
+
     ui_other_component_init();
 
     tileview = lv_tileview_create(NULL);
@@ -220,8 +226,17 @@ static void enter_menu_cb(lv_event_t *event)
     if (enter_menu_flag && code < LV_EVENT_COVER_CHECK)
     {
         enter_menu_flag = false;
-        custom_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                             lv_app_menu_init, 0);
+        extern bool is_card_menu;
+        if (is_card_menu)
+        {
+            custom_screen_change(&scr_app_menu_card, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_menu_card_init, true);
+        }
+        else
+        {
+            custom_screen_change(&scr_app_menu_cellular, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_menu_cellular_init, true);
+        }
         return;
     }
     while (indev)

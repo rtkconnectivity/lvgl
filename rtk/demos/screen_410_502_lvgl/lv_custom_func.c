@@ -151,7 +151,7 @@ void custom_remove_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
 {
     lv_obj_remove_flag(obj, flag);
     // iterate over all child widgets
-    uint32_t child_cnt = lv_obj_get_child_cnt(obj);
+    uint32_t child_cnt = lv_obj_get_child_count(obj);
     for (uint32_t i = 0; i < child_cnt; i++)
     {
         lv_obj_t *child = lv_obj_get_child(obj, i);
@@ -165,7 +165,7 @@ void custom_add_flag_recursive(lv_obj_t *obj, lv_obj_flag_t flag)
 {
     lv_obj_add_flag(obj, flag);
     // iterate over all child widgets
-    uint32_t child_cnt = lv_obj_get_child_cnt(obj);
+    uint32_t child_cnt = lv_obj_get_child_count(obj);
     for (uint32_t i = 0; i < child_cnt; i++)
     {
         lv_obj_t *child = lv_obj_get_child(obj, i);

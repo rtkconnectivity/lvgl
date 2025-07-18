@@ -346,7 +346,17 @@ static void heartrate_cb(lv_event_t *event)
 
 static void enter_menu_cb(lv_event_t *event)
 {
-    custom_screen_change(&scr_app_menu, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0, lv_app_menu_init, 0);
+    extern bool is_card_menu;
+    if (is_card_menu)
+    {
+        custom_screen_change(&scr_app_menu_card, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_card_init, 0);
+    }
+    else
+    {
+        custom_screen_change(&scr_app_menu_cellular, NULL, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                             lv_app_menu_cellular_init, 0);
+    }
 }
 
 static void weather_cb(lv_event_t *event)

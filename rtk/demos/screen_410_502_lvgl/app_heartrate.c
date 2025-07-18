@@ -31,8 +31,17 @@ static void exit_app_heartrate(void)
 {
     if (enter_menu_flag)
     {
-        custom_screen_change(&scr_app_menu, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
-                             lv_app_menu_init, true);
+        extern bool is_card_menu;
+        if (is_card_menu)
+        {
+            custom_screen_change(&scr_app_menu_card, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_menu_card_init, true);
+        }
+        else
+        {
+            custom_screen_change(&scr_app_menu_cellular, &scr_app_heartrate, LV_SCR_LOAD_ANIM_FADE_OUT, 300, 0,
+                                 lv_app_menu_cellular_init, true);
+        }
     }
     else
     {

@@ -289,6 +289,28 @@ const lv_image_dsc_t ui_line_still =
     .data = UI_LINE_STILL_BIN + 8
 };
 
+const lv_image_dsc_t ui_menu_card =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 170,
+    .header.h = 56,
+    .header.stride = 680,
+    .data_size = 38080,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_MENU_CARD_BIN + 8
+};
+
+const lv_image_dsc_t ui_menu_cellular =
+{
+    .header.magic = LV_IMAGE_HEADER_MAGIC,
+    .header.w = 235,
+    .header.h = 56,
+    .header.stride = 940,
+    .data_size = 52640,
+    .header.cf = LV_COLOR_FORMAT_ARGB8888,
+    .data = UI_MENU_CELLULAR_BIN + 8
+};
+
 const lv_image_dsc_t ui_message_icon =
 {
     .header.magic = LV_IMAGE_HEADER_MAGIC,
