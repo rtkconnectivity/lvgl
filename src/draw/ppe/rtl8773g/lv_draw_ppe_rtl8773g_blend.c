@@ -8,6 +8,7 @@
  *********************/
 #include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773G
+#if LV_USE_PPE_BLEND
 #include "../../../misc/lv_area_private.h"
 #include "../../sw/lv_draw_sw_mask_private.h"
 #include "lv_draw_ppe_rtl8773g.h"
@@ -773,6 +774,6 @@ lv_result_t lv_blend_rgb888_image_to_argb8888_ppe(lv_draw_sw_blend_image_dsc_t *
     PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
     return LV_RESULT_OK;
 }
-
+#endif
 #endif /*LV_USE_PPE*/
 

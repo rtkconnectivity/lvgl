@@ -325,6 +325,7 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_mask_rect.c
     ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_support.c
     ${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_box_shadow.c
+	${LVGL_DIR}/src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g_blend.c
 
     ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk.c
     ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk_letter.c

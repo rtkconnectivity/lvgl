@@ -29,7 +29,9 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
+#if LV_USE_DRAW_SW_ASM == LV_DRAW_SW_ASM_CUSTOM
 #define LV_USE_PPE_BLEND 1
+#endif
 /**********************
  *      TYPEDEFS
  **********************/
