@@ -19,12 +19,11 @@
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
+#include "hack_lv_draw_buf.h"
 
 #include "ui.h"
 
-
-
-#ifdef CONFIG_SOC_SERIES_RTL87x3G
+#ifdef CONFIG_SOC_SERIES_RTL87X3G
 #include "..\..\..\rtl87x3g\platform\inc\address_map.h"
 #endif
 
