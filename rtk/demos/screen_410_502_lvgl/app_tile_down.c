@@ -65,7 +65,7 @@ static void timer_cb(lv_timer_t *timer)
         lv_obj_t *minute_singel = lv_obj_get_child(clock_circle, 3);
         lv_image_set_src(minute_singel, text_num_array[watch_time.tm_min % 10]);
         lv_obj_t *date_label = lv_obj_get_child(clock_circle, -1);
-        char content[10];
+        char content[30];
         sprintf(content, "%s%d\n%s", month[watch_time.tm_mon], watch_time.tm_mday,
                 day[watch_time.tm_wday]);
         lv_label_set_text(date_label, content);
