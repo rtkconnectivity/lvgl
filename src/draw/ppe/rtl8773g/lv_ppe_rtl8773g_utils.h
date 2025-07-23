@@ -39,10 +39,16 @@ PPE_ERR lv_ppe_recolor(ppe_buffer_t *image, ppe_buffer_t *buffer, ppe_rect_t *re
 
 uint8_t *lv_ppe_get_buffer(uint32_t size);
 
-PPE_PIXEL_FORMAT lv_ppe_get_format(lv_color_format_t cf, const uint8_t *content);
+PPE_PIXEL_FORMAT lv_ppe_get_format(lv_color_format_t cf);
 
 lv_area_t lv_ppe_get_matrix_area(ppe_matrix_t *matrix, const lv_area_t *coords,
                                  const lv_draw_image_dsc_t *draw_dsc);
+
+void lv_ppe_get_matrix(ppe_matrix_t *matrix, const lv_area_t *coords,
+                       const lv_draw_image_dsc_t *draw_dsc);
+
+void lv_ppe_get_inverse_matrix(ppe_matrix_t *matrix, const lv_area_t *coords,
+                               const lv_draw_image_dsc_t *draw_dsc);
 
 bool lv_ppe_get_area(ppe_rect_t *result_rect, ppe_rect_t *source_rect, ppe_matrix_t *matrix);
 

@@ -181,7 +181,7 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             const lv_draw_image_dsc_t *draw_dsc = (lv_draw_image_dsc_t *) task->draw_dsc;
             lv_layer_t *layer = (lv_layer_t *)draw_dsc->src;
 
-            if (lv_ppe_get_format(layer->color_format, layer->draw_buf->data) == PPE_FORMAT_NOT_SUPPORT)
+            if (lv_ppe_get_format(layer->color_format) == PPE_FORMAT_NOT_SUPPORT)
             {
                 return 0;
             }
@@ -218,7 +218,7 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             }
 
             lv_color_format_t cf = draw_dsc->header.cf;
-            PPE_PIXEL_FORMAT format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
+            PPE_PIXEL_FORMAT format = lv_ppe_get_format(img_dsc->header.cf);
             uint32_t recolor = lv_ppe_get_color(draw_dsc->recolor, 0);
             if (format == PPE_FORMAT_NOT_SUPPORT || (format == PPE_A8 && recolor != 0))
             {

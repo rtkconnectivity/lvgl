@@ -38,6 +38,10 @@
  *  STATIC PROTOTYPES
  **********************/
 
+static void img_draw_core(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+                          const lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
+                          const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
+
 static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords);
 static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
@@ -89,7 +93,6 @@ void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image
 }
 #endif
 
-#include "trace.h"
 void lv_draw_ppe_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                        const lv_area_t *coords)
 {
@@ -100,7 +103,7 @@ void lv_draw_ppe_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 
     if (!draw_dsc->tile)
     {
-        lv_draw_ppe_normal(draw_unit, draw_dsc, coords);
+        lv_draw_image_normal_helper(draw_unit, draw_dsc, coords, img_draw_core);
     }
     else
     {
@@ -124,7 +127,6 @@ void lv_draw_ppe_layer(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-#include "trace.h"
 static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords)
 {
@@ -151,7 +153,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     }
 
 
-//    DBG_DIRECT("blend mode %d", draw_dsc->blend_mode);
     target.format = PPE_ABGR8888;
     switch (draw_unit->target_layer->color_format)
     {
@@ -183,10 +184,9 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
 
     PPE_BLEND_METHOD method = PPE_BLEND_PREMULTIPLY;
 
-    source.format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
+    source.format = lv_ppe_get_format(img_dsc->header.cf);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
 
-//    DBG_DIRECT("%s src ft %d dst ft %d", compressed?"compressed":"uncompressed", source.format, target.format);
     source.address = (uint32_t)img_dsc->data;
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
@@ -341,7 +341,6 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
 //        uint32_t idu1 = sys_timestamp_get_us();
         IDU_ERROR err_code = IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
 //        uint32_t idu2 = sys_timestamp_get_us();
-//        DBG_DIRECT("IDU consume %d us || %d ms", idu2 - idu1, (idu2 - idu1) / 1000);
         source.address = (uint32_t)pic_buffer;
         source.width = image_width;
         source.height = image_height;
@@ -438,7 +437,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     ppe_buffer_t target, source;
     memset(&target, 0, sizeof(ppe_buffer_t));
     memset(&source, 0, sizeof(ppe_buffer_t));
-    source.format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
+    source.format = lv_ppe_get_format(img_dsc->header.cf);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
     if (img_dsc->header.cf == LV_COLOR_FORMAT_RAW)
     {
@@ -647,6 +646,154 @@ skip_ppe:
     LV_PROFILER_DRAW_END;
 }
 
+static void img_draw_core(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+                          const lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
+                          const lv_area_t *img_coords, const lv_area_t *clipped_img_area)
+{
+    const lv_draw_buf_t *decoded = decoder_dsc->decoded;
+    const uint8_t *src_buf = decoded->data;
+    const lv_image_header_t *header = &decoded->header;
+    uint32_t img_stride = decoded->header.stride;
+    lv_color_format_t cf = decoded->header.cf;
+
+    LV_PROFILER_DRAW_BEGIN;
+    lv_layer_t *layer = draw_unit->target_layer;
+    const lv_image_dsc_t *img_dsc = draw_dsc->src;
+
+    lv_area_t constraint_area;
+    bool compressed = false;
+    if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, clipped_img_area))
+    {
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    bool transform = (draw_dsc->scale_x != LV_SCALE_NONE || draw_dsc->scale_y != LV_SCALE_NONE\
+                      || draw_dsc->rotation != 0 || draw_dsc->skew_x != 0 || draw_dsc->skew_y != 0);
+    ppe_buffer_t target, source;
+    memset(&target, 0, sizeof(ppe_buffer_t));
+    memset(&source, 0, sizeof(ppe_buffer_t));
+
+    target.format = PPE_ABGR8888;
+    switch (draw_unit->target_layer->color_format)
+    {
+    case LV_COLOR_FORMAT_RGB565:
+        target.format = PPE_RGB565;
+        break;
+    case LV_COLOR_FORMAT_ARGB8888:
+        target.format = PPE_ARGB8888;
+        break;
+    case LV_COLOR_FORMAT_RGB888:
+        target.format = PPE_RGB888;
+        break;
+    case LV_COLOR_FORMAT_XRGB8888:
+        target.format = PPE_XRGB8888;
+        break;
+    default:
+        lv_draw_sw_image(draw_unit, draw_dsc, img_coords);
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
+    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.stride = target.width;
+    target.win_x_min = 0;
+    target.win_x_max = target.width - 1;
+    target.win_y_min = 0;
+    target.win_y_max = target.height - 1;
+
+    PPE_BLEND_METHOD method = PPE_BLEND_PREMULTIPLY;
+
+    source.format = lv_ppe_get_format(decoded->header.cf);
+    uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
+
+    source.address = (uint32_t)src_buf;
+    source.width = decoded->header.w;
+    source.height = decoded->header.h;
+    source.high_quality = false;
+    if (img_stride != 0)
+    {
+        source.stride = img_stride / pixel_byte;
+    }
+    else
+    {
+        source.stride = decoded->header.w;
+    }
+    source.opacity = draw_dsc->opa;
+    source.win_x_min = target.win_x_min;
+    source.win_x_max = target.win_x_max;
+    source.win_y_min = target.win_y_min;
+    source.win_y_max = target.win_y_max;
+    source.const_color = 0xFFFFFFFF;
+
+    if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
+        draw_dsc->opa == 0xFF && draw_dsc->rotation == 0)
+    {
+        method = PPE_BLEND_BYPASS;
+    }
+
+
+    uint32_t src_stride = 0;
+    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+        target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
+    {
+        int16_t target_x = constraint_area.x1 - draw_unit->target_layer->buf_area.x1;
+        int16_t target_y = constraint_area.y1 - draw_unit->target_layer->buf_area.y1;
+        uint32_t length = lv_area_get_width(&constraint_area) * pixel_byte;
+        uint32_t height = lv_area_get_height(&constraint_area);
+        if (img_dsc->header.stride != 0)
+        {
+            src_stride = img_dsc->header.stride;
+        }
+        else
+        {
+            src_stride = img_dsc->header.w * pixel_byte;
+        }
+        uint32_t dst_stride = target.width * pixel_byte;
+        uint32_t dst_addr = target.address + (target.stride * target_y + target_x) * pixel_byte;
+
+        uint32_t src_addr = source.address + (source.stride * (constraint_area.y1 - img_coords->y1) +
+                                              (constraint_area.x1 - img_coords->x1)) * pixel_byte;
+        lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    ppe_matrix_t inverse, pre_trans;
+
+    lv_ppe_get_inverse_matrix(&inverse, img_coords, draw_dsc);
+    ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1, &inverse);
+
+    if (draw_dsc->recolor_opa >= LV_OPA_MIN)
+    {
+        uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
+        ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
+        PPE_Finish();
+        PPE_Mask(&source, recolor_value, &recolor_rect);
+    }
+
+    lv_area_move(&constraint_area, -draw_unit->target_layer->buf_area.x1,
+                 -draw_unit->target_layer->buf_area.y1);
+
+    if (draw_dsc->antialias && ppe_matrix_is_complex(&inverse))
+    {
+        source.high_quality = true;
+    }
+//    uint32_t ppe1 = sys_timestamp_get_us();
+
+    PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
+                                   method);
+    PPE_Finish();
+//    uint32_t ppe2 = sys_timestamp_get_us();
+    if (err == PPE_SUCCESS)
+    {
+
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    LV_PROFILER_DRAW_END;
+    return;
+}
+
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords, lv_matrix_t *matrix)
@@ -718,7 +865,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
 
     PPE_BLEND_METHOD method = PPE_BLEND_PREMULTIPLY;
 
-    source.format = lv_ppe_get_format(img_dsc->header.cf, img_dsc->data);
+    source.format = lv_ppe_get_format(img_dsc->header.cf);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
 
     source.address = (uint32_t)img_dsc->data;
