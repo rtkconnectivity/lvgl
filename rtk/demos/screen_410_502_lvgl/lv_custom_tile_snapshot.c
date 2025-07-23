@@ -212,14 +212,16 @@ static void snapshot_custom_cb_create(lv_event_t *e)
         {
             uint8_t *fb = lv_display_get_buf_active(NULL)->data;
             create_snapshot_copy(widget, img_snapshot, fb);
+            LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
+            return;
         }
         else if (lv_display_get_user_data(NULL) != NULL)
         {
             uint8_t *fb = lv_display_get_user_data(NULL);
             create_snapshot_copy(widget, img_snapshot, fb);
+            LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
+            return;
         }
-        LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
-        return;
     }
     create_snapshot_normal(widget, img_snapshot);
 }

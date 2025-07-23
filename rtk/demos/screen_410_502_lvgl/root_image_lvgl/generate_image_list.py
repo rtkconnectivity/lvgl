@@ -43,10 +43,11 @@ def parse_bin_file(file_path):
 
         compress = data[0]
         if compress != 0:
-            color_space = "LV_COLOR_FORMAT_RAW"
-            data_name = file_name.upper().replace('.', '_')
+            flags = "LV_IMAGE_FLAGS_USER1"
         else:
-            data_name = file_name.upper().replace('.', '_') + " + 8"
+            flags = "0"
+
+        data_name = file_name.upper().replace('.', '_') + " + 8"
 
         # Read the 3rd and 4th bytes to determine the width W, note that the low byte comes first
         width = struct.unpack('<H', data[2:4])[0]
@@ -66,6 +67,7 @@ def parse_bin_file(file_path):
             'stride': stride,
             'data_size': data_size,
             'color_space': color_space,
+            'flags': flags,
             'data_name': data_name
         }
 
@@ -86,7 +88,8 @@ def generate_c_file(bin_file_data, output_c_file, output_h_file):
             f_c.write(f"    .header.stride = {data['stride']},\n")
             f_c.write(f"    .data_size = {data['data_size']},\n")
             f_c.write(f"    .header.cf = {data['color_space']},\n")
-            f_c.write(f"    .data = {data['data_name']}\n")
+            f_c.write(f"    .header.flags = {data['flags']},\n")
+            f_c.write(f"    .data = (uint8_t *){data['data_name']}\n")
             f_c.write("};\n\n")
 
     # Generate the .h file

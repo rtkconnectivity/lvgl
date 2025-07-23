@@ -18,12 +18,10 @@ extern "C" {
 #include "stdlib.h"
 #include "lvgl.h"
 
-#include "lv_display_private.h"
-#include "lv_tileview_private.h"
-#include "lv_area_private.h"
+#include "../../../../src/lvgl_private.h"
 
 #if LV_USE_MATRIX
-#include "lv_matrix.h"
+#include "../../../../src/misc/lv_matrix.h"
 #endif
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 #include "lv_custom_matrix.h"

@@ -8,7 +8,7 @@
  *********************/
 #include <math.h>
 #include "lv_custom_func.h"
-#include "lv_indev_private.h"
+#include "../../../../src/lvgl_private.h"
 
 /*********************
  *      DEFINES

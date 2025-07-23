@@ -91,12 +91,6 @@ SLIDE_EFFECT global_slide = SCALE;
  **********************/
 void watch_demo_init(void)
 {
-    // lv_obj_t *example_card_stack(lv_obj_t *parent);
-    // example_card_stack(lv_screen_active());
-    // lv_obj_t *example_cellular(lv_obj_t *parent);
-    // example_cellular(lv_screen_active());
-    // return;
-
     ui_other_component_init();
 
     tileview = lv_tileview_create(NULL);

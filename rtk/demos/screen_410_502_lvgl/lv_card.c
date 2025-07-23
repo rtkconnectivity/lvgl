@@ -105,7 +105,7 @@ static void update_card_transform(lv_obj_t *card, lv_obj_t *parent)
         float scale_range = 0.5f;
         int32_t scope = screen_h;
         int32_t diff = screen_h / 2 - location - view_data->card_height / 2;
-        diff = abs(diff);
+        diff = LV_ABS(diff);
         if (diff > scope / 2) { diff = scope / 2;}
         float scale = 1.0f - scale_range * diff / (scope / 2.0f);
         lv_obj_set_style_transform_pivot_x(card, LV_PCT(50), 0);
@@ -165,7 +165,7 @@ static void lv_card_auto_create(lv_obj_t *card_view)
     if (child_count == 0)
     {
         lv_obj_t *card = lv_card_create(card_view,
-                                        abs(view_data->offset) / (view_data->card_height + view_data->card_space));
+                                        LV_ABS(view_data->offset) / (view_data->card_height + view_data->card_space));
         update_card_transform(card, card_view);
     }
 

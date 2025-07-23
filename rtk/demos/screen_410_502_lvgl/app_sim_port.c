@@ -92,7 +92,7 @@ static void port_log(lv_log_level_t level, const char *buf)
 static void load_ui_source(void)
 {
     int fd;
-    fd = open("../demos/screen_410_502_lvgl/root_image_lvgl/root(0x02542400).bin", 0);
+    fd = open("../demos/screen_410_502_lvgl/root_image_lvgl/root(0x704D1000).bin", 0);
     if (fd > 0)
     {
         printf("open root.bin Successful!\n");

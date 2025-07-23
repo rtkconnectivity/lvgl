@@ -18,9 +18,6 @@ extern "C" {
 #include "stdlib.h"
 
 #include "lvgl.h"
-#include "lv_draw_buf.h"
-#include "lv_snapshot.h"
-#include "lv_image.h"
 /*********************
  *      DEFINES
  *********************/

@@ -28,15 +28,16 @@
 #define APP_TASK_PRIORITY               1   /* Task priorities. */
 #define APP_TASK_STACK_SIZE             (512 * 24)
 
-#ifdef TARGET_RTL8773E
+#ifdef CONFIG_SOC_SERIES_RTL87x3E
 #define LV_USE_PSRAM         1
 #define PSRAM_BUF_SIZE       (3*1024*1024)
 #define PSRAM_BUF_ADDR       0x4100000
 #define CPU_FREQ             100000000
-#elif defined TARGET_RTL8773G
+#elif defined CONFIG_SOC_SERIES_RTL87X3G
 #define LV_USE_PSRAM         1
-#define PSRAM_BUF_SIZE       (3*1024*1024)
-#define PSRAM_BUF_ADDR       0x24000000
+#define PSRAM_BUF_SIZE       (4*1024*1024)
+#define PSRAM_BUF_ADDR       0x22000000
+// #define PSRAM_BUF_ADDR       0x24000000
 #define CPU_FREQ             200000000
 #else
 #define LV_USE_PSRAM         0
@@ -87,8 +88,6 @@ lv_tlsf_t draw_buf_tlfs;
 #endif
 
 void *lvgl_task_handle;
-static void *gui_timer0 = NULL;
-
 /**********************
  *      MACROS
  **********************/
@@ -157,11 +156,6 @@ static void port_log(lv_log_level_t level, const char *buf)
     }
 }
 
-static void lv_tick(void *pxTimer)
-{
-    lv_tick_inc(10);
-}
-
 static uint32_t sys_tick_get(void)
 {
     return sys_timestamp_get();
@@ -187,8 +181,6 @@ void my_profiler_init(void)
 #endif
 static void lvgl_demo_run(void *p)
 {
-    os_timer_create(&gui_timer0, "lvgl tick", 1, 10, true, lv_tick);
-    os_timer_start(&gui_timer0);
     lv_init();
     lv_psram_init((void *)PSRAM_BUF, PSRAM_BUF_SIZE);
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
@@ -203,6 +195,7 @@ static void lvgl_demo_run(void *p)
     DBG_DIRECT("LVGL start \n");
 
     lv_demo_benchmark();
+    // lv_demo_widgets();
     while (1)
     {
         // lv_obj_invalidate(lv_screen_active());

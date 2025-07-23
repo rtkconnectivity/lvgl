@@ -18,7 +18,7 @@ extern "C" {
 #include "stdlib.h"
 #include "lvgl.h"
 
-#include "lv_display_private.h"
+#include "../../../../src/lvgl_private.h"
 
 /*********************
  *      DEFINES
