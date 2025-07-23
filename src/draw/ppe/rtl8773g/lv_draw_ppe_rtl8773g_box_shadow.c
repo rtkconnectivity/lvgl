@@ -768,11 +768,10 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 PPE_Mask(&target, source.const_color, (ppe_rect_t *)&clip_area_sub);
             }
         }
-
-        PPE_Finish();
-        lv_free(sh_buf);
-        lv_free(mask_buf);
     }
+    PPE_Finish();
+    lv_free(sh_buf);
+    lv_free(mask_buf);
 }
 
 /**********************

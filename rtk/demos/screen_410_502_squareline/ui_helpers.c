@@ -161,14 +161,16 @@ static lv_obj_t *create_snapshot_obj_directly(lv_obj_t *parent, lv_obj_t *target
         {
             uint8_t *fb = lv_display_get_buf_active(NULL)->data;
             create_snapshot_copy(target, snapshot, fb);
+            LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
+            return snapshot;
         }
         else if (lv_display_get_user_data(NULL) != NULL)
         {
             uint8_t *fb = lv_display_get_user_data(NULL);
             create_snapshot_copy(target, snapshot, fb);
+            LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
+            return snapshot;
         }
-        LV_LOG_INFO("widget_area is equal to screen_area, goto create_snapshot_copy");
-        return snapshot;
     }
     create_snapshot_normal(target, snapshot);
 
