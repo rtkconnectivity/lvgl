@@ -828,7 +828,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         LV_PROFILER_DRAW_END;
         return;
     }
-    if (!lv_area_intersect(&constraint_area, &constraint_area, &draw_unit->clip_area))
+    if (!lv_area_intersect(&constraint_area, &constraint_area, draw_unit->clip_area))
     {
         LV_PROFILER_DRAW_END;
         return;
