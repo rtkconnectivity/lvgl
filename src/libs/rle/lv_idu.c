@@ -288,15 +288,17 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             return LV_RESULT_INVALID;
         }
 
-        dsc->decoded = lv_draw_buf_create_ex(image_cache_draw_buf_handlers, width, height, dsc->header.cf,
-                                             LV_STRIDE_AUTO);
-        if (dsc->decoded == NULL)
+        lv_draw_buf_t *decoded = lv_draw_buf_create_ex(image_cache_draw_buf_handlers, width, height,
+                                                       dsc->header.cf,
+                                                       LV_STRIDE_AUTO);
+        if (decoded == NULL)
         {
+            dsc->decoded = NULL;
             LV_LOG_ERROR("Failed to create draw buffer");
             return LV_RESULT_INVALID;  // Handle error appropriately
         }
-
-        uint8_t *img_data = (uint8_t *)dsc->decoded->data;
+        dsc->decoded = decoded;
+        uint8_t *img_data = (uint8_t *)decoded->data;
 
         lv_result_t ret;
 #if LV_USE_RTK_IDU_HW
@@ -304,11 +306,36 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         if (ret != LV_RESULT_OK)
         {
-            lv_draw_buf_destroy((void *)dsc->decoded);
+            lv_draw_buf_destroy((void *)decoded);
+            dsc->decoded = NULL;
             LV_LOG_ERROR("HW decompression failed ");
             return ret;
         }
-#endif
+
+        if (!lv_image_cache_is_enabled())
+        {
+            LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            return LV_RESULT_OK;
+        }
+
+        /*Add the decoded image to the cache*/
+        lv_image_cache_data_t search_key;
+        search_key.src_type = dsc->src_type;
+        search_key.src = dsc->src;
+        search_key.slot.size = decoded->data_size;
+
+        lv_cache_entry_t *entry = lv_image_decoder_add_to_cache(decoder, &search_key, decoded, NULL);
+
+        if (entry == NULL)
+        {
+            LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            return LV_RESULT_INVALID;
+        }
+        dsc->cache_entry = entry;
+
+        LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+        return LV_RESULT_OK;    /*If not returned earlier then it failed*/
+#else
 
         ret = decompress_rle_data(input_type, file, img_data, width, height);
         if (ret != LV_RESULT_OK)
@@ -317,9 +344,24 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             LV_LOG_ERROR("Decompression failed for input type: %c", input_type);
             return ret;
         }
+        /*Add the decoded image to the cache*/
+        lv_image_cache_data_t search_key;
+        search_key.src_type = dsc->src_type;
+        search_key.src = dsc->src;
+        search_key.slot.size = decoded->data_size;
 
-        // LV_LOG_INFO("Software decode success.");
-        return LV_RESULT_OK;
+        lv_cache_entry_t *entry = lv_image_decoder_add_to_cache(decoder, &search_key, decoded, NULL);
+
+        if (entry == NULL)
+        {
+            LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            return LV_RESULT_INVALID;
+        }
+        dsc->cache_entry = entry;
+
+        LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+        return LV_RESULT_OK;    /*If not returned earlier then it failed*/
+#endif
     }
     return LV_RESULT_INVALID;    /*If not returned earlier then it failed*/
 
@@ -328,14 +370,9 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 static void idu_decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc)
 {
     LV_UNUSED(decoder);
-    if (dsc->decoded)
-    {
-        if (!lv_image_cache_is_enabled() || (dsc->cache == NULL && dsc->cache_entry == NULL))
-        {
-            lv_draw_buf_destroy((void *)dsc->decoded);
-        }
-        dsc->decoded = NULL;
-    }
+
+    if (dsc->args.no_cache ||
+        !lv_image_cache_is_enabled()) { lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded); }
     LV_LOG_INFO("Closed IDU image");
 }
 
