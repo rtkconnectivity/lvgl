@@ -24,7 +24,7 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-#define LV_PPE_MAX_BUFFER_SIZE  (40 * 1024)
+#define LV_PPE_MAX_BUFFER_SIZE  (0 * 1024)
 
 /**********************
  *      TYPEDEFS

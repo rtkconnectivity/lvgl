@@ -20,7 +20,7 @@
 #include "rtl_idu_int.h"
 #include "string.h"
 
-SHM_DATA_SECTION uint8_t cache_buffer[40 * 1024];
+DSP_RAM_DATA_SECTION uint8_t cache_buffer[LV_PPE_MAX_BUFFER_SIZE];
 /*********************
  *      DEFINES
  *********************/
