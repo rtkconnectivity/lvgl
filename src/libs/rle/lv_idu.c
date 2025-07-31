@@ -250,6 +250,7 @@ static lv_result_t idu_decoder_info(lv_image_decoder_t *decoder, lv_image_decode
 static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc)
 {
     LV_UNUSED(decoder);
+    LV_PROFILER_DECODER_BEGIN_TAG("lv_idu_decoder_open");
     if (dsc->src_type == LV_IMAGE_SRC_FILE)
     {
         LV_LOG_ERROR("LV_IMAGE_SRC_FILE todo");
@@ -261,12 +262,14 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         if (image == NULL || image->data == NULL)
         {
             LV_LOG_ERROR("Invalid source descriptor or data");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
         LV_ASSERT(image != NULL);
         if (image->header.w == 0 || image->header.h == 0)
         {
             LV_LOG_ERROR("Invalid image dimensions");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
         uint16_t width = dsc->header.w;
@@ -285,6 +288,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         if (required_size == 0 || required_size > (10 * 1024 * 1024))
         {
             LV_LOG_ERROR("Invalid image size: %ux%u, required %u bytes", width, height, required_size);
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
 
@@ -295,6 +299,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         {
             dsc->decoded = NULL;
             LV_LOG_ERROR("Failed to create draw buffer");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;  // Handle error appropriately
         }
         dsc->decoded = decoded;
@@ -309,12 +314,14 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             lv_draw_buf_destroy((void *)decoded);
             dsc->decoded = NULL;
             LV_LOG_ERROR("HW decompression failed ");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return ret;
         }
 
         if (!lv_image_cache_is_enabled())
         {
             LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_OK;
         }
 
@@ -328,12 +335,12 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         if (entry == NULL)
         {
-            LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
 
-        LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+        LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
         return LV_RESULT_OK;    /*If not returned earlier then it failed*/
 #else
 
@@ -343,6 +350,11 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             lv_draw_buf_destroy((void *)dsc->decoded);
             LV_LOG_ERROR("Decompression failed for input type: %c", input_type);
             return ret;
+        }
+        if (!lv_image_cache_is_enabled())
+        {
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
+            return LV_RESULT_OK;
         }
         /*Add the decoded image to the cache*/
         lv_image_cache_data_t search_key;
@@ -354,15 +366,16 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         if (entry == NULL)
         {
-            LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+            LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
         dsc->cache_entry = entry;
 
-        LV_PROFILER_DECODER_END_TAG("lv_lodepng_decoder_open");
+        LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
         return LV_RESULT_OK;    /*If not returned earlier then it failed*/
 #endif
     }
+    LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
     return LV_RESULT_INVALID;    /*If not returned earlier then it failed*/
 
 }
