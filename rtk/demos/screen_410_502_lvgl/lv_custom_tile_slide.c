@@ -11,7 +11,7 @@
 #include "lv_obj_pos.h"
 
 #include "lv_img_dsc_list.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 
 /*********************
  *      DEFINES

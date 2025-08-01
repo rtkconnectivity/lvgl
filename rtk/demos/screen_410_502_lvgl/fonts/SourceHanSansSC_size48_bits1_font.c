@@ -4,7 +4,7 @@
  * Opts: --bpp 1 --size 48 --no-compress --font SourceHanSansSC.otf --range 32-126,176 --format lvgl -o SourceHanSansSC_size48_bits1_font.c
  ******************************************************************************/
 
-#include "app_main.h"
+#include "lvgl_watch.h"
 
 #ifndef SOURCEHANSANSSC_SIZE48_BITS1_FONT
 #define SOURCEHANSANSSC_SIZE48_BITS1_FONT 1

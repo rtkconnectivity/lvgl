@@ -7,7 +7,7 @@
  *      INCLUDES
  *********************/
 #include "lvgl.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_custom_tile_slide.h"
 
 /**********************

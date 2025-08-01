@@ -8,7 +8,7 @@
  *********************/
 #include <math.h>
 #include "lvgl.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_card.h"
 #include "lv_cellular.h"
 

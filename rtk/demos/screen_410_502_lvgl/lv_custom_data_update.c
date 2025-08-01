@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "app_main.h"
+#include "lvgl_watch.h"
 
 #if LVGL_USE_CJSON
 #include "cJSON.h"

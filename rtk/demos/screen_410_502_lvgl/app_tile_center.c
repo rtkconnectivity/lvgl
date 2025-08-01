@@ -7,7 +7,7 @@
  *      INCLUDES
  *********************/
 #include "lvgl.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_img_dsc_list.h"
 #include <time.h>
 #include <stdio.h>

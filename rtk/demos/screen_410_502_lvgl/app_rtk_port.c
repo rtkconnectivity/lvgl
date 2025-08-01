@@ -21,7 +21,7 @@
 #include "lv_port_fs.h"
 #include "hack_lv_draw_buf.h"
 
-#include "app_main.h"
+#include "lvgl_watch.h"
 
 #ifdef CONFIG_SOC_SERIES_RTL87X3G
 #include "..\..\..\rtl87x3g\platform\inc\address_map.h"

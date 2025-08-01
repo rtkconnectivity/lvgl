@@ -15,7 +15,7 @@
 
 #include <time.h>
 #include "lvgl.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"

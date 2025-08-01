@@ -1,5 +1,5 @@
 /**
- * @file app_main.c
+ * @file lvgl_watch.c
  *
  */
 
@@ -16,7 +16,7 @@
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
 
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_custom_tile_slide.h"
 #include "lv_custom_tile_snapshot.h"
 

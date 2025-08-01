@@ -9,7 +9,7 @@
 #include <time.h>
 #include <string.h>
 #include "lvgl.h"
-#include "app_main.h"
+#include "lvgl_watch.h"
 #include "lv_card.h"
 #include "lv_custom_tile_snapshot.h"
 

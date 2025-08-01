@@ -1,10 +1,10 @@
 /**
- * @file app_main.h
+ * @file lvgl_watch.h
  *
  */
 
-#ifndef _APP_MAIN_H
-#define _APP_MAIN_H
+#ifndef _LVGL_WATCH_H
+#define _LVGL_WATCH_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,7 +4,7 @@
  * Opts: --bpp 1 --size 12 --no-compress --font HarmonyOS_Sans_SC_Regular.ttf --range 32-126,176 --format lvgl -o SourceHanSansSC_size12_bits1_font.c
  ******************************************************************************/
 
-#include "app_main.h"
+#include "lvgl_watch.h"
 
 #ifndef SOURCEHANSANSSC_SIZE12_BITS1_FONT
 #define SOURCEHANSANSSC_SIZE12_BITS1_FONT 1
