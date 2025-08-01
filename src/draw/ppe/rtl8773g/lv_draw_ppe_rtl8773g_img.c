@@ -814,10 +814,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     memcpy(&ppe_mat, matrix, sizeof(ppe_matrix_t));
     if (coords->x1 != 0 || coords->y1 != 0)
     {
-        ppe_get_identity(&pre_trans);
-        pre_trans.m[0][2] = coords->x1;
-        pre_trans.m[1][2] = coords->y1;
-        ppe_mat_multiply(&ppe_mat, &pre_trans);
+        ppe_translate(coords->x1, coords->y1, &ppe_mat);
     }
     lv_ppe_get_area(&target_rect, &src_rect, &ppe_mat);
 
@@ -828,11 +825,11 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         LV_PROFILER_DRAW_END;
         return;
     }
-    // if (!lv_area_intersect(&constraint_area, &constraint_area, draw_unit->clip_area))
-    // {
-    //     LV_PROFILER_DRAW_END;
-    //     return;
-    // }
+    if (!lv_area_intersect(&constraint_area, &constraint_area, &draw_unit->target_layer->phy_clip_area))
+    {
+        LV_PROFILER_DRAW_END;
+        return;
+    }
 
     bool transform = ppe_matrix_is_complex(&ppe_mat);
 
