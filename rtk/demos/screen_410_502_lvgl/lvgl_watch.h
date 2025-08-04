@@ -66,6 +66,7 @@ extern lv_obj_t *tile_down;
 extern lv_obj_t *tile_left;
 extern lv_obj_t *tile_right;
 extern lv_obj_t *tile_right_2;
+extern lv_obj_t *tile_right_3;
 
 extern lv_obj_t *scr_tile_center;
 extern lv_obj_t *scr_tile_up;
@@ -73,6 +74,7 @@ extern lv_obj_t *scr_tile_down;
 extern lv_obj_t *scr_tile_left;
 extern lv_obj_t *scr_tile_right;
 extern lv_obj_t *scr_tile_right_2;
+extern lv_obj_t *scr_tile_right_3;
 extern lv_obj_t *scr_app_control_board;
 extern lv_obj_t *scr_app_menu_card;
 extern lv_obj_t *scr_app_menu_cellular;
@@ -97,6 +99,7 @@ void lv_tile_down_init(void);
 void lv_tile_left_init(void);
 void lv_tile_right_init(void);
 void lv_tile_right_2_init(void);
+void lv_tile_right_3_init(void);
 
 void lv_app_control_board_init(void);
 void lv_app_menu_card_init(void);

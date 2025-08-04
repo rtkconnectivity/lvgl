@@ -65,5 +65,14 @@
 #endif
 // </e>
 
+// <e> RTK GUI Enable Lite3D library
+#define CONFIG_REALTEK_BUILD_LITE3D  1
+#if (CONFIG_REALTEK_BUILD_LITE3D == 1)
+// <c> Enable Lite3D WIN32 GCC LIB
+#define CONFIG_REALTEK_BUILD_LITE3D_FOR_WIN32_GCC_LIB
+// </c>
+#endif
+// </e>
+
 // <<< end of configuration section >>>
 #endif // RTK_GUI_CONFIG_H__
