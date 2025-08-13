@@ -105,6 +105,9 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
         /*Use the cache if available*/
         sh_buf = lv_malloc(corner_size * corner_size);
         lv_memcpy(sh_buf, cache->cache, corner_size * corner_size);
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+        lv_ppe_clean_cache(sh_buf, corner_size * corner_size);
+#endif
     }
     else
     {
@@ -119,6 +122,9 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
             cache->cache_size = corner_size;
             cache->cache_r = r_sh;
         }
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+        lv_ppe_clean_cache(sh_buf, corner_size * corner_size * sizeof(uint16_t));
+#endif
     }
 #else
     sh_buf = lv_malloc(corner_size * corner_size * sizeof(uint16_t));
@@ -144,13 +150,6 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
     int32_t y;
     bool simple_sub;
 
-//    lv_draw_sw_blend_dsc_t blend_dsc;
-//    lv_memzero(&blend_dsc, sizeof(blend_dsc));
-//    blend_dsc.blend_area = &blend_area;
-//    blend_dsc.mask_area = &blend_area;
-//    blend_dsc.mask_buf = mask_buf;
-//    blend_dsc.color = dsc->color;
-//    blend_dsc.opa = dsc->opa;
 
     int32_t w_half = shadow_area.x1 + lv_area_get_width(&shadow_area) / 2;
     int32_t h_half = shadow_area.y1 + lv_area_get_height(&shadow_area) / 2;
@@ -746,6 +745,9 @@ void lv_draw_ppe_box_shadow(lv_draw_unit_t *draw_unit, const lv_draw_box_shadow_
                 }
                 else
                 {
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+                    lv_ppe_clean_cache(mask_buf, lv_area_get_width(&core_area) * lv_area_get_height(&core_area));
+#endif
                     ppe_get_identity(&inverse);
                     inverse.m[0][2] = draw_unit->target_layer->buf_area.x1 - clip_area_sub.x1;
                     inverse.m[1][2] = draw_unit->target_layer->buf_area.y1 - clip_area_sub.y1;

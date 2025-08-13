@@ -302,9 +302,12 @@ static void execute_drawing(lv_draw_sw_unit_t *u)
         break;
 #endif
     default:
-        break;
+        return;
     }
-
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+    lv_ppe_clean_cache(u->base_unit.target_layer->draw_buf->data,
+                       u->base_unit.target_layer->draw_buf->data_size);
+#endif
 #if LV_USE_PARALLEL_DRAW_DEBUG
     /*Layers manage it for themselves*/
     if (t->type != LV_DRAW_TASK_TYPE_LAYER)

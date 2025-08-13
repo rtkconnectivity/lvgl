@@ -80,8 +80,6 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
-//    lv_draw_buf_clear(draw_buf, &clear_area);
-//    DBG_DIRECT("clear top x %d -> %d, y %d -> %d", clear_area.x1, clear_area.x2, clear_area.y1, clear_area.y2);
 
     /*Clear the bottom part*/
     lv_area_set(&clear_area, draw_unit->clip_area->x1, dsc->area.y2 + 1, draw_unit->clip_area->x2,
@@ -89,23 +87,17 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
-//    lv_draw_buf_clear(draw_buf, &clear_area);
-//    DBG_DIRECT("clear bot x %d -> %d, y %d -> %d", clear_area.x1, clear_area.x2, clear_area.y1, clear_area.y2);
     /*Clear the left part*/
     lv_area_set(&clear_area, draw_unit->clip_area->x1, dsc->area.y1, dsc->area.x1 - 1, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
-//    lv_draw_buf_clear(draw_buf, &clear_area);
-//    DBG_DIRECT("clear left x %d -> %d, y %d -> %d", clear_area.x1, clear_area.x2, clear_area.y1, clear_area.y2);
 
     /*Clear the right part*/
     lv_area_set(&clear_area, dsc->area.x2 + 1, dsc->area.y1, draw_unit->clip_area->x2, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
-//    lv_draw_buf_clear(draw_buf, &clear_area);
-//    DBG_DIRECT("clear right x %d -> %d, y %d -> %d", clear_area.x1, clear_area.x2, clear_area.y1, clear_area.y2);
 
     lv_draw_sw_mask_radius_param_t param;
     lv_draw_sw_mask_radius_init(&param, &dsc->area, dsc->radius, false);
@@ -162,13 +154,7 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
     lv_draw_sw_mask_free_param(&param);
 }
 
-/*******************
-        if(res == LV_DRAW_SW_MASK_RES_TRANSP) {
-            lv_memzero(c32_buf, area_w * sizeof(lv_color32_t));
-        }
-        else {
-            uint32_t i;
-            for(i = 0; i < area_w; i++) {***
+/********************
  *   STATIC FUNCTIONS
  **********************/
 

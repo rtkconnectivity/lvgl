@@ -74,6 +74,10 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
         break;
     default:
         lv_draw_sw_fill(draw_unit, dsc, coords);
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+        lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
+                           draw_unit->target_layer->draw_buf->data_size);
+#endif
         return;
     }
 
@@ -154,6 +158,9 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                 /* Initialize the mask to opa instead of 0xFF and blend with LV_OPA_COVER.
                  * It saves calculating the final opa in lv_draw_sw_blend*/
             }
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+            lv_ppe_clean_cache(mask_buf, clipped_w * rout);
+#endif
             blend_area.y1 = bg_coords.y1;
             blend_area.y2 = bg_coords.y1 + rout - 1;
             blend_area.x1 = clipped_coords.x1;
@@ -253,6 +260,10 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                     lv_draw_sw_blend(draw_unit, &blend_dsc);
                 }
             }
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+            lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
+                               draw_unit->target_layer->draw_buf->data_size);
+#endif
         }
     }
     /* Draw the center of the rectangle.*/
@@ -294,16 +305,8 @@ static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_
     uint32_t ppe_color = lv_ppe_get_color(blend_dsc->color, blend_dsc->opa);
     lv_area_move(&blend_area, -layer->buf_area.x1, -layer->buf_area.y1);
     ppe_rect_t draw_rect = {.x1 = blend_area.x1, .y1 = blend_area.y1, .x2 = blend_area.x2, .y2 = blend_area.y2};
-//    align_area(&blend_area);
-//    DBG_DIRECT("fill area x %d -> %d, y %d -> %d color %x", blend_area.x1, blend_area.x2, blend_area.y1, blend_area.y2, ppe_color);
-//    DBG_DIRECT("buf area x %d -> %d, y %d -> %d", layer->buf_area.x1, layer->buf_area.x2, layer->buf_area.y1, layer->buf_area.y2);
-//    uint32_t draw_start = target.address + (blend_area.x1 + blend_area.y1 * target.stride) * 2;
-//    DBG_DIRECT("buff address %x, draw start address %x, %s", target.address, draw_start, draw_start%64?"not aligned":"aligned");
-//    uint32_t time1 = sys_timestamp_get_us();
     PPE_Finish();
     PPE_ERR err = PPE_Mask(&target, ppe_color, &draw_rect);
-//    uint32_t time2 = sys_timestamp_get_us();
-//    DBG_DIRECT("PPE fill time %d", time2 - time1);
     LV_PROFILER_DRAW_END;
 }
 

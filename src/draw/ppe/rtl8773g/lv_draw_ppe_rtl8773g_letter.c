@@ -26,6 +26,7 @@
 #include "../../../misc/lv_area_private.h"
 #include "lv_draw_ppe_rtl8773g.h"
 #include "lv_ppe_rtl8773g_utils.h"
+#include "lvgl.h"
 #include "string.h"
 /*********************
  *      DEFINES
@@ -207,9 +208,13 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_unit_t *draw_unit,
                 blend_dsc.mask_stride = draw_buf->header.stride;
                 blend_dsc.blend_area = glyph_draw_dsc->letter_coords;
                 blend_dsc.mask_res = LV_DRAW_SW_MASK_RES_CHANGED;
-
                 lv_draw_sw_blend(draw_unit, &blend_dsc);
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+                lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
+                                   draw_unit->target_layer->draw_buf->data_size);
+#endif
             }
+            break;
         case LV_FONT_GLYPH_FORMAT_A1_ALIGNED:
         case LV_FONT_GLYPH_FORMAT_A2_ALIGNED:
         case LV_FONT_GLYPH_FORMAT_A4_ALIGNED:
@@ -256,7 +261,15 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_unit_t *draw_unit,
                 {
                     glyph.stride = glyph.width + align;
                 }
-
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+                lv_display_t *disp_drv = lv_display_get_default();
+                if (draw_unit->target_layer->draw_buf != disp_drv->buf_1 &&
+                    draw_unit->target_layer->draw_buf != disp_drv->buf_2)
+                {
+                    lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
+                                       draw_unit->target_layer->draw_buf->data_size);
+                }
+#endif
                 hw_blit_font(&df, &glyph);
             }
             break;

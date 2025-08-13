@@ -345,7 +345,7 @@ uint8_t lv_acc_get_low_speed_channel(void)
 {
     return low_speed_channel;
 }
-#include "trace.h"
+
 void lv_acc_dma_copy(uint32_t length, uint32_t height, uint32_t src_stride,
                      uint32_t dst_stride, uint8_t *src, uint8_t *dst)
 {
@@ -353,6 +353,9 @@ void lv_acc_dma_copy(uint32_t length, uint32_t height, uint32_t src_stride,
     {
         memcpy(dst + dst_stride * i, src + src_stride * i, length);
     }
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+    lv_ppe_clean_cache(dst, dst_stride * height);
+#endif
     return;
     bool use_LLI = true;
     if ((length == src_stride && length == dst_stride) || height == 1)
@@ -620,4 +623,15 @@ bool lv_ppe_use_entire(lv_draw_unit_t *draw_unit, lv_display_t *disp)
            (lv_display_get_vertical_resolution(disp) == lv_area_get_height(
                 &draw_unit->target_layer->buf_area));
 }
+
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+void lv_ppe_clean_cache(void *addr, int32_t size)
+{
+#if LV_PPE_CACHE_STRATEGY == LV_PPE_CACHE_WRITE_BACK
+    SCB_CleanInvalidateDCache_by_Addr(addr, size);
+#else
+    SCB_InvalidateDCache_by_Addr(addr, size);
+#endif
+}
+#endif
 #endif /*LV_USE_PPE*/

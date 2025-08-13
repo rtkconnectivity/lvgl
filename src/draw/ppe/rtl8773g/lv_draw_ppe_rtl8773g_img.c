@@ -103,6 +103,7 @@ void lv_draw_ppe_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 
     if (!draw_dsc->tile)
     {
+        //lv_draw_ppe_normal(draw_unit, draw_dsc, coords);
         lv_draw_image_normal_helper(draw_unit, draw_dsc, coords, img_draw_core);
     }
     else
@@ -754,6 +755,7 @@ static void img_draw_core(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *
 
         uint32_t src_addr = source.address + (source.stride * (constraint_area.y1 - img_coords->y1) +
                                               (constraint_area.x1 - img_coords->x1)) * pixel_byte;
+        PPE_Finish();
         lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
         LV_PROFILER_DRAW_END;
         return;
@@ -778,12 +780,9 @@ static void img_draw_core(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *
     {
         source.high_quality = true;
     }
-//    uint32_t ppe1 = sys_timestamp_get_us();
-
+    PPE_Finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
                                    method);
-    PPE_Finish();
-//    uint32_t ppe2 = sys_timestamp_get_us();
     if (err == PPE_SUCCESS)
     {
 

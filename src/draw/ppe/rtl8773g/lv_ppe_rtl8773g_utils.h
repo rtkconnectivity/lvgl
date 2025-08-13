@@ -26,6 +26,12 @@ extern "C" {
  *********************/
 #define LV_PPE_MAX_BUFFER_SIZE  (0 * 1024)
 
+#define LV_PPE_CACHE_NONE               0
+#define LV_PPE_CACHE_WRITE_BACK         1
+#define LV_PPE_CACHE_WRITE_THROUGH      2
+
+#define LV_PPE_CACHE_STRATEGY           LV_PPE_CACHE_NONE
+
 /**********************
  *      TYPEDEFS
  **********************/
@@ -66,6 +72,9 @@ void subtract_intersection(const lv_area_t *area, const lv_area_t *intersection,
 
 bool lv_ppe_use_entire(lv_draw_unit_t *draw_unit, lv_display_t *disp);
 
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+void lv_ppe_clean_cache(void *addr, int32_t size);
+#endif
 /**********************
  *      MACROS
  **********************/
