@@ -7,27 +7,28 @@ if(POLICY CMP0079)
 endif()
 
 # Define a variable for the library name
-if(CONFIG_REALTEK_BUILD_LITE3D) #set to 1 to enable or variable to for depnedency
-
+if(CONFIG_REALTEK_BUILD_LVGL_LITE3D) #set to 1 to enable or variable to for depnedency
+    message("CONFIG_REALTEK_BUILD_LVGL_LITE3D")
     file(GLOB SOURCES "*.c" "*.cpp")
     file(GLOB HEADERS "*.h" "*.hpp")
 
-    target_include_directories(${GUI_TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_include_directories(app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-    if(CONFIG_REALTEK_BUILD_LITE3D_FOR_WIN32_GCC_LIB)
-        target_link_libraries(${GUI_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libLite3D_GCC.a)
+    if(CONFIG_REALTEK_BUILD_LVGL_LITE3D_FOR_WIN32_GCC_LIB)
+        target_link_libraries(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libLite3D_GCC.a)
     endif()
-    if(CONFIG_REALTEK_BUILD_LITE3D_8773E_ARMCC_LIB)
-        target_link_libraries(${GUI_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773E_ARMCC.lib)
+    if(CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773E_ARMCC_LIB)
+        target_link_libraries(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773E_ARMCC.lib)
     endif()
-    if(CONFIG_REALTEK_BUILD_LITE3D_8773E_ARMCL_LIB)
-        target_link_libraries(${GUI_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773E_ARMCLANG.lib)
+    if(CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773E_ARMCL_LIB)
+        target_link_libraries(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773E_ARMCLANG.lib)
     endif()
-    if(CONFIG_REALTEK_BUILD_LITE3D_8773G_ARMCL_LIB)
-        target_link_libraries(${GUI_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773G_ARMCLANG.lib)
+    if(CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773G_ARMCL_LIB)
+        target_link_libraries(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773G_ARMCLANG.lib)
     endif()
-    if(CONFIG_REALTEK_BUILD_LITE3D_8773G_ZEPHYR_LIB)
-        target_link_libraries(${GUI_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773G_ZEPHYR.a)
+    if(CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773G_ZEPHYR_LIB)
+        message("CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773G_ZEPHYR_LIB")
+        target_link_libraries(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/Lite3D_RTL8773G_ZEPHYR.a)
     endif()
 
 endif()

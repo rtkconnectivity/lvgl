@@ -6,4 +6,5 @@ cmake_minimum_required(VERSION 3.10)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/screen_410_502_squareline)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/screen_410_502_lvgl)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/benchmark)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Lite3D)
 
