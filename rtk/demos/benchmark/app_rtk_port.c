@@ -35,8 +35,8 @@
 #define CPU_FREQ             100000000
 #elif defined CONFIG_SOC_SERIES_RTL87X3G
 #define LV_USE_PSRAM         1
-#define PSRAM_BUF_SIZE       (4*1024*1024)
-#define PSRAM_BUF_ADDR       0x22000000
+#define PSRAM_BUF_SIZE       (((3 * 1024 + 512) * 1024))
+#define PSRAM_BUF_ADDR       0x22000000 + 512 * 1024
 // #define PSRAM_BUF_ADDR       0x24000000
 #define CPU_FREQ             200000000
 #else

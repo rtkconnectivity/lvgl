@@ -64,7 +64,7 @@ static void lvgl_demo_run(void *p)
 {
     lv_init();
 
-    lv_mem_add_pool((void *)SPIC1_MEM_BASE, 4 * 1024 * 1024);
+    lv_mem_add_pool((void *)(SPIC1_MEM_BASE + 512 * 1024), (3 * 1024 + 512) * 1024);
 
 
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);

@@ -154,7 +154,7 @@ void watch_demo_init(void)
     lv_tile_left_init();
     lv_tile_right_init();
     lv_tile_right_2_init();
-    lv_tile_right_3_init();
+    // lv_tile_right_3_init();
 
 #if WATCH_DEMO_USE_TILESLIDE
     lv_obj_add_event_cb(tileview, tileview_custom_cb, LV_EVENT_ALL, &tileview_scrolling);
