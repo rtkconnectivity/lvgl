@@ -84,6 +84,7 @@ extern "C" {
 #include "src/widgets/tileview/lv_tileview.h"
 #include "src/widgets/win/lv_win.h"
 #include "src/widgets/cardview/lv_cardview.h"
+#include "src/widgets/3d/lv_lite3d.h"
 
 #include "src/others/snapshot/lv_snapshot.h"
 #include "src/others/sysmon/lv_sysmon.h"

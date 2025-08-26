@@ -11,6 +11,7 @@
 #include "../Lite3D/include/l3.h"
 #include "root_image_lvgl/ui_resource.h"
 
+
 #if LVGL_USE_CJSON
 #include "cJSON.h"
 #endif
@@ -31,23 +32,17 @@ lv_obj_t *scr_app_3d_face;
  **********************/
 static lv_obj_t *face_container;
 
-static uint8_t *cbuf; // 16 bits per pixel, RGB565 format
 /* Animation Variables */
 static float rot_angle = 5.0f;
-static l3_model_t *face_3d;
-static lv_obj_t *canvas;
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 static void update_face_animation(lv_timer_t *timer)
 {
-    lv_obj_t *canvas = (lv_obj_t *)lv_timer_get_user_data(timer);
-    lv_obj_invalidate(canvas);
-
-    lv_memset(cbuf, 0, FACE_MODEL_WIDTH * FACE_MODEL_HEIGHT * 2);
-    l3_set_target_canvas(face_3d, 0, 0, FACE_MODEL_WIDTH, FACE_MODEL_HEIGHT, 16/*LITE_RGB565*/, cbuf);
-    l3_push(face_3d);
-    l3_draw(face_3d);
+    lv_obj_t *lite3d = (lv_obj_t *)lv_timer_get_user_data(timer);
+    rot_angle ++;
+    lv_obj_invalidate(lite3d);
 }
 
 static void on_canvas_touch(lv_event_t *e)
@@ -79,46 +74,18 @@ static void face_global_cb(l3_model_t *this)
 
 }
 
-static void canvas_cleanup(lv_event_t *e)
-{
-    if (cbuf)
-    {
-        lv_free(cbuf);
-    }
-    if (face_3d)
-    {
-        l3_free_model(face_3d);
-        face_3d = NULL;
-    }
-    lv_obj_t *canvas = lv_event_get_target(e);
-    lv_timer_t *timer = (lv_timer_t *)lv_obj_get_user_data(canvas);
-    if (timer)
-    {
-        lv_timer_del(timer);
-    }
-}
 
 void app_3d_face(lv_obj_t *parent)
 {
-    face_3d = l3_create_model(DESC_FACE_BIN, L3_DRAW_FRONT_AND_SORT, 0, 0, FACE_MODEL_WIDTH,
-                              FACE_MODEL_HEIGHT);
+    l3_model_t *face_3d = l3_create_model(DESC_FACE_BIN, L3_DRAW_FRONT_AND_SORT, 0, 0,
+                                          FACE_MODEL_WIDTH,
+                                          FACE_MODEL_HEIGHT);
     l3_set_global_transform(face_3d, (l3_global_transform_cb)face_global_cb);
 
-    canvas = lv_canvas_create(parent);
-    lv_obj_set_size(canvas, LV_PCT(100), LV_PCT(100));
-    lv_obj_add_flag(canvas, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_t *lite3d = lv_lite3d_create(parent, face_3d);
 
-    cbuf = lv_malloc(FACE_MODEL_WIDTH * FACE_MODEL_HEIGHT * 2);
-    lv_memset(cbuf, 0, FACE_MODEL_WIDTH * FACE_MODEL_HEIGHT * 2);
-    lv_canvas_set_buffer(canvas, cbuf, FACE_MODEL_WIDTH, FACE_MODEL_HEIGHT, LV_COLOR_FORMAT_RGB565);
-
-    l3_set_target_canvas(face_3d, 0, 0, FACE_MODEL_WIDTH, FACE_MODEL_HEIGHT, 16/*LITE_RGB565*/, cbuf);
-    l3_push(face_3d);
-    l3_draw(face_3d);
-
-    lv_obj_add_event_cb(canvas, on_canvas_touch, LV_EVENT_ALL, NULL);
-    lv_timer_t *timer = lv_timer_create(update_face_animation, 16, canvas);
-    lv_obj_add_event_cb(canvas, canvas_cleanup, LV_EVENT_DELETE, NULL);
+    lv_obj_add_event_cb(lite3d, on_canvas_touch, LV_EVENT_ALL, NULL);
+    lv_timer_t *timer = lv_timer_create(update_face_animation, 16, lite3d);
 }
 
 

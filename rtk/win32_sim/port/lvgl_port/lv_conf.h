@@ -753,6 +753,8 @@
 
 #define LV_USE_CARDVIEW   1
 
+#define LV_USE_LITE3D     1
+
 /*==================
  * THEMES
  *==================*/
