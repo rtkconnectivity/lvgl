@@ -1,5 +1,5 @@
 /**
- * @file app_rtk_port.c
+ * @file app_sim_port.c
  *
  */
 
@@ -9,42 +9,23 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include <sys/types.h>
+#include <pthread.h>
+#include "unistd.h"
 
-#include "os_task.h"
-#include "os_timer.h"
-#include "trace.h"
-#include "platform_utils.h"
-
+#include <time.h>
 #include "lvgl.h"
 #include "lv_demos.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
-
+#include "rtk_demo_card.h"
 
 /*********************
  *      DEFINES
  *********************/
-#define APP_TASK_PRIORITY               1   /* Task priorities. */
-#define APP_TASK_STACK_SIZE             (512 * 24)
-
-#ifdef CONFIG_SOC_SERIES_RTL87x3E
 #define LV_USE_PSRAM         1
 #define PSRAM_BUF_SIZE       (3*1024*1024)
-#define PSRAM_BUF_ADDR       0x4100000
-#define CPU_FREQ             100000000
-#elif defined CONFIG_SOC_SERIES_RTL87X3G
-#define LV_USE_PSRAM         1
-#define PSRAM_BUF_SIZE       (((3 * 1024 + 512) * 1024))
-#define PSRAM_BUF_ADDR       0x22000000 + 512 * 1024
-// #define PSRAM_BUF_ADDR       0x24000000
-#define CPU_FREQ             200000000
-#else
-#define LV_USE_PSRAM         0
-#define PSRAM_BUF_SIZE       0
-#define PSRAM_BUF_ADDR       0
-#define CPU_FREQ             100000000
-#endif
 
 #if LV_USE_PSRAM == 1
 #define LV_USE_PSRAM_POOL
@@ -73,21 +54,19 @@ static void lv_psram_draw_buf(void *buf, size_t size);
 static void lv_psram_init(void *buf, size_t size);
 static void port_log(lv_log_level_t level, const char *buf);
 static void lv_tick(void *pxTimer);
-static void lvgl_demo_run(void *p);
-
-/*for 8773E*/
-static uint32_t sys_tick_get(void);
+static void *lvgl_demo_run(void *p);
+static void *lvgl_timer(void *arg);
+static void single_demo_ui_init(void);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-uint32_t PSRAM_BUF = PSRAM_BUF_ADDR;
+uint8_t resource_root[1024 * 1024 * 20];
+uint8_t PSRAM_BUF[PSRAM_BUF_SIZE];
 
 #ifdef LV_USE_PSRAM_DRAW_BUF
 lv_tlsf_t draw_buf_tlfs;
 #endif
-
-void *lvgl_task_handle;
 /**********************
  *      MACROS
  **********************/
@@ -96,17 +75,28 @@ void *lvgl_task_handle;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void rt_lvgl_demo_init(void)
+void rtk_lvgl_demo_init(void)
 {
-    /* littleGL demo gui thread */
-    os_task_create(&lvgl_task_handle, "lvgl", lvgl_demo_run, 0, APP_TASK_STACK_SIZE,
-                   APP_TASK_PRIORITY);
+    pthread_t thread1;
+    pthread_create(&thread1, NULL, lvgl_demo_run, NULL);
+    pthread_t thread2;
+    pthread_create(&thread2, NULL, lvgl_timer, NULL);
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static void port_log(lv_log_level_t level, const char *buf)
+{
+    printf("%s", buf);
+}
+
 #ifdef LV_USE_PSRAM_DRAW_BUF
+#include "lv_tlsf.h"
+#include "lv_types.h"
+#include "lv_draw_buf_private.h"
+lv_tlsf_t draw_buf_tlfs;
 static void *tlfs_buf_malloc(size_t size_bytes, lv_color_format_t color_format)
 {
     return lv_tlsf_malloc(draw_buf_tlfs, size_bytes);
@@ -132,7 +122,7 @@ static void lv_psram_draw_buf(void *buf, size_t size)
 #endif
 
 #ifdef LV_USE_PSRAM_POOL
-static void lv_psram_add_pool(void *buf, size_t size)
+void lv_psram_add_pool(void *buf, size_t size)
 {
     lv_mem_add_pool(buf, size);
 }
@@ -148,58 +138,59 @@ static void lv_psram_init(void *buf, size_t size)
 #endif
 }
 
-static void port_log(lv_log_level_t level, const char *buf)
+static void single_demo_ui_init(void)
 {
-    if (level >= LV_LOG_LEVEL)
-    {
-        DBG_DIRECT("%s", buf);
-    }
+    /* ---------------------------------------------------
+     * Official Demos (Choose ONE below)
+     * Uncomment the desired demo function:
+     *  lv_demo_benchmark()  - Performance testing
+     *  lv_demo_widgets()   - Widget collection
+     *  lv_demo_music()     - Music player UI
+     *  lv_demo_stress()    - Stress test
+     * --------------------------------------------------- */
+
+    lv_demo_benchmark();
+    // lv_demo_widgets();
+    // lv_demo_music();
+    // lv_demo_stress();
+
+
+    /* ---------------------------------------------------
+     * RTK Custom Demos (Choose ONE below)
+     * Uncomment the desired demo function:
+     *  rtk_demo_card()     - Card widfet demo
+     * --------------------------------------------------- */
+
+    // rtk_demo_card();
 }
 
-static uint32_t sys_tick_get(void)
+static void *lvgl_demo_run(void *arg)
 {
-    return sys_timestamp_get();
-}
-#if LV_USE_PROFILER == 1
-static uint32_t my_get_tick_cb(void)
-{
-    return read_cpu_counter() / (CPU_FREQ / 1000000);
-}
-static void my_flush_cb(const char *buf)
-{
-    DBG_DIRECT("%s", buf);
-}
-void my_profiler_init(void)
-{
-    lv_profiler_builtin_config_t config;
-    lv_profiler_builtin_config_init(&config);
-    config.tick_per_sec = 1000000;
-    config.tick_get_cb = my_get_tick_cb;
-    config.flush_cb = my_flush_cb;
-    lv_profiler_builtin_init(&config);
-}
-#endif
-static void lvgl_demo_run(void *p)
-{
+    if (lv_is_initialized() == true)
+    {
+        return 0;
+    }
     lv_init();
-    lv_psram_init((void *)PSRAM_BUF, PSRAM_BUF_SIZE);
+    lv_psram_init(PSRAM_BUF, PSRAM_BUF_SIZE);
     lv_log_register_print_cb((lv_log_print_g_cb_t)port_log);
-    lv_tick_set_cb(sys_tick_get);
-#if LV_USE_PROFILER == 1
-    my_profiler_init();
-#endif
+
     lv_port_disp_init();
     lv_port_indev_init();
     // lv_port_fs_init();
 
-    DBG_DIRECT("LVGL start \n");
-
-    lv_demo_benchmark();
-    // lv_demo_widgets();
-    while (1)
+    single_demo_ui_init();
+    while (true)
     {
         // lv_obj_invalidate(lv_screen_active());
         lv_task_handler();
     }
 }
 
+static void *lvgl_timer(void *arg)
+{
+    while (true)
+    {
+        usleep(1000 * 10);
+        lv_tick_inc(10);
+    }
+}

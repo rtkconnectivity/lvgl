@@ -1,5 +1,15 @@
 # Changelog
 
+### Code Base
+
+#### Version: 9.3
+
+#### github commit link
+
+<https://github.com/lvgl/lvgl/commit/8c2289f87feee210e354c8d5311a36e85e63891c>
+
+---
+
 #### Date: 2025-04-10
 
 #### Author: [luke_sun]

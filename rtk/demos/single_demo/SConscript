@@ -11,6 +11,10 @@ CPPPATH = [cwd]
 
 if GetDepend('CONFIG_REALTEK_BUILD_LVGL_SIMPLE_DEMO'):
     src += Glob('*.c')
+    src += Glob('./card/*.c')
+
+    CPPPATH += [cwd + '/card']
+
     CPPDEFINES += ['DRV_LCD_WIDTH=410']
     CPPDEFINES += ['DRV_LCD_HIGHT=502']
     CPPDEFINES += ['DRV_PIXEL_BITS=16']

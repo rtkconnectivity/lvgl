@@ -4,6 +4,7 @@ message(STATUS "CMAKELIST FOLDER: ${CMAKE_CURRENT_SOURCE_DIR}")
 if(CONFIG_REALTEK_BUILD_LVGL_SIMPLE_DEMO)
     file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/card/*.c"
     )
     set(LVGL_DIR ${ZEPHYR_LVGL_MODULE_DIR})
 
@@ -11,6 +12,7 @@ if(CONFIG_REALTEK_BUILD_LVGL_SIMPLE_DEMO)
 
     target_include_directories(app PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/card"
     )
     target_include_directories(app PRIVATE
     ${LVGL_DIR}/demos/
