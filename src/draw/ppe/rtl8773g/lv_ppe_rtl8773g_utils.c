@@ -178,8 +178,8 @@ void lv_ppe_get_inverse_matrix(ppe_matrix_t *matrix, const lv_area_t *coords,
         }
         if (scale)
         {
-            float scale_ratio_x = 1.0f / (draw_dsc->scale_x / LV_SCALE_NONE);
-            float scale_ratio_y = 1.0f / (draw_dsc->scale_y / LV_SCALE_NONE);
+            float scale_ratio_x = 1.0f / (draw_dsc->scale_x * 1.0f / LV_SCALE_NONE);
+            float scale_ratio_y = 1.0f / (draw_dsc->scale_y * 1.0f / LV_SCALE_NONE);
             ppe_scale(scale_ratio_x, scale_ratio_y, matrix);
         }
         if (skew)
