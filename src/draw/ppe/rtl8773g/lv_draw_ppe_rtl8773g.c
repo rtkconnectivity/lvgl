@@ -301,7 +301,7 @@ static void execute_drawing(lv_draw_ppe_unit_t *u)
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-        lv_draw_ppe_image_use_matrix((lv_draw_unit_t *)u, t->draw_dsc, &t->area, &t->matrix);
+        lv_draw_ppe_image_use_matrix((lv_draw_unit_t *)u, t->draw_dsc, &t->area, &t->matrix, 0);
 #else
         lv_draw_ppe_image((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
 #endif

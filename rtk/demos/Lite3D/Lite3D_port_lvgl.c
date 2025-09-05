@@ -136,7 +136,7 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
 
     lv_matrix_t *matrix = (lv_matrix_t *)image->matrix.m;
 
-    lv_draw_ppe_image_use_matrix(&draw_unit, &draw_dsc, &coords, matrix);
+    lv_draw_ppe_image_use_matrix(&draw_unit, &draw_dsc, &coords, matrix, image->blend_mode);
 }
 
 #endif

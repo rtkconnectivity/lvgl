@@ -48,7 +48,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                              const lv_area_t *coords);
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
-                               const lv_area_t *coords, lv_matrix_t *matrix);
+                               const lv_area_t *coords, lv_matrix_t *matrix, uint32_t mode);
 #endif
 
 /**********************
@@ -64,14 +64,14 @@ static uint8_t *cache_buffer = NULL;
  **********************/
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 void lv_draw_ppe_image_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
-                                  const lv_area_t *coords, lv_matrix_t *matrix)
+                                  const lv_area_t *coords, lv_matrix_t *matrix, uint32_t mode)
 {
     if (draw_dsc->opa <= (lv_opa_t)LV_OPA_MIN)
     {
         return;
     }
 
-    lv_draw_ppe_matrix(draw_unit, draw_dsc, coords, matrix);
+    lv_draw_ppe_matrix(draw_unit, draw_dsc, coords, matrix, mode);
 }
 
 void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
@@ -89,7 +89,7 @@ void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image
 
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_ppe_matrix(draw_unit, &new_draw_dsc, coords, matrix);
+    lv_draw_ppe_matrix(draw_unit, &new_draw_dsc, coords, matrix, 0);
 }
 #endif
 
@@ -795,7 +795,7 @@ static void img_draw_core(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *
 
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
-                               const lv_area_t *coords, lv_matrix_t *matrix)
+                               const lv_area_t *coords, lv_matrix_t *matrix, uint32_t mode)
 {
     LV_PROFILER_DRAW_BEGIN;
     lv_layer_t *layer = draw_unit->target_layer;
@@ -887,15 +887,30 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
     source.const_color = 0xFFFFFFFF;
+    if (mode == 1)
+    {
+        source.color_key_config.key_range.B_max = 0x00;
+        source.color_key_config.key_range.B_min = 0x00;
+        source.color_key_config.key_range.G_max = 0x00;
+        source.color_key_config.key_range.G_min = 0x00;
+        source.color_key_config.key_range.R_max = 0x00;
+        source.color_key_config.key_range.R_min = 0x00;
+        source.color_key_config.key_enable.channel_en.a_en = 1;
+        source.color_key_config.key_enable.channel_en.r_en = 1;
+        source.color_key_config.key_enable.channel_en.g_en = 1;
+        source.color_key_config.key_enable.channel_en.b_en = 1;
+        source.color_key_config.key_mode = PPE_COLOR_KEY_INSIDE;
+        source.color_key_config.key_replace.key_replace = 0;
+    }
 
     if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
-        draw_dsc->opa == 0xFF && draw_dsc->rotation == 0)
+        draw_dsc->opa == 0xFF && draw_dsc->rotation == 0 && mode == 0)
     {
         method = PPE_BLEND_BYPASS;
     }
 
     uint32_t src_stride = 0;
-    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 && mode == 0 &&
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
         int16_t target_x = constraint_area.x1 - draw_unit->target_layer->buf_area.x1;

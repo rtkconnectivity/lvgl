@@ -64,7 +64,7 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
                            const lv_area_t *coords);
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 void lv_draw_ppe_image_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
-                                  const lv_area_t *coords, lv_matrix_t *matrix);
+                                  const lv_area_t *coords, lv_matrix_t *matrix, uint32_t mode);
 void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
                                   const lv_area_t *coords, lv_matrix_t *matrix);
 #endif
