@@ -1,10 +1,11 @@
 /**
- * @file lv_card.h
+ * @file lv_cardview.h
  *
  */
 
-#ifndef LV_CARD_H
-#define LV_CARD_H
+
+#ifndef LV_CARDVIEW_H
+#define LV_CARDVIEW_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,8 +14,12 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "lvgl.h"
-#include "lvgl_watch.h"
+#include "../lv_conf_internal.h"
+
+#if LV_USE_CARDVIEW != 0 ||1
+
+#include "../../core/lv_obj.h"
+#include "../../core/lv_obj_private.h"
 
 /*********************
  *      DEFINES
@@ -23,7 +28,8 @@ extern "C" {
 /**********************
  *      TYPEDEFS
  **********************/
-// Card style enumeration
+
+/*Card style enumeration*/
 typedef enum
 {
     CARD_CLASSIC,
@@ -32,14 +38,14 @@ typedef enum
     CARD_ZOOM,
 } CARDSTYLE;
 
-// Card user data structure
+/*Card user data structure*/
 typedef struct
 {
     int16_t index;      // Card index
     int16_t start_y;    // Initial Y-axis position
 } CardData;
 
-// Card container user data structure
+/*Card container user data structure*/
 typedef struct
 {
     CARDSTYLE style;             // Card style
@@ -59,9 +65,31 @@ typedef struct
     void *design_param;
 } CardViewData;
 
+/*Data of cardviewate*/
+typedef struct {
+    lv_obj_t obj;
+    CardViewData data;
+} lv_cardview_t;
+
+typedef struct {
+    lv_obj_t obj;
+    CardData data;
+} lv_card_t;
+
+
+LV_ATTRIBUTE_EXTERN_DATA extern const lv_obj_class_t lv_cardview_class;
+
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
+
+/**
+ * Create a cardview object
+ * @param parent    pointer to an object, it will be the parent of the new cardview
+ * @return          pointer to the created bar
+ */
+lv_obj_t * lv_cardview_create(lv_obj_t * parent);
+
 /**
  * @brief Custom card view widget which custom card widget nested in
  * @param parent Parent object.
@@ -73,12 +101,23 @@ typedef struct
  */
 lv_obj_t *lv_card_view_create(lv_obj_t *parent,
                               CARDSTYLE style,
-                              lv_coord_t card_height,
-                              lv_coord_t card_space,
-                              lv_coord_t stack_location,
+                              int16_t card_height,
+                              int16_t card_space,
+                              int16_t stack_location,
                               int16_t total_num,
                               void (* card_design)(lv_obj_t *obj, void *param),
                               void *design_param);
+
+/*======================
+ * Add/remove functions
+ *=====================*/
+
+/**
+ * Create a card object
+ * @param parent    pointer to an object, it will be the parent of the new cardview
+ * @return          pointer to the created bar
+ */
+lv_obj_t * lv_card_create(lv_obj_t * parent);
 
 /**
  * @brief Custom card view widget which custom card widget nested in.
@@ -86,14 +125,18 @@ lv_obj_t *lv_card_view_create(lv_obj_t *parent,
  * @param index Card index.
  * @return Pointer to the created card object.
  */
-lv_obj_t *lv_card_create(lv_obj_t *parent, int16_t index);
+lv_obj_t *lv_card_create_with_index(lv_obj_t *parent, int16_t index);
+
+/*=====================
+ * Setter functions
+ *====================*/
 
 /**
  * @brief Set card_view offset.
  * @param card_view Card_view.
  * @param offset Offset.
  */
-void lv_card_view_set_offset(lv_obj_t *card_view, lv_coord_t offset);
+void lv_card_view_set_offset(lv_obj_t *card_view, int16_t offset);
 
 /**
  * @brief Set card_view' number of cards.
@@ -102,8 +145,22 @@ void lv_card_view_set_offset(lv_obj_t *card_view, lv_coord_t offset);
  */
 void lv_card_view_set_number(lv_obj_t *card_view, int16_t total_num);
 
+/*=====================
+ * Getter functions
+ *====================*/
+
+/*=====================
+ * Other functions
+ *====================*/
+
+/**********************
+ *      MACROS
+ **********************/
+
+#endif /*LV_USE_CARDVIEW*/
+
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
 
-#endif /*LV_CARD_H*/
+#endif /*LV_CARDVIEW_H*/

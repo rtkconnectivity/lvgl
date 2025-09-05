@@ -10,7 +10,6 @@
 #include <string.h>
 #include "lvgl.h"
 #include "lvgl_watch.h"
-#include "lv_card.h"
 #include "lv_custom_tile_snapshot.h"
 
 /**********************
@@ -29,7 +28,8 @@ static lv_obj_t *clock_circle, *clock_tab;
 static void timer_cb(lv_timer_t *timer)
 {
     lv_obj_t *card_view = lv_timer_get_user_data(timer);
-    CardViewData *view_data = lv_obj_get_user_data(card_view);
+    lv_cardview_t *cdv = (lv_cardview_t *)card_view;
+    CardViewData *view_data = &cdv->data;
     if (clock_circle && clock_tab)
     {
         if (view_data->offset < 32)
@@ -94,7 +94,8 @@ static bool is_top_start(lv_point_t *point)
 static void scr_tile_down_event_cb(lv_event_t *e)
 {
     lv_obj_t *cardview = lv_event_get_user_data(e);
-    CardViewData *view_data = lv_obj_get_user_data(cardview);
+    lv_cardview_t *cdv = (lv_cardview_t *)cardview;
+    CardViewData *view_data = &cdv->data;
     lv_event_code_t code = lv_event_get_code(e);
     static lv_point_t point;
 
@@ -298,7 +299,8 @@ static void create_snapshot_cb(lv_event_t *e)
 
 static void card_design(lv_obj_t *card, void *param)
 {
-    CardData *card_data = lv_obj_get_user_data(card);
+    lv_card_t *cd = (lv_card_t *)card;
+    CardData *card_data = &cd->data;
     lv_obj_set_style_bg_opa(card, LV_OPA_0, 0);
     lv_obj_set_style_border_width(card, 0, 0);
     lv_obj_set_style_pad_all(card, 0, 0);

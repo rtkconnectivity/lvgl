@@ -9,7 +9,6 @@
 #include <math.h>
 #include "lvgl.h"
 #include "lvgl_watch.h"
-#include "lv_card.h"
 #include "lv_cellular.h"
 
 /*********************
@@ -243,7 +242,8 @@ static void card_design(lv_obj_t *card, void *param)
     lv_obj_set_style_border_width(card, 0, 0);
     lv_obj_set_style_pad_all(card, 0, 0);
 
-    CardData *card_data = lv_obj_get_user_data(card);
+    lv_card_t *cd = (lv_card_t *)card;
+    CardData *card_data = &cd->data;
     uint16_t index = card_data->index;
     if (index < APP_COUNT)
     {
@@ -277,8 +277,8 @@ static void card_design(lv_obj_t *card, void *param)
 static void card_view_timer_cb(lv_timer_t *timer)
 {
     lv_obj_t *card_view = (lv_obj_t *)lv_timer_get_user_data(timer);
-    CardViewData *view_data = lv_obj_get_user_data(card_view);
-    card_view_offset = view_data->offset;
+    lv_cardview_t *cdv = (lv_cardview_t *)card_view;
+    card_view_offset = cdv->data.offset;
 }
 
 static void cellular_timer_cb(lv_timer_t *timer)

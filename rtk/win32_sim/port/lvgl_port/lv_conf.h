@@ -751,6 +751,8 @@
 
 #define LV_USE_WIN        1
 
+#define LV_USE_CARDVIEW   1
+
 /*==================
  * THEMES
  *==================*/

@@ -21,6 +21,8 @@
 #include "lv_port_indev.h"
 #include "lv_port_fs.h"
 
+#include "rtk_demo_card.h"
+#include "rtk_demo_cellular.h"
 
 /*********************
  *      DEFINES
@@ -203,9 +205,11 @@ static void single_demo_ui_init(void)
      * RTK Custom Demos (Choose ONE below)
      * Uncomment the desired demo function:
      *  rtk_demo_card()     - Card widfet demo
+     *  rtk_demo_cellular() - Cellular widget demo
      * --------------------------------------------------- */
 
     // rtk_demo_card();
+    // rtk_demo_cellular();
 }
 
 static void lvgl_demo_run(void *p)

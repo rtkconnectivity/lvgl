@@ -306,6 +306,7 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/widgets/textarea/lv_textarea.c
     ${LVGL_DIR}/src/widgets/tileview/lv_tileview.c
     ${LVGL_DIR}/src/widgets/win/lv_win.c
+    ${LVGL_DIR}/src/widgets/cardview/lv_cardview.c
 
     ${LVGL_DIR}/src/draw/ppe/rtl87x2g/lv_draw_ppe_rtl87x2g.c
     ${LVGL_DIR}/src/draw/ppe/rtl87x2g/lv_draw_ppe_rtl87x2g_fill.c
