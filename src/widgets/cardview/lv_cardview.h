@@ -16,7 +16,7 @@ extern "C" {
  *********************/
 #include "../lv_conf_internal.h"
 
-#if LV_USE_CARDVIEW != 0 ||1
+#if LV_USE_CARDVIEW != 0
 
 #include "../../core/lv_obj.h"
 #include "../../core/lv_obj_private.h"

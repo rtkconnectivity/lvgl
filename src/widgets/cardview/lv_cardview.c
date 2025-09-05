@@ -9,7 +9,7 @@
 #include "lv_cardview.h"
 #include "../../core/lv_obj_class_private.h"
 
-#if defined(LV_USE_CARDVIEW) && LV_USE_CARDVIEW != 0 || 1
+#if defined(LV_USE_CARDVIEW) && LV_USE_CARDVIEW != 0
 
 /*********************
  *      DEFINES
