@@ -9,7 +9,6 @@
 #include <math.h>
 #include "lvgl.h"
 #include "lvgl_watch.h"
-#include "lv_cellular.h"
 
 /*********************
  *      DEFINES
@@ -284,7 +283,8 @@ static void card_view_timer_cb(lv_timer_t *timer)
 static void cellular_timer_cb(lv_timer_t *timer)
 {
     lv_obj_t *cellular = (lv_obj_t *)lv_timer_get_user_data(timer);
-    CellularData *cellular_data = lv_obj_get_user_data(cellular);
+    lv_cellular_t *cellular_obj = (lv_cellular_t *)cellular;
+    CellularData *cellular_data = &cellular_obj->data;
     cellular_offset = cellular_data->ver_offset;
 
     if (cellular_img)
@@ -352,9 +352,10 @@ void lv_app_menu_cellular_init(void)
         enter_app_weather, enter_app_music, enter_app_calendar, enter_app_activity, enter_app_heartrate,
     };
     int array_size = sizeof(img_data) / sizeof(img_data[0]);
-    lv_obj_t *cellular = lv_cellular_create(scr_app_menu_cellular, 100, img_data, array_size,
-                                            enter_app_cb);
-    CellularData *cellular_date = (CellularData *)lv_obj_get_user_data(cellular);
+    lv_obj_t *cellular = lv_cellular_create_with_icon(scr_app_menu_cellular, 100, img_data, array_size,
+                                                      enter_app_cb);
+    lv_cellular_t *cellular_obj = (lv_cellular_t *)cellular;
+    CellularData *cellular_date = &cellular_obj->data;
     cellular_date->ver_offset_min -= 100;
     lv_cellular_set_offset(cellular, cellular_offset);
 
