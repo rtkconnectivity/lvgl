@@ -16,7 +16,7 @@ extern "C" {
 #include "lvgl.h"
 
 #if LV_USE_MATRIX
-#include "../../../src/misc/lv_matrix.h"
+#include "../../../../src/misc/lv_matrix.h"
 
 /*********************
  *      DEFINES

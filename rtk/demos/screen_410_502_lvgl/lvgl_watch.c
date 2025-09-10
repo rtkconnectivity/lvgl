@@ -59,9 +59,8 @@ static char *content = NULL;
  *  GLOBAL VARIABLES
  **********************/
 struct tm watch_time = {0};
-
+tileview_slide_t slide_info = {0};
 lv_obj_t *tileview;
-bool tileview_scrolling = false;
 lv_obj_t *tile_center;
 lv_obj_t *tile_up;
 lv_obj_t *tile_down;
@@ -157,11 +156,12 @@ void watch_demo_init(void)
     lv_tile_right_3_init();
 
 #if WATCH_DEMO_USE_TILESLIDE
-    lv_obj_add_event_cb(tileview, tileview_custom_cb, LV_EVENT_ALL, &tileview_scrolling);
 #if WATCH_DEMO_USE_SNAPSHOT
     event_snapshot_creat = lv_event_register_id();
     event_snapshot_delete = lv_event_register_id();
-
+    slide_info.snapshot = true;
+    slide_info.create_snapshot = event_snapshot_creat;
+    slide_info.delete_snapshot = event_snapshot_delete;
     create_snapshot_obj_with_enent(tile_center, tile_center,
                                    event_snapshot_creat, event_snapshot_delete);
     create_snapshot_obj_with_enent(tile_up, tile_up,
@@ -177,6 +177,7 @@ void watch_demo_init(void)
     create_snapshot_obj_with_enent(tile_right_3, tile_right_3,
                                    event_snapshot_creat, event_snapshot_delete);
 #endif
+    lv_obj_add_event_cb(tileview, tileview_custom_cb, LV_EVENT_ALL, &slide_info);
 #endif
     lv_screen_load(tileview);
 }

@@ -15,11 +15,11 @@ extern "C" {
  *********************/
 #include "lvgl.h"
 
-#include "../../../src/lvgl_private.h"
-#include "../../../src/core/lv_obj_pos.h"
+#include "../../../../src/lvgl_private.h"
+#include "../../../../src/core/lv_obj_pos.h"
 
 #if LV_USE_MATRIX
-#include "../../../src/misc/lv_matrix.h"
+#include "../../../../src/misc/lv_matrix.h"
 #endif
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 #include "lv_custom_matrix.h"

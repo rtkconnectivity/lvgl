@@ -13,9 +13,11 @@ if GetDepend('CONFIG_REALTEK_BUILD_LVGL_SIMPLE_DEMO'):
     src += Glob('*.c')
     src += Glob('./card/*.c')
     src += Glob('./cellular/*.c')
+    src += Glob('./tileview_slide_snapshot/*.c')
 
     CPPPATH += [cwd + '/card']
     CPPPATH += [cwd + '/cellular']
+    CPPPATH += [cwd + '/tileview_slide_snapshot']
 
     CPPDEFINES += ['DRV_LCD_WIDTH=410']
     CPPDEFINES += ['DRV_LCD_HIGHT=502']
