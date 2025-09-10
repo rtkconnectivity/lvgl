@@ -42,3 +42,22 @@ PR: <https://github.com/lvgl/lvgl/pull/7960>
 Add PPE initialization and SW IDU decoder initialization during LVGL initialization, depending on the macros in the config file.
 
 ---
+
+#### Date: 2025-09-10
+
+#### Author: [luke_sun, sienna_shen]
+
+- **Change Reason**: add new widget header file into lvgl.h.
+- **Modified Files**:
+  - `lv_init.h`
+
+#### Description
+
+Add new widget
+
+ - lv_cardview LV_USE_CARDVIEW
+ - lv_cellular LV_USE_CELLULAR
+ - lv_lite3d LV_USE_LITE3D
+
+---
+
