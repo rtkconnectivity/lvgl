@@ -8,9 +8,8 @@
  *********************/
 #include "lvgl.h"
 #include "lvgl_watch.h"
-#include "../Lite3D/include/l3.h"
+#include "../../../src/libs/Lite3D/include/l3.h"
 #include "root_image_lvgl/ui_resource.h"
-
 
 #if LVGL_USE_CJSON
 #include "cJSON.h"

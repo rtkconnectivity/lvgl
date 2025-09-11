@@ -16,12 +16,12 @@
 
 
 #include <stdlib.h>
-#include "l3.h"
+#include "./include/l3.h"
 
 
 #include "lvgl.h"
-#include "../../../src/misc/lv_types.h"
-#include "../../../src/draw/lv_draw_private.h"
+#include "../../src/misc/lv_types.h"
+#include "../../src/draw/lv_draw_private.h"
 
 void *l3_port_malloc(size_t size)
 {
@@ -33,10 +33,11 @@ void l3_port_free(void *ptr)
 }
 
 #if LV_USE_DRAW_PPE_RTL8773G
-#include "../../../src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.h"
+#include "../../src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.h"
 void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
                                      l3_rect_t *rect)
 {
+    // int ppe_prepare_time = read_cpu_counter();
     // draw_uint
     lv_image_header_t dc_header =
     {
@@ -134,7 +135,7 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
         .y2 = image_header->h - 1,
     };
 
-    lv_matrix_t *matrix = (lv_matrix_t *)image->matrix.m;
+    lv_matrix_t *matrix = (lv_matrix_t *)image->matrix.u.m;
 
     lv_draw_ppe_image_use_matrix(&draw_unit, &draw_dsc, &coords, matrix, image->blend_mode);
 }

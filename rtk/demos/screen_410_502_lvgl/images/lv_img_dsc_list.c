@@ -423,17 +423,6 @@ const lv_image_dsc_t watch_second_hand =
     .data = (uint8_t *)WATCH_SECOND_HAND_BIN + 8
 };
 
-const lv_image_dsc_t desc_face =
-{
-    .header.magic = LV_IMAGE_HEADER_MAGIC,
-    .header.w = 0,
-    .header.h = 740,
-    .header.stride = 0,
-    .data_size = 0,
-    .header.cf = LV_COLOR_FORMAT_RGB565,
-    .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)DESC_FACE_BIN + 8
-};
 
 const lv_image_dsc_t capsule_mute_off =
 {

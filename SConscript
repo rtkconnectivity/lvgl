@@ -66,6 +66,28 @@ if GetDepend('CONFIG_REALTEK_BUILD_LVGL_DEMO_APP'):
             if check_h_hpp_exists(current_path):
                 inc = inc + [current_path]
 
+lite3d_src = []
+lite3d_inc = []
+libs = []
+libpath = []
+if GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D'):
+    lite3d_src_cwd = lvgl_cwd + 'src/libs/Lite3D/'
+    lite3d_inc += [lite3d_src_cwd + '/include']
+
+    if GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D_FOR_WIN32_GCC_LIB'):
+        libs = ['Lite3D_GCC']
+        libpath = [lite3d_src_cwd + '/lib']
+    elif GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773E_ARMCC_LIB'):
+        lite3d_src += [lite3d_src_cwd + '/lib/Lite3D_RTL8773E_ARMCC.lib']
+    elif GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773E_ARMCL_LIB'):
+        lite3d_src += [lite3d_src_cwd + '/lib/Lite3D_RTL8773E_ARMCLANG.lib']
+    elif GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773G_ARMCL_LIB'):
+        lite3d_src += [lite3d_src_cwd + '/lib/Lite3D_RTL8773G_ARMCLANG.lib']
+
+        
+group = group + DefineGroup('lite3d', lite3d_src, depend=['CONFIG_REALTEK_BUILD_LVGL_LITE3D'], CPPPATH=lite3d_inc, LIBS = libs, LIBPATH = libpath)
+
+
 Import('PLATFORM')
 LOCAL_CFLAGS = ''
 if PLATFORM == 'gcc' or PLATFORM == 'armclang': # GCC or Keil AC6

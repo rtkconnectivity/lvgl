@@ -14,7 +14,7 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include "../../core/lv_obj_private.h"
-#include "../../../rtk/demos/Lite3D/include/l3.h"
+#include "../../src/libs/Lite3D/include/l3.h"
 
 #if LV_USE_LITE3D != 0
 /*********************

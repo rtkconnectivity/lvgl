@@ -36,7 +36,6 @@ extern const lv_image_dsc_t watch_hour_hand;
 extern const lv_image_dsc_t watch_mask;
 extern const lv_image_dsc_t watch_minute_hand;
 extern const lv_image_dsc_t watch_second_hand;
-extern const lv_image_dsc_t desc_face;
 extern const lv_image_dsc_t capsule_mute_off;
 extern const lv_image_dsc_t capsule_mute_on;
 extern const lv_image_dsc_t capsule_nobother_off;
