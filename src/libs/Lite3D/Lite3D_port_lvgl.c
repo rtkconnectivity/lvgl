@@ -32,8 +32,8 @@ void l3_port_free(void *ptr)
     lv_free(ptr);
 }
 
-#if LV_USE_DRAW_PPE_RTL8773G
-#include "../../src/draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.h"
+#if LV_USE_DRAW_PPE_RTL8773G && LV_DRAW_TRANSFORM_USE_MATRIX
+#include "../../draw/ppe/rtl8773g/lv_draw_ppe_rtl8773g.h"
 void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
                                      l3_rect_t *rect)
 {

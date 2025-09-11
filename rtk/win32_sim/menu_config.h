@@ -65,11 +65,20 @@
 #endif
 // </e>
 
-// <e> RTK GUI Enable Lite3D library
+// <e> LVGL Enable Lite3D library
 #define CONFIG_REALTEK_BUILD_LVGL_LITE3D  1
 #if (CONFIG_REALTEK_BUILD_LVGL_LITE3D == 1)
 // <c> Enable Lite3D WIN32 GCC LIB
 #define CONFIG_REALTEK_BUILD_LVGL_LITE3D_FOR_WIN32_GCC_LIB
+// </c>
+#endif
+// </e>
+
+// <e> LVGL Enable FreeType
+#define CONFIG_REALTEK_BUILD_FREETYPE_SRC  0
+#if (CONFIG_REALTEK_BUILD_FREETYPE_SRC == 1)
+// <c> Enable FreeType use LVGL port, shoule sync with LV_FREETYPE_USE_LVGL_PORT in lv_conf.h
+#define CONFIG_FREETYPE_USE_LVGL_PORT
 // </c>
 #endif
 // </e>

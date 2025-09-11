@@ -66,6 +66,16 @@ menu "LVGL configuration"
 				endchoice
 			endif
 
+			config REALTEK_BUILD_FREETYPE_SRC
+				bool "Enable Buile FreeType library"
+				default n
+
+			if REALTEK_BUILD_FREETYPE_SRC
+				config FREETYPE_USE_LVGL_PORT
+					bool "Let FreeType use LVGL memory and file porting"
+					default n
+			endif
+
 		endif # REALTEK_BUILD_LVGL
 
 

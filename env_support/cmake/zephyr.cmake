@@ -194,6 +194,7 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/libs/tiny_ttf/lv_tiny_ttf.c
     ${LVGL_DIR}/src/libs/tjpgd/lv_tjpgd.c
     ${LVGL_DIR}/src/libs/tjpgd/tjpgd.c
+    ${LVGL_DIR}/src/libs/Lite3D/Lite3D_port_lvgl.c
 
     ${LVGL_DIR}/src/lv_init.c
 
@@ -308,6 +309,7 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/widgets/win/lv_win.c
     ${LVGL_DIR}/src/widgets/cardview/lv_cardview.c
     ${LVGL_DIR}/src/widgets/cellular/lv_cellular.c
+    ${LVGL_DIR}/src/widgets/3d/lv_lite3d.c
 
     ${LVGL_DIR}/src/draw/ppe/rtl87x2g/lv_draw_ppe_rtl87x2g.c
     ${LVGL_DIR}/src/draw/ppe/rtl87x2g/lv_draw_ppe_rtl87x2g_fill.c
@@ -341,6 +343,9 @@ target_sources(app PRIVATE
     ${LVGL_DIR}/src/libs/avi/avidec.c
     ${LVGL_DIR}/src/libs/avi/lv_avi.c
 )
+
+include(${LVGL_DIR}/src/libs/Lite3D/Lite3D.cmake)
+include(${LVGL_DIR}/libs/freetype/freetype.cmake)
 
 # zephyr_library_link_libraries(LVGL)
 # target_link_libraries(LVGL INTERFACE zephyr_interface)

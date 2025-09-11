@@ -84,8 +84,52 @@ if GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D'):
     elif GetDepend('CONFIG_REALTEK_BUILD_LVGL_LITE3D_8773G_ARMCL_LIB'):
         lite3d_src += [lite3d_src_cwd + '/lib/Lite3D_RTL8773G_ARMCLANG.lib']
 
-        
+
 group = group + DefineGroup('lite3d', lite3d_src, depend=['CONFIG_REALTEK_BUILD_LVGL_LITE3D'], CPPPATH=lite3d_inc, LIBS = libs, LIBPATH = libpath)
+
+ft_src = []
+ft_inc = []
+ft_def = []
+if GetDepend('CONFIG_REALTEK_BUILD_FREETYPE_SRC'):
+    ft_inc += [cwd + '/libs/freetype/include']
+    ft_src = [
+        cwd + "/libs/freetype/src/autofit/autofit.c",
+        cwd + "/libs/freetype/src/bdf/bdf.c",
+        cwd + "/libs/freetype/src/cff/cff.c",
+        cwd + "/libs/freetype/src/dlg/dlgwrap.c",
+        cwd + "/libs/freetype/src/base/ftbase.c",
+        cwd + "/libs/freetype/src/cache/ftcache.c",
+        cwd + "/libs/freetype/src/base/ftdebug.c",
+        cwd + "/libs/freetype/src/gzip/ftgzip.c",
+        cwd + "/libs/freetype/src/base/ftinit.c",
+        cwd + "/libs/freetype/src/lzw/ftlzw.c",
+        cwd + "/libs/freetype/src/pcf/pcf.c",
+        cwd + "/libs/freetype/src/pfr/pfr.c",
+        cwd + "/libs/freetype/src/psaux/psaux.c",
+        cwd + "/libs/freetype/src/pshinter/pshinter.c",
+        cwd + "/libs/freetype/src/psnames/psmodule.c",
+        cwd + "/libs/freetype/src/raster/raster.c",
+        cwd + "/libs/freetype/src/sdf/sdf.c",
+        cwd + "/libs/freetype/src/sfnt/sfnt.c",
+        cwd + "/libs/freetype/src/smooth/smooth.c",
+        cwd + "/libs/freetype/src/base/ftmm.c",
+        cwd + "/libs/freetype/src/base/ftglyph.c",
+        cwd + "/libs/freetype/src/base/ftbitmap.c",
+        cwd + "/libs/freetype/src/truetype/truetype.c",
+        cwd + "/libs/freetype/src/type1/type1.c",
+        cwd + "/libs/freetype/src/cid/type1cid.c",
+        cwd + "/libs/freetype/src/type42/type42.c",
+        cwd + "/libs/freetype/src/winfonts/winfnt.c",
+        cwd + "/libs/freetype/src/svg/ftsvg.c",
+        cwd + "/libs/freetype/src/base/ftsystem.c",
+    ]
+
+    if GetDepend('CONFIG_FREETYPE_USE_LVGL_PORT'):
+        ft_src.remove(cwd + "/libs/freetype/src/base/ftsystem.c")
+
+    ft_def += ['FT2_BUILD_LIBRARY']
+
+group = group + DefineGroup('freetype', ft_src, depend=['CONFIG_REALTEK_BUILD_FREETYPE_SRC'], CPPPATH=ft_inc, CPPDEFINES=ft_def)
 
 
 Import('PLATFORM')
