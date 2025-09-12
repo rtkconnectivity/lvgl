@@ -1,0 +1,23 @@
+/**
+ * @file rtk_demo_lite3d_disc.h
+ *
+ */
+
+#ifndef RTK_DEMO_LITE3D_DISC_H
+#define RTK_DEMO_LITE3D_DISC_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief rtk demo lite3d disc
+ *
+ */
+void rtk_demo_lite3d_disc(void);
+
+#ifdef __cplusplus
+} /*extern "C"*/
+#endif
+
+#endif /*RTK_DEMO_LITE3D_DISC_H*/

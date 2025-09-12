@@ -20,6 +20,7 @@ extern "C" {
 #include "rtk_demo_card.h"
 #include "rtk_demo_cellular.h"
 #include "rtk_demo_tileview_slide.h"
+#include "rtk_demo_lite3d_disc.h"
 
 /*********************
  *      DEFINES

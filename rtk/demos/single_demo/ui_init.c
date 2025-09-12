@@ -35,11 +35,13 @@ void single_demo_ui_init(void)
      *  rtk_demo_cellular() - Cellular widget demo
      *  rtk_demo_tileview_slide() - Tileview slide demo
      *  rtk_demo_tileview_slide_snapshot() - Tileview 2.5D slide demo cache by snapshot
+     *  rtk_demo_lite3d_disc() - Lite3D disc demo
      * --------------------------------------------------- */
 
     // rtk_demo_card();
     // rtk_demo_cellular();
     // rtk_demo_tileview_slide();
     // rtk_demo_tileview_slide_snapshot();
+    // rtk_demo_lite3d_disc();
 }
 

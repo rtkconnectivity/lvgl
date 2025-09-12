@@ -37,7 +37,6 @@ void l3_port_free(void *ptr)
 void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
                                      l3_rect_t *rect)
 {
-    // int ppe_prepare_time = read_cpu_counter();
     // draw_uint
     lv_image_header_t dc_header =
     {
