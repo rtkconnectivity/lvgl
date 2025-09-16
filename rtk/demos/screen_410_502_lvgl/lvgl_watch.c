@@ -68,6 +68,7 @@ lv_obj_t *tile_left;
 lv_obj_t *tile_right;
 lv_obj_t *tile_right_2;
 lv_obj_t *tile_right_3;
+lv_obj_t *tile_right_4;
 
 lv_obj_t *scr_tile_center;
 lv_obj_t *scr_tile_up;
@@ -76,6 +77,7 @@ lv_obj_t *scr_tile_left;
 lv_obj_t *scr_tile_right;
 lv_obj_t *scr_tile_right_2;
 lv_obj_t *scr_tile_right_3;
+lv_obj_t *scr_tile_right_4;
 
 lv_obj_t *scr_app_music;
 
@@ -107,6 +109,7 @@ void watch_demo_init(void)
     tile_right = lv_tileview_add_tile(tileview, 2, 1, LV_DIR_HOR); // create right tile
     tile_right_2 = lv_tileview_add_tile(tileview, 3, 1, LV_DIR_HOR); // create right 2 tile
     tile_right_3 = lv_tileview_add_tile(tileview, 4, 1, LV_DIR_HOR); // create right 3 tile
+    tile_right_4 = lv_tileview_add_tile(tileview, 5, 1, LV_DIR_HOR); // create right 4 tile
 
     lv_obj_set_user_data(tile_center, (void *)&global_slide);
     lv_obj_set_user_data(tile_up, (void *)&global_slide);
@@ -115,6 +118,7 @@ void watch_demo_init(void)
     lv_obj_set_user_data(tile_right, (void *)&global_slide);
     lv_obj_set_user_data(tile_right_2, (void *)&global_slide);
     lv_obj_set_user_data(tile_right_3, (void *)&global_slide);
+    lv_obj_set_user_data(tile_right_4, (void *)&global_slide);
 
     scr_tile_center = lv_obj_create(tile_center);
     lv_obj_remove_style_all(scr_tile_center);
@@ -144,6 +148,10 @@ void watch_demo_init(void)
     lv_obj_remove_style_all(scr_tile_right_3);
     lv_obj_set_size(scr_tile_right_3, LV_PCT(100), LV_PCT(100));
 
+    scr_tile_right_4 = lv_obj_create(tile_right_4);
+    lv_obj_remove_style_all(scr_tile_right_4);
+    lv_obj_set_size(scr_tile_right_4, LV_PCT(100), LV_PCT(100));
+
     lv_tileview_set_tile_by_index(tileview, 1, 1, LV_ANIM_OFF); // start with center tile, no animation
 
     //initialize tileview UI
@@ -154,6 +162,7 @@ void watch_demo_init(void)
     lv_tile_right_init();
     lv_tile_right_2_init();
     lv_tile_right_3_init();
+    lv_tile_right_4_init();
 
 #if WATCH_DEMO_USE_TILESLIDE
 #if WATCH_DEMO_USE_SNAPSHOT
@@ -175,6 +184,8 @@ void watch_demo_init(void)
     create_snapshot_obj_with_enent(tile_right_2, tile_right_2,
                                    event_snapshot_creat, event_snapshot_delete);
     create_snapshot_obj_with_enent(tile_right_3, tile_right_3,
+                                   event_snapshot_creat, event_snapshot_delete);
+    create_snapshot_obj_with_enent(tile_right_4, tile_right_4,
                                    event_snapshot_creat, event_snapshot_delete);
 #endif
     lv_obj_add_event_cb(tileview, tileview_custom_cb, LV_EVENT_ALL, &slide_info);

@@ -108,8 +108,6 @@ void rtk_demo_lite3d_disc(void)
     l3_set_global_transform(disc_3d, (l3_global_transform_cb)disc_global_cb);
     l3_set_face_transform(disc_3d, (l3_face_transform_cb)disc_face_cb);
     lv_obj_t *lite3d_disc = lv_lite3d_create(screen, disc_3d);
-    lv_lite3d_set_click_cb(lite3d_disc, disc_click_cb);
-
 
     l3_model_t *disc_cube = l3_create_model((void *)_acdesc_disc_cube, L3_DRAW_FRONT_AND_SORT, 15, 0,
                                             DISC_MODEL_WIDTH,
@@ -118,6 +116,8 @@ void rtk_demo_lite3d_disc(void)
     l3_set_face_transform(disc_cube, (l3_face_transform_cb)disc_cube_face_cb);
     lv_obj_t *lite3d_disc_cube = lv_lite3d_create(screen, disc_cube);
 
+    lv_lite3d_set_click_cb(lite3d_disc, disc_click_cb);
+    lv_lite3d_set_click_cb(lite3d_disc_cube, disc_click_cb);
     lv_timer_t *timer = lv_timer_create(update_disc_animation, 16, lite3d_disc);
 }
 

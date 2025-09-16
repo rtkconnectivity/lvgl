@@ -24,7 +24,7 @@
 #include "lvgl_watch.h"
 
 #ifdef CONFIG_SOC_SERIES_RTL87X3G
-#include "..\..\..\inc\rtl87x3g\platform\address_map.h"
+#include "..\..\..\rtl87x3g\platform\inc\address_map.h"
 #endif
 
 #ifdef CONFIG_SOC_SERIES_RTL87x3E
