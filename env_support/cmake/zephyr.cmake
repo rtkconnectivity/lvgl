@@ -333,6 +333,7 @@ target_sources(app PRIVATE
 
     ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk.c
     ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk_letter.c
+    ${LVGL_DIR}/src/draw/rtk/lv_draw_rtk_img.c
     ${LVGL_DIR}/src/draw/rtk/font_rendering_utils.c
 
     ${LVGL_DIR}/src/libs/jpu/lv_jpu.c

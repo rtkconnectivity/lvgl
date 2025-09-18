@@ -130,7 +130,35 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
         }
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
+        {
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+            lv_draw_image_dsc_t * draw_dsc = task->draw_dsc;
 
+            bool matrix_tidentify = task->matrix.m[0][0] == 1.0f
+                                && task->matrix.m[0][1] == 0.0f
+                                && task->matrix.m[0][2] == 0.0f
+                                && task->matrix.m[1][0] == 0.0f
+                                && task->matrix.m[1][1] == 1.0f
+                                && task->matrix.m[1][2] == 0.0f
+                                && task->matrix.m[2][0] == 0.0f
+                                && task->matrix.m[2][1] == 0.0f
+                                && task->matrix.m[2][2] == 1.0f;
+
+            if(matrix_tidentify) return 0;
+            if(draw_dsc->tile) return 0;
+            if(draw_dsc->bitmap_mask_src) return 0;
+            if(draw_dsc->recolor_opa) return 0;
+
+            lv_color_format_t cf = draw_dsc->header.cf;
+            if (cf == LV_COLOR_FORMAT_ARGB8888
+             || cf == LV_COLOR_FORMAT_RGB565
+             || cf == LV_COLOR_FORMAT_RGB888)
+            {
+                task->preference_score = 90;
+                task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
+            }
+#endif
+        }
         break;
     case LV_DRAW_TASK_TYPE_ARC:
 
@@ -142,7 +170,37 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
 
         break;
     case LV_DRAW_TASK_TYPE_LAYER:
+        {
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+            lv_draw_image_dsc_t * draw_dsc = task->draw_dsc;
+            lv_layer_t *layer = (lv_layer_t *)draw_dsc->src;
+            lv_image_dsc_t *img_dsc = (lv_image_dsc_t *)layer->draw_buf;
 
+            bool matrix_tidentify = task->matrix.m[0][0] == 1.0f
+                                && task->matrix.m[0][1] == 0.0f
+                                && task->matrix.m[0][2] == 0.0f
+                                && task->matrix.m[1][0] == 0.0f
+                                && task->matrix.m[1][1] == 1.0f
+                                && task->matrix.m[1][2] == 0.0f
+                                && task->matrix.m[2][0] == 0.0f
+                                && task->matrix.m[2][1] == 0.0f
+                                && task->matrix.m[2][2] == 1.0f;
+
+            if(matrix_tidentify) return 0;
+            if(draw_dsc->tile) return 0;
+            if(draw_dsc->bitmap_mask_src) return 0;
+            if(draw_dsc->recolor_opa) return 0;
+
+            lv_color_format_t cf = img_dsc->header.cf;
+            if (cf == LV_COLOR_FORMAT_ARGB8888
+             || cf == LV_COLOR_FORMAT_RGB565
+             || cf == LV_COLOR_FORMAT_RGB888)
+            {
+                task->preference_score = 90;
+                task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
+            }
+#endif
+        }
         break;
     case LV_DRAW_TASK_TYPE_MASK_RECTANGLE:
 
@@ -222,7 +280,7 @@ static void execute_drawing(lv_draw_rtk_unit_t *u)
         lv_draw_rtk_label((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
-
+        lv_draw_rtk_image((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_ARC:
 
@@ -234,7 +292,7 @@ static void execute_drawing(lv_draw_rtk_unit_t *u)
 
         break;
     case LV_DRAW_TASK_TYPE_LAYER:
-
+        lv_draw_rtk_layer((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_MASK_RECTANGLE:
 
