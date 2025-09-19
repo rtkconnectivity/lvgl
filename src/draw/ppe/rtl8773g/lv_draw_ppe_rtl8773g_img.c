@@ -869,7 +869,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     source.format = lv_ppe_get_format(img_dsc->header.cf);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
 
-    source.address = (uint32_t)img_dsc->data;
+    source.address = (uint32_t)img_dsc->data + (compressed ? 8 : 0);
     source.width = img_dsc->header.w;
     source.height = img_dsc->header.h;
     source.high_quality = false;
@@ -1013,7 +1013,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         dma_cfg.output_buf = (uint32_t *)pic_buffer;
         dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
         dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-        IDU_ERROR err_code = IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+        IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
         source.address = (uint32_t)pic_buffer;
         source.width = image_width;
         source.height = image_height;

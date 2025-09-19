@@ -279,7 +279,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         LV_LOG_INFO("Input width: %d height %d", width, height);
         LV_LOG_INFO("Input type: %d stride %d", input_type, stride);
 
-        const uint8_t *rle_header = (const uint8_t *)(image->data);
+        const uint8_t *rle_header = (const uint8_t *)(image->data + 8);
         idu_file_t *file = (idu_file_t *)rle_header;
 
         uint32_t required_size = height * image->header.stride;
