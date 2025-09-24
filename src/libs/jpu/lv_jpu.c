@@ -274,11 +274,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         dec_param.size = f_sz;
         dec_param.frameFormat = PACKED_FORMAT_422_YUYV;
         dec_param.useWrapper = 1;
-#if LV_COLOR_DEPTH==16
         dec_param.rgbType = JPU_RGB565;
-#elif LV_COLOR_DEPTH==32
-        dec_param.rgbType = JPU_RGB888;
-#endif
         LV_LOG_INFO("data %p, %d", dec_param.data, dec_param.size);
         hal_jpu_mem_init(lv_malloc, lv_free);
         err = hal_jpu_decode(&dec_param, &output, &output_size, &w, &h);
@@ -297,17 +293,17 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (draw_buf == NULL) { return LV_RESULT_INVALID; }
 
 #if 1
-        draw_buf->header.w = w;
-        draw_buf->header.h = h;
+        draw_buf->header.w = dsc->header.w;
+        draw_buf->header.h = dsc->header.h;
         if (dec_param.rgbType == JPU_RGB565)
         {
             draw_buf->header.cf = LV_COLOR_FORMAT_RGB565;
-            draw_buf->header.stride = draw_buf->header.w * 2;
+            draw_buf->header.stride = w * 2;
         }
         else if (dec_param.rgbType == JPU_RGB888)
         {
             draw_buf->header.cf = LV_COLOR_FORMAT_RGB888;
-            draw_buf->header.stride = draw_buf->header.w * 3;
+            draw_buf->header.stride = w * 3;
         }
 
         draw_buf->header.flags = LV_IMAGE_FLAGS_MODIFIABLE | LV_IMAGE_FLAGS_ALLOCATED;
@@ -374,11 +370,7 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         dec_param.size = img_size;
         dec_param.frameFormat = PACKED_FORMAT_422_YUYV;
         dec_param.useWrapper = 1;
-#if LV_COLOR_DEPTH==16
         dec_param.rgbType = JPU_RGB565;
-#elif LV_COLOR_DEPTH==32
-        dec_param.rgbType = JPU_RGB888;
-#endif
         LV_LOG_INFO("data %p, %d", dec_param.data, dec_param.size);
         hal_jpu_mem_init(lv_malloc, lv_free);
         err = hal_jpu_decode(&dec_param, &output, &output_size, &w, &h);
@@ -397,17 +389,17 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         if (draw_buf == NULL) { return LV_RESULT_INVALID; }
 
 #if 1
-        draw_buf->header.w = w;
-        draw_buf->header.h = h;
+        draw_buf->header.w = dsc->header.w;
+        draw_buf->header.h = dsc->header.h;
         if (dec_param.rgbType == JPU_RGB565)
         {
             draw_buf->header.cf = LV_COLOR_FORMAT_RGB565;
-            draw_buf->header.stride = draw_buf->header.w * 2;
+            draw_buf->header.stride = w * 2;
         }
         else if (dec_param.rgbType == JPU_RGB888)
         {
             draw_buf->header.cf = LV_COLOR_FORMAT_RGB888;
-            draw_buf->header.stride = draw_buf->header.w * 3;
+            draw_buf->header.stride = w * 3;
         }
 
         draw_buf->header.flags = LV_IMAGE_FLAGS_MODIFIABLE | LV_IMAGE_FLAGS_ALLOCATED;

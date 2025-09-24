@@ -212,7 +212,10 @@ static void lv_avi_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
     lv_image_cache_drop(lv_image_get_src(obj));
 
     if(aviobj->avi)
+    {
         ad_close_avi(aviobj->avi);
+    }
+        
     lv_timer_delete(aviobj->timer);
 }
 
@@ -225,6 +228,7 @@ static void next_frame_task_cb(lv_timer_t * t)
 
     aviobj->last_call = lv_tick_get();
 
+    ad_release_frame(aviobj->avi);
     int has_next = ad_get_frame(aviobj->avi);
     if(has_next == 0) {
         /*It was the last repeat*/
@@ -233,10 +237,7 @@ static void next_frame_task_cb(lv_timer_t * t)
         if(res != LV_RESULT_OK) return;
     }
 
-    // for variable
-    aviobj->imgdsc.data = (const uint8_t * )(aviobj->avi->data + aviobj->avi->cur_frame_pos + 8);
-
-
+    aviobj->imgdsc.data = (const uint8_t * )(aviobj->avi->framedata);
     aviobj->imgdsc.data_size = aviobj->avi->cur_frame_size;
     lv_image_set_src((lv_obj_t *)&aviobj->img, &aviobj->imgdsc);
 

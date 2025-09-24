@@ -277,6 +277,27 @@ int ad_get_frame(ad_AVI * avi)
                 avi->cur_frame_pos = avi->movi_data_beacon + idx.offset;
                 avi->cur_frame_size = idx.size;
                 LV_LOG_INFO("frame %d, offset 0x%x, size %d, pos 0x%x", frame_cnt, idx.offset, avi->cur_frame_size, avi->cur_frame_pos);
+
+                if(avi->is_file) 
+                {
+                    f_avi_seek(avi, avi->cur_frame_pos + 8, LV_FS_SEEK_SET);
+                    avi->framedata_raw = lv_malloc(avi->cur_frame_size + 7);
+                    if(avi->framedata_raw)
+                    {
+                        avi->framedata = (uint8_t*)(((uint32_t)(avi->framedata_raw + 7) >> 3)  << 3);
+                        f_avi_read(avi, avi->framedata, avi->cur_frame_size);
+                    }
+                    else
+                    {
+                        LV_LOG_ERROR("AVI load frame malloc fail");
+                        return 0;
+                    }
+                }
+                else 
+                {
+                    avi->framedata = (uint8_t * )(avi->data + avi->cur_frame_pos + 8);
+                }
+
                 return 1;
             }
         }
@@ -284,7 +305,16 @@ int ad_get_frame(ad_AVI * avi)
     return 0;
 }
 
+void ad_release_frame(ad_AVI * avi)
+{
+    if(avi->is_file && avi->framedata_raw)
+    {
+        lv_free(avi->framedata_raw);
+    }
 
+    avi->framedata = NULL;
+    avi->framedata_raw = NULL;
+}
 
 void ad_rewind(ad_AVI * avi)
 {
@@ -295,6 +325,7 @@ void ad_rewind(ad_AVI * avi)
 
 void ad_close_avi(ad_AVI * avi)
 {
+    ad_release_frame(avi);
     f_avi_close(avi);
     lv_free(avi);
 }

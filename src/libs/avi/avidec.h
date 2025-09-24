@@ -98,7 +98,8 @@ typedef struct _ad_AVI {
     uint32_t chunk_num;
     int idx1_data_beacon;
 
-    // uint8_t *framebuff;
+    uint8_t *framedata;
+    uint8_t *framedata_raw;
 } ad_AVI;
 
 
@@ -109,6 +110,7 @@ ad_AVI * ad_open_avi_data(const void * data);
 void ad_render_frame(ad_AVI * avi);
 
 int ad_get_frame(ad_AVI * avi);
+void ad_release_frame(ad_AVI * avi);
 void ad_rewind(ad_AVI * avi);
 void ad_close_avi(ad_AVI * avi);
 
