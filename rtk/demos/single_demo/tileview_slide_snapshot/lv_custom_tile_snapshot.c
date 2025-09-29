@@ -28,6 +28,14 @@
 static void lv_draw_buf_memcpy(void *dst, const void *src, size_t len);
 
 /**
+ * @brief Find snapshot image object linked to a widget
+ *
+ * @param target Widget object to search for snapshot
+ * @return lv_obj_t* Pointer to snapshot image object if found, NULL otherwise
+ */
+static lv_obj_t *find_snapshot(lv_obj_t *target);
+
+/**
  * @brief Delete snapshot resources
  * @param widget Associated widget object
  * @param img_snapshot Target snapshot image object to operate
@@ -94,17 +102,44 @@ static void snapshot_custom_cb_create(lv_event_t *e);
  *   GLOBAL FUNCTIONS
  **********************/
 
-void delete_snapshot_obj_directly(lv_obj_t *widget, lv_obj_t *snapshot)
+void delete_snapshot_obj_directly(lv_obj_t *target, lv_obj_t *snapshot)
 {
-    delete_snapshot(widget, snapshot);
-    lv_obj_remove_flag(widget, LV_OBJ_FLAG_HIDDEN);
+    if (snapshot == NULL)
+    {
+        snapshot = find_snapshot(target);
+    }
+    if (snapshot == NULL)
+    {
+        LV_LOG_WARN("Snapshot not found for target %p", target);
+        return;
+    }
+    delete_snapshot(target, snapshot);
+    lv_obj_remove_flag(target, LV_OBJ_FLAG_HIDDEN);
 }
 
-lv_obj_t *create_snapshot_obj_directly(lv_obj_t *parent, lv_obj_t *target)
+void update_snapshot_obj_directly(lv_obj_t *target, lv_obj_t *snapshot)
 {
-    lv_obj_t *snapshot = lv_image_create(parent);
+    if (snapshot == NULL)
+    {
+        snapshot = find_snapshot(target);
+    }
+    if (snapshot == NULL)
+    {
+        LV_LOG_WARN("Snapshot not found for target %p", target);
+        return;
+    }
+    lv_obj_remove_flag(target, LV_OBJ_FLAG_HIDDEN);
+    update_snapshot(target, snapshot);
+    lv_obj_add_flag(target, LV_OBJ_FLAG_HIDDEN);
+}
+
+lv_obj_t *create_snapshot_obj_directly(lv_obj_t *target)
+{
+    lv_obj_t *snapshot = lv_image_create(lv_obj_get_parent(target));
     lv_obj_set_size(snapshot, lv_obj_get_width(target), lv_obj_get_height(target));
     create_snapshot_normal(target, snapshot);
+    lv_obj_set_user_data(snapshot, target);
+    lv_obj_add_event_cb(snapshot, snapshot_custom_cb_delete, LV_EVENT_DELETE, target);
     lv_obj_add_flag(target, LV_OBJ_FLAG_HIDDEN);
     return snapshot;
 }
@@ -124,6 +159,23 @@ lv_obj_t *create_snapshot_obj_with_enent(lv_obj_t *parent, lv_obj_t *target,
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+
+static lv_obj_t *find_snapshot(lv_obj_t *target)
+{
+    lv_obj_t *snapshot = NULL;
+    lv_obj_t *parent = lv_obj_get_parent(target);
+
+    for (int i = 0; i < lv_obj_get_child_count(parent); i++)
+    {
+        lv_obj_t *obj = lv_obj_get_child(parent, i);
+        if (lv_obj_get_user_data(obj) == target)
+        {
+            snapshot = obj;
+            break;
+        }
+    }
+    return snapshot;
+}
 
 static void lv_draw_buf_memcpy(void *dst, const void *src, size_t len)
 {
