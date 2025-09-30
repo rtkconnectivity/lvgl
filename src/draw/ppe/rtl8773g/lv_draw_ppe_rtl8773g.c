@@ -75,7 +75,9 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
     case LV_DRAW_TASK_TYPE_FILL:
         {
             const lv_draw_fill_dsc_t *draw_dsc = (lv_draw_fill_dsc_t *) task->draw_dsc;
-            if ((draw_dsc->grad.dir != (lv_grad_dir_t)LV_GRAD_DIR_NONE))
+            if ((draw_dsc->grad.dir != (lv_grad_dir_t)LV_GRAD_DIR_NONE) ||
+                draw_unit->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8888\
+                || draw_unit->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8565)
             {
                 return 0;
             }
