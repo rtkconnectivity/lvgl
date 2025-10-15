@@ -16,6 +16,7 @@ static void example_card_design(lv_obj_t *card, void *param)
     uint32_t index = cd->data.index;
 
     lv_obj_set_style_bg_color(card, lv_color_make(12 * index, 255 - 12 * index, 128), 0);
+    lv_obj_set_style_radius(card, 30, 0);
 
     lv_obj_t *label = lv_label_create(card);
     lv_label_set_text_fmt(label, "Card %d", index);
@@ -30,9 +31,7 @@ static void example_card_design(lv_obj_t *card, void *param)
  */
 static lv_obj_t *example_card_stack(lv_obj_t *parent)
 {
-    lv_coord_t card_height = 200;
-    lv_coord_t card_space = 0;
-    lv_obj_t *cardview = lv_card_view_create(parent, CARD_STACK, card_height, card_space, 10, 20,
+    lv_obj_t *cardview = lv_card_view_create(parent, CARD_STACK, 200, 0, 100, 20,
                                              example_card_design, NULL);
 
     return cardview;

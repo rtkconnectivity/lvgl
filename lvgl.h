@@ -86,6 +86,7 @@ extern "C" {
 #include "src/widgets/cardview/lv_cardview.h"
 #include "src/widgets/cellular/lv_cellular.h"
 #include "src/widgets/3d/lv_lite3d.h"
+#include "src/widgets/snapshot/lv_snapshot_widgets.h"
 
 #include "src/others/snapshot/lv_snapshot.h"
 #include "src/others/sysmon/lv_sysmon.h"

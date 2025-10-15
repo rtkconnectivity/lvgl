@@ -757,6 +757,10 @@
 
 #define LV_USE_LITE3D     1
 
+/** Enable snapshot widget
+ *  - Requires `LV_USE_SNAPSHOT = 1` */
+#define LV_USE_SNAPSHOT_WIDGETS     1
+
 /*==================
  * THEMES
  *==================*/
