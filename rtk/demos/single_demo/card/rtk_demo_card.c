@@ -31,7 +31,7 @@ static void example_card_design(lv_obj_t *card, void *param)
  */
 static lv_obj_t *example_card_stack(lv_obj_t *parent)
 {
-    lv_obj_t *cardview = lv_card_view_create(parent, CARD_STACK, 200, 0, 100, 20,
+    lv_obj_t *cardview = lv_card_view_create(parent, CARD_STACK, 200, 6, 100, 20,
                                              example_card_design, NULL);
 
     return cardview;
@@ -39,6 +39,10 @@ static lv_obj_t *example_card_stack(lv_obj_t *parent)
 
 void rtk_demo_card(void)
 {
+#if LV_DRAW_TRANSFORM_USE_MATRIX && __WIN32
+    LV_LOG_WARN("card demo is not supported. Please disable LV_DRAW_TRANSFORM_USE_MATRIX");
+#else
     example_card_stack(lv_screen_active());
+#endif
 }
 

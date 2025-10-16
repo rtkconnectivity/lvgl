@@ -124,7 +124,7 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             const lv_font_fmt_txt_dsc_t *fdsc = font->dsc;
             if (fdsc->bitmap_format == LV_FONT_FMT_PLAIN_ALIGNED)
             {
-                task->preference_score = 90;
+                task->preference_score = 85;
                 task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
             }
         }
@@ -154,7 +154,7 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
              || cf == LV_COLOR_FORMAT_RGB565
              || cf == LV_COLOR_FORMAT_RGB888)
             {
-                task->preference_score = 90;
+                task->preference_score = 85;
                 task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
             }
 #endif
@@ -196,7 +196,7 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
              || cf == LV_COLOR_FORMAT_RGB565
              || cf == LV_COLOR_FORMAT_RGB888)
             {
-                task->preference_score = 90;
+                task->preference_score = 85;
                 task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
             }
 #endif

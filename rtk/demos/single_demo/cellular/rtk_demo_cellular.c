@@ -16,18 +16,23 @@ void rtk_demo_cellular(void)
     lv_obj_remove_style_all(scr_app_menu_cellular);
     lv_obj_set_size(scr_app_menu_cellular, LV_PCT(100), LV_PCT(100));
 
-    LV_IMAGE_DECLARE(img_benchmark_lvgl_logo_rgb);
+    LV_IMAGE_DECLARE(calculator_icon);
+    LV_IMAGE_DECLARE(house_icon);
+    LV_IMAGE_DECLARE(package_icon);
+    LV_IMAGE_DECLARE(pay_icon);
+    LV_IMAGE_DECLARE(weather_icon);
+
     const lv_image_dsc_t *img_data[] =
     {
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
-        &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb, &img_benchmark_lvgl_logo_rgb,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
+        &calculator_icon, &house_icon, &package_icon, &pay_icon, &weather_icon,
     };
     lv_event_cb_t enter_app_cb_list[] =
     {
@@ -44,7 +49,7 @@ void rtk_demo_cellular(void)
 
     int array_size = sizeof(img_data) / sizeof(img_data[0]);
     lv_obj_t *cellular = lv_cellular_create_with_icon(scr_app_menu_cellular,
-                                                      img_benchmark_lvgl_logo_rgb.header.w, img_data, array_size, enter_app_cb_list);
+                                                      calculator_icon.header.w, img_data, array_size, enter_app_cb_list);
 }
 
 

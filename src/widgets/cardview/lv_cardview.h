@@ -24,7 +24,7 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-
+#define RECORD_NUM 5
 /**********************
  *      TYPEDEFS
  **********************/
@@ -58,7 +58,7 @@ typedef struct
     uint8_t keep_card_num;       // Number of created notes.
     uint16_t created_card_index; // Index of the last created card.
     int16_t speed;
-    int16_t record[5];
+    int16_t record[RECORD_NUM];
     lv_timer_t *timer;           // Timer for inertial motion
 
     void (* card_design)(lv_obj_t *obj, void *param);

@@ -271,6 +271,10 @@ static void lv_cardview_event(const lv_obj_class_t * class_p, lv_event_t * e)
             view_data->timer = NULL;
         }
         last_y = point.y;
+        for (int32_t i = 0; i < RECORD_NUM - 1; i++)
+        {
+            view_data->record[i] = last_y;
+        }
     }
     else if (code == LV_EVENT_RELEASED)
     {
@@ -291,7 +295,7 @@ static void lv_card_constructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
     lv_obj_add_flag(obj, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_remove_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
-   LV_TRACE_OBJ_CREATE("finished");
+    LV_TRACE_OBJ_CREATE("finished");
 }
 
 static void lv_card_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
@@ -317,8 +321,7 @@ static void lv_card_event(const lv_obj_class_t * class_p, lv_event_t * e)
 
 static void card_view_update_speed(int16_t *record, int16_t *speed, int16_t tp_delta)
 {
-    int record_num = 4;
-
+    int record_num = RECORD_NUM - 1;
     for (size_t i = 0; i < record_num; i++)
     {
         record[i] = record[i + 1];

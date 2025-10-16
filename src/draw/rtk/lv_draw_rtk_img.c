@@ -161,6 +161,8 @@ static void gui_get_target_color(uint8_t *target_red, uint8_t *target_green, uin
             *target_blue = pixel->blue;
             break;
         }
+    default:
+        break;
     }
 }
 
@@ -223,6 +225,8 @@ static void gui_set_pixel_color(uint8_t *writebuf, uint32_t write_off, lv_color_
             pixel->blue = target_blue;
             break;
         }
+    default:
+        break;
     }
 }
 static void do_raster_pixel(const gui_raster_params_t *params)
