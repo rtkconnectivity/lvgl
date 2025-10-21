@@ -11,12 +11,17 @@
 
 #if LV_USE_SNAPSHOT
 #if defined(LV_USE_SNAPSHOT_WIDGETS) && LV_USE_SNAPSHOT_WIDGETS != 0
+#include "../../src/draw/lv_draw_buf_private.h"
 
+#if LV_USE_RTK_JPU
+#include "rtl_hal_jpu.h"
+#endif
 /*********************
  *      DEFINES
  *********************/
 #define MY_CLASS (&lv_snapshot_widgets_class)
 
+#define JPEG_QUALITY 80
 /**********************
  *      TYPEDEFS
  **********************/
@@ -40,7 +45,9 @@ static void create_snapshot_normal(lv_obj_t *widget, lv_obj_t *img_snapshot);
 
 static void hidden_children(lv_obj_t *obj, bool hidden);
 
-
+#if LV_USE_RTK_JPU
+static void jpeg_encode_snapshot(lv_draw_buf_t *draw_buf, uint8_t *img_data, lv_color_format_t cf);
+#endif
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -96,7 +103,7 @@ void lv_snapshot_widgets_need_redraw(lv_obj_t *obj)
     if (snapshot_widgets->need_redraw == false)
     {
         snapshot_widgets->need_redraw = true;
-        lv_obj_send_event(obj, LV_EVENT_VALUE_CHANGED, NULL);
+        lv_obj_send_event(obj, LV_EVENT_REFRESH, NULL);
     }
 }
 
@@ -117,6 +124,12 @@ void lv_snapshot_widgets_set_snapshot_format(lv_obj_t *obj, lv_color_format_t cf
         snapshot_widgets->snapshot_format = cf;
         lv_snapshot_widgets_need_redraw(obj);
     }
+}
+
+void lv_snapshot_widgets_use_jpeg(lv_obj_t *obj, bool use_jpeg)
+{
+    lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
+    snapshot_widgets->use_jpeg = use_jpeg;
 }
 
 /*=====================
@@ -156,7 +169,7 @@ static void lv_snapshot_widgets_constructor(const lv_obj_class_t * class_p, lv_o
     lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
     /*Initialize the widget's data*/
     lv_obj_t *snapshot = lv_image_create(obj);
-    lv_obj_align(snapshot, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align(snapshot, LV_ALIGN_TOP_LEFT, 0, 0);
     snapshot_widgets->snapshot = snapshot;
     lv_obj_add_event_cb(snapshot, delete_snapshot_cb, LV_EVENT_DELETE, obj);
 
@@ -188,14 +201,18 @@ static void lv_snapshot_widgets_event(const lv_obj_class_t * class_p, lv_event_t
     lv_obj_t *obj = lv_event_get_current_target(e);
     lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
 
-    if(code == LV_EVENT_VALUE_CHANGED)
+    if(code == LV_EVENT_REFRESH)
     {
+        LV_LOG_INFO("update snapshot widget");
         lv_snapshot_widgets_update(obj);
     }
     else if(code == LV_EVENT_CHILD_CREATED)
     {
         lv_obj_t *child = lv_event_get_param(e);
-        lv_obj_add_event_cb(child, bubble_up_redraw_cb, LV_EVENT_VALUE_CHANGED, obj);
+        if (child)
+        {
+            lv_obj_add_event_cb(child, bubble_up_redraw_cb, LV_EVENT_VALUE_CHANGED, obj);
+        }
     }
 }
 
@@ -222,7 +239,16 @@ static void update_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot)
     {
         lv_draw_buf_destroy(snapshot);
     }
-    snapshot = lv_snapshot_take(widget, lv_snapshot_widgets_get_snapshot_format(widget));
+    lv_color_format_t snapshot_cf = lv_snapshot_widgets_get_snapshot_format(widget);
+    snapshot = lv_snapshot_take(widget, snapshot_cf);
+#if LV_USE_RTK_JPU
+    lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)widget;
+    if (snapshot_widgets->use_jpeg &&
+        (snapshot_cf == LV_COLOR_FORMAT_RGB565 || snapshot_cf == LV_COLOR_FORMAT_RGB888))
+    {
+        jpeg_encode_snapshot(snapshot, snapshot->data, snapshot_cf);
+    }
+#endif
     lv_image_set_src(img_snapshot, snapshot);
 }
 
@@ -248,7 +274,7 @@ static void hidden_children(lv_obj_t *obj, bool hidden)
 {
     if (hidden)
     {
-        for (int i = 0; i < lv_obj_get_child_count(obj); i++)
+        for (int i = 1; i < lv_obj_get_child_count(obj); i++)
         {
             lv_obj_t *child = lv_obj_get_child(obj, i);
             lv_obj_add_flag(child, LV_OBJ_FLAG_HIDDEN);
@@ -256,13 +282,69 @@ static void hidden_children(lv_obj_t *obj, bool hidden)
     }
     else
     {
-        for (int i = 0; i < lv_obj_get_child_count(obj); i++)
+        for (int i = 1; i < lv_obj_get_child_count(obj); i++)
         {
             lv_obj_t *child = lv_obj_get_child(obj, i);
             lv_obj_remove_flag(child, LV_OBJ_FLAG_HIDDEN);
         }
     }
 }
+
+#if LV_USE_RTK_JPU
+static void jpeg_encode_snapshot(lv_draw_buf_t *draw_buf, uint8_t *img_data, lv_color_format_t cf)
+{
+    JPU_ENC_PARAM enc_param;
+    uint8_t *jpg_data = NULL;
+    uint32_t jpg_size = 0;
+    uint32_t w = 0;
+    uint32_t h = 0;
+    JPU_ERROR err;
+
+    lv_memset((void *)&enc_param, 0, sizeof(JPU_ENC_PARAM));
+
+    enc_param.data = (uint8_t *)img_data;
+    enc_param.size = draw_buf->data_size;
+    enc_param.picWidth = draw_buf->header.w;
+    enc_param.picHeight = draw_buf->header.h;
+    enc_param.jpgFormat = JPU_FORMAT_422;
+    enc_param.frameFormat = PACKED_FORMAT_422_YUYV;
+    enc_param.quality = JPEG_QUALITY;
+    enc_param.useWrapper = 1;
+    if (cf == LV_COLOR_FORMAT_RGB565)
+    {
+        enc_param.rgbType = JPU_RGB565;
+    }
+    else if (cf == LV_COLOR_FORMAT_RGB888)
+    {
+        enc_param.rgbType = JPU_RGB888;
+    }
+    /*JPEG buffer size is 1/4 of the original image size*/
+    size_t jpg_buff_sz = draw_buf->data_size / 4;
+    enc_param.jpg_buff_sz = jpg_buff_sz;
+
+    err = hal_jpu_encode(&enc_param, &jpg_data, &jpg_size, &w, &h);
+
+    if (err != JPU_SUCCESS)
+    {
+        LV_LOG_ERROR("enc jpeg file failed, err: %d", err);
+    }
+
+    /*WT: Write Through Cache*/
+    SCB_InvalidateDCache_by_Addr(jpg_data, jpg_size);
+    /*WB: Write Back Cache*/
+    // SCB_CleanInvalidateDCache_by_Addr(jpg_data, jpg_size);
+
+    draw_buf->handlers->buf_free_cb(draw_buf->unaligned_data);
+    draw_buf->data = jpg_data;
+    draw_buf->unaligned_data = hal_jpu_get_raw_buffer(jpg_data);
+    draw_buf->data_size = jpg_size;
+    draw_buf->header.stride = w * lv_color_format_get_bpp(draw_buf->header.cf) / 8;
+    draw_buf->header.cf = LV_COLOR_FORMAT_RAW;
+
+    LV_LOG_INFO("JPG size %d",jpg_size);
+    hal_jpu_clean_buffer(jpg_data);
+}
+#endif
 
 #else /*Enable this file at the top*/
 

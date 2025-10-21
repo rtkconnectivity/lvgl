@@ -31,6 +31,12 @@
 #define JPEG_SIGNATURE 0xFFD8FF
 #define IS_JPEG_SIGNATURE(x) (((x) & 0x00FFFFFF) == JPEG_SIGNATURE)
 
+#define LV_JPU_CACHE_NONE               0
+#define LV_JPU_CACHE_WRITE_BACK         1
+#define LV_JPU_CACHE_WRITE_THROUGH      2
+
+#define LV_JPU_CACHE_STRATEGY           LV_JPU_CACHE_NONE
+
 /**********************
  *      TYPEDEFS
  **********************/
@@ -48,6 +54,8 @@ static lv_draw_buf_t *decode_jpeg_file(const char *filename);
 static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_t *width,
                                uint32_t  *height);
 static bool get_jpeg_size(uint8_t *data, uint32_t data_size, uint32_t *width, uint32_t *height);
+static void *jpu_malloc(size_t size);
+static void jpu_free(void * buf);
 // static bool get_jpeg_direction(uint8_t * data, uint32_t data_size, uint32_t * orientation);
 // static void rotate_buffer(lv_draw_buf_t * decoded, uint8_t * buffer, uint32_t line_index, uint32_t angle);
 // static void error_exit(j_common_ptr cinfo);
@@ -71,6 +79,8 @@ const int JPEG_LITTLE_ENDIAN_TAG = 0x4949;
  */
 void lv_jpu_init(void)
 {
+    hal_jpu_mem_init(jpu_malloc, jpu_free);
+
     lv_image_decoder_t *dec = lv_image_decoder_create();
     lv_image_decoder_set_info_cb(dec, decoder_info);
     lv_image_decoder_set_open_cb(dec, decoder_open);
@@ -276,7 +286,6 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         dec_param.useWrapper = 1;
         dec_param.rgbType = JPU_RGB565;
         LV_LOG_INFO("data %p, %d", dec_param.data, dec_param.size);
-        hal_jpu_mem_init(lv_malloc, lv_free);
         err = hal_jpu_decode(&dec_param, &output, &output_size, &w, &h);
         if (err != JPU_SUCCESS)
         {
@@ -284,6 +293,11 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
             lv_free((void *)file_data);
             return LV_RESULT_INVALID;
         }
+#if LV_JPU_CACHE_STRATEGY == LV_JPU_CACHE_WRITE_THROUGH
+        SCB_InvalidateDCache_by_Addr(output, output_size);
+#elif LV_JPU_CACHE_STRATEGY == LV_JPU_CACHE_WRITE_BACK
+        SCB_CleanInvalidateDCache_by_Addr(output, output_size);
+#endif
         lv_free((void *)file_data);
 
 #endif
@@ -372,14 +386,17 @@ static lv_result_t decoder_open(lv_image_decoder_t *decoder, lv_image_decoder_ds
         dec_param.useWrapper = 1;
         dec_param.rgbType = JPU_RGB565;
         LV_LOG_INFO("data %p, %d", dec_param.data, dec_param.size);
-        hal_jpu_mem_init(lv_malloc, lv_free);
         err = hal_jpu_decode(&dec_param, &output, &output_size, &w, &h);
         if (err != JPU_SUCCESS)
         {
             LV_LOG_WARN("decode jpeg file failed, err: %d", err);
             return LV_RESULT_INVALID;
         }
-
+#if LV_JPU_CACHE_STRATEGY == LV_JPU_CACHE_WRITE_THROUGH
+        SCB_InvalidateDCache_by_Addr(output, output_size);
+#elif LV_JPU_CACHE_STRATEGY == LV_JPU_CACHE_WRITE_BACK
+        SCB_CleanInvalidateDCache_by_Addr(output, output_size);
+#endif
         LV_LOG_INFO("decode jpeg sucess  w %d h %d", w, h);
 #endif
 
@@ -593,7 +610,7 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
                         {
                             LV_LOG_INFO("read jpeg size w %d h %d format %d", *width, *height, format);
                             lv_fs_close(&f);
-                            align_jpeg_size(width, height, format);
+                            // align_jpeg_size(width, height, format);
                             return true;
                         }
                         else
@@ -623,7 +640,7 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
         const uint8_t *pdata = src;
         if (get_jpeg_header_size(pdata, 3 * 512, width, height, &format))
         {
-            align_jpeg_size(width, height, format);
+            // align_jpeg_size(width, height, format);
             LV_LOG_INFO("read jpeg size w %d h %d format %d", *width, *height, format);
         }
     }
@@ -634,6 +651,15 @@ static bool get_jpeg_head_info(const void *src, lv_image_src_t src_type, uint32_
     }
 
     return true;
+}
+
+static void *jpu_malloc(size_t size)
+{
+    return lv_draw_buf_get_image_handlers()->buf_malloc_cb(size, 0);
+}
+static void jpu_free(void * buf)
+{
+    lv_draw_buf_get_image_handlers()->buf_free_cb(buf);
 }
 
 #endif /*LV_USE_JPU*/

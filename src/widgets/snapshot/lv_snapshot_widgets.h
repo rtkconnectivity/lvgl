@@ -84,6 +84,14 @@ void lv_snapshot_widgets_need_redraw(lv_obj_t *obj);
  */
 void lv_snapshot_widgets_set_snapshot_format(lv_obj_t *obj, lv_color_format_t cf);
 
+/**
+ * @brief Set the use_jpeg flag of the snapshot_widgets
+ *
+ * @param obj pointer to the snapshot_widgets object
+ * @param use_jpeg the use_jpeg flag to set
+ */
+void lv_snapshot_widgets_use_jpeg(lv_obj_t *obj, bool use_jpeg);
+
 /*=====================
  * Getter functions
  *====================*/
