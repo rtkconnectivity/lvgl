@@ -12,6 +12,7 @@
 #if LV_USE_SNAPSHOT
 #if defined(LV_USE_SNAPSHOT_WIDGETS) && LV_USE_SNAPSHOT_WIDGETS != 0
 #include "../../src/draw/lv_draw_buf_private.h"
+#include "../../src/misc/lv_async.h"
 
 #if LV_USE_RTK_JPU
 #include "rtl_hal_jpu.h"
@@ -33,15 +34,14 @@ static void lv_snapshot_widgets_constructor(const lv_obj_class_t * class_p, lv_o
 static void lv_snapshot_widgets_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj);
 static void lv_snapshot_widgets_event(const lv_obj_class_t * class_p, lv_event_t * e);
 
+static void snapshot_widgets_update(void *obj);
+
 static void delete_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot);
 static void delete_snapshot_cb(lv_event_t *e);
 
 static void update_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot);
-static void update_snapshot_cb(lv_event_t *e);
 
 static void bubble_up_redraw_cb(lv_event_t *e);
-
-static void create_snapshot_normal(lv_obj_t *widget, lv_obj_t *img_snapshot);
 
 static void hidden_children(lv_obj_t *obj, bool hidden);
 
@@ -84,26 +84,38 @@ lv_obj_t * lv_snapshot_widgets_create(lv_obj_t * parent)
 void lv_snapshot_widgets_update(lv_obj_t *obj)
 {
     lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
-    if(snapshot_widgets->need_redraw == false || snapshot_widgets->snapshot == NULL)
-    {
-        return;
-    }
 
-    hidden_children(obj, false);
-    lv_obj_add_flag(snapshot_widgets->snapshot, LV_OBJ_FLAG_HIDDEN);
-    update_snapshot(obj, snapshot_widgets->snapshot);
-    hidden_children(obj, true);
-    lv_obj_remove_flag(snapshot_widgets->snapshot, LV_OBJ_FLAG_HIDDEN);
-    snapshot_widgets->need_redraw = false;
+    snapshot_widgets->need_redraw = true;
+    if(!snapshot_widgets->update_running)
+    {
+        lv_obj_send_event(obj, LV_EVENT_REFRESH, NULL);
+    }
+    else
+    {
+        snapshot_widgets->reschedule = true;
+    }
 }
 
-void lv_snapshot_widgets_need_redraw(lv_obj_t *obj)
+void lv_snapshot_widgets_need_update(lv_obj_t *obj)
 {
     lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
-    if (snapshot_widgets->need_redraw == false)
+
+    if(!snapshot_widgets->need_redraw)
     {
         snapshot_widgets->need_redraw = true;
-        lv_obj_send_event(obj, LV_EVENT_REFRESH, NULL);
+        if(!snapshot_widgets->update_running)
+        {
+            lv_async_call(snapshot_widgets_update, obj);
+        }
+        else
+        {
+            snapshot_widgets->reschedule = true;
+        }
+        return;
+    }
+    if(snapshot_widgets->update_running)
+    {
+        snapshot_widgets->reschedule = true;
     }
 }
 
@@ -122,14 +134,28 @@ void lv_snapshot_widgets_set_snapshot_format(lv_obj_t *obj, lv_color_format_t cf
     if (snapshot_widgets->snapshot_format != cf)
     {
         snapshot_widgets->snapshot_format = cf;
-        lv_snapshot_widgets_need_redraw(obj);
+        lv_snapshot_widgets_need_update(obj);
     }
 }
 
 void lv_snapshot_widgets_use_jpeg(lv_obj_t *obj, bool use_jpeg)
 {
     lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
-    snapshot_widgets->use_jpeg = use_jpeg;
+    if (snapshot_widgets->use_jpeg != use_jpeg)
+    {
+        snapshot_widgets->use_jpeg = use_jpeg;
+        lv_snapshot_widgets_need_update(obj);
+    }
+}
+
+void lv_snapshot_widgets_set_bg_color(lv_obj_t *obj, lv_color_t bg_color)
+{
+    lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)obj;
+    if (!lv_color_eq(snapshot_widgets->bg_color, bg_color))
+    {
+        snapshot_widgets->bg_color = bg_color;
+        lv_snapshot_widgets_need_update(obj);
+    }
 }
 
 /*=====================
@@ -173,9 +199,11 @@ static void lv_snapshot_widgets_constructor(const lv_obj_class_t * class_p, lv_o
     snapshot_widgets->snapshot = snapshot;
     lv_obj_add_event_cb(snapshot, delete_snapshot_cb, LV_EVENT_DELETE, obj);
 
-    snapshot_widgets->bg_color = lv_color32_make(0, 0, 0, 255);
+    snapshot_widgets->bg_color = lv_color_black();
     snapshot_widgets->snapshot_format = LV_COLOR_FORMAT_UNKNOWN;
     snapshot_widgets->need_redraw = false;
+    snapshot_widgets->update_running = false;
+    snapshot_widgets->reschedule = false;
 
     LV_TRACE_OBJ_CREATE("finished");
 }
@@ -204,7 +232,7 @@ static void lv_snapshot_widgets_event(const lv_obj_class_t * class_p, lv_event_t
     if(code == LV_EVENT_REFRESH)
     {
         LV_LOG_INFO("update snapshot widget");
-        lv_snapshot_widgets_update(obj);
+        snapshot_widgets_update(obj);
     }
     else if(code == LV_EVENT_CHILD_CREATED)
     {
@@ -220,8 +248,9 @@ static void bubble_up_redraw_cb(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *snapshot = lv_event_get_user_data(e);
-    lv_snapshot_widgets_need_redraw(snapshot);
+    lv_snapshot_widgets_need_update(snapshot);
 }
+
 static void delete_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot)
 {
     lv_draw_buf_t *snapshot = (lv_draw_buf_t *)lv_image_get_src(img_snapshot);
@@ -252,14 +281,41 @@ static void update_snapshot(lv_obj_t *widget, lv_obj_t *img_snapshot)
     lv_image_set_src(img_snapshot, snapshot);
 }
 
-static void update_snapshot_cb(lv_event_t *e)
+static void snapshot_widgets_update(void *obj)
 {
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t *snapshot = lv_event_get_current_target(e);
-    lv_obj_t *target = lv_event_get_user_data(e);
-    lv_snapshot_widgets_t * snapshot_widgets = (lv_snapshot_widgets_t *)target;
+    LV_ASSERT_OBJ(obj, MY_CLASS);
 
-    lv_snapshot_widgets_update(target);
+    lv_snapshot_widgets_t *snapshot_widgets = (lv_snapshot_widgets_t *)obj;
+    if(snapshot_widgets->update_running) return;
+
+    snapshot_widgets->update_running = true;
+
+    if(!snapshot_widgets->need_redraw || snapshot_widgets->snapshot == NULL)
+    {
+        snapshot_widgets->update_running = false;
+        return;
+    }
+
+    hidden_children(obj, false);
+    lv_obj_add_flag(snapshot_widgets->snapshot, LV_OBJ_FLAG_HIDDEN);
+    if (!lv_color_eq(snapshot_widgets->bg_color, lv_color_black()))
+    {
+        lv_obj_set_style_bg_color(obj, snapshot_widgets->bg_color, 0);
+        lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
+    }
+    update_snapshot(obj, snapshot_widgets->snapshot);
+    lv_obj_set_style_bg_opa(obj, LV_OPA_TRANSP, 0);
+    hidden_children(obj, true);
+    lv_obj_remove_flag(snapshot_widgets->snapshot, LV_OBJ_FLAG_HIDDEN);
+
+    snapshot_widgets->need_redraw = false;
+    snapshot_widgets->update_running = false;
+    if(snapshot_widgets->reschedule)
+    {
+        snapshot_widgets->reschedule = false;
+        snapshot_widgets->need_redraw = true;
+        lv_async_call(snapshot_widgets_update, obj);
+    }
 }
 
 static void delete_snapshot_cb(lv_event_t *e)
