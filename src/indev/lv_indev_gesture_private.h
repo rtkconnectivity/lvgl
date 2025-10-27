@@ -39,7 +39,7 @@ extern "C" {
 /* Represent the motion of a finger */
 struct lv_indev_gesture_motion {
     int8_t finger;                      /* The ID of the tracked finger */
-    lv_point_t start_point;             /* The coordinates where the DOWN event occured */
+    lv_point_t start_point;             /* The coordinates where the DOWN event occurred */
     lv_point_t point;                   /* The current coordinates */
     lv_indev_state_t state;             /* DEBUG: The state i.e PRESSED or RELEASED */
 };
@@ -69,10 +69,14 @@ struct lv_indev_gesture {
 
 };
 
+/* Recognizer configuration. It stores the thresholds needed to detect the gestures and
+ * consider them as recognized. Once recognized, indev start sending LV_GESTURE event
+ */
 struct lv_indev_gesture_configuration {
 
-    float pinch_up_threshold;           /* When the gesture reaches the threshold - start sending events */
-    float pinch_down_threshold;         /* When the gesture reaches the threshold - start sending events */
+    float pinch_up_threshold;           /* Threshold for the pinch up gesture to be recognized - in pixels */
+    float pinch_down_threshold;         /* Threshold for the pinch down gesture to be recognized - in pixels */
+    float rotation_angle_rad_threshold; /* Threshold for the rotation gesture to be recognized - in radians */
 
 };
 
@@ -90,4 +94,4 @@ struct lv_indev_gesture_configuration {
 } /*extern "C"*/
 #endif
 
-#endif /* END LV_INDEV_GESTURE_PRIVATE_H */
+#endif /* LV_INDEV_GESTURE_PRIVATE_H */

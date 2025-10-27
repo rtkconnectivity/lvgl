@@ -54,23 +54,25 @@ typedef enum {
     LV_INDEV_GESTURE_PINCH,
     LV_INDEV_GESTURE_SWIPE,
     LV_INDEV_GESTURE_ROTATE,
+    LV_INDEV_GESTURE_TWO_FINGERS_SWIPE,
     LV_INDEV_GESTURE_SCROLL,            /* Used with scrollwheels */
     LV_INDEV_GESTURE_CNT,               /* Total number of gestures types */
 } lv_indev_gesture_type_t;
 
 /** Data structure passed to an input driver to fill*/
 typedef struct {
+    lv_indev_gesture_type_t gesture_type[LV_INDEV_GESTURE_CNT]; /* Current gesture types, per gesture */
+    void * gesture_data[LV_INDEV_GESTURE_CNT]; /* Used to store data per gesture */
+
+    lv_indev_state_t state; /**< LV_INDEV_STATE_RELEASED or LV_INDEV_STATE_PRESSED*/
+
     lv_point_t point; /**< For LV_INDEV_TYPE_POINTER the currently pressed point*/
     uint32_t key;     /**< For LV_INDEV_TYPE_KEYPAD the currently pressed key*/
     uint32_t btn_id;  /**< For LV_INDEV_TYPE_BUTTON the currently pressed button*/
     int16_t enc_diff; /**< For LV_INDEV_TYPE_ENCODER number of steps since the previous read*/
 
-    lv_indev_state_t state; /**< LV_INDEV_STATE_RELEASED or LV_INDEV_STATE_PRESSED*/
+    uint32_t timestamp; /**< Initialized to lv_tick_get(). Driver may provide more accurate timestamp for buffered events*/
     bool continue_reading;  /**< If set to true, the read callback is invoked again, unless the device is in event-driven mode*/
-
-    lv_indev_gesture_type_t gesture_type;
-    void * gesture_data;
-
 } lv_indev_data_t;
 
 typedef void (*lv_indev_read_cb_t)(lv_indev_t * indev, lv_indev_data_t * data);

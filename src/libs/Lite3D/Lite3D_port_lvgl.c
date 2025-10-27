@@ -20,8 +20,8 @@
 
 
 #include "lvgl.h"
-#include "../../src/misc/lv_types.h"
-#include "../../src/draw/lv_draw_private.h"
+#include "../../misc/lv_types.h"
+#include "../../draw/lv_draw_private.h"
 
 void *l3_port_malloc(size_t size)
 {

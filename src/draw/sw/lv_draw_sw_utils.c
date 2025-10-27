@@ -126,13 +126,41 @@ static void rotate270_l8(const uint8_t * src, uint8_t * dst, int32_t src_width, 
  *   GLOBAL FUNCTIONS
  **********************/
 
+void lv_draw_sw_i1_to_argb8888(const void * buf_i1, void * buf_argb8888, uint32_t width, uint32_t height,
+                               uint32_t buf_i1_stride, uint32_t buf_argb8888_stride, uint32_t index0_color, uint32_t index1_color)
+{
+    /*Extract the bits of I1 px_map and convert them to ARGB8888*/
+    const uint8_t * src = buf_i1;
+    uint32_t * dst = buf_argb8888;
+    uint32_t i1_row_byte_count = width / 8;
+    for(uint32_t row = 0; row < height; row++) {
+        uint32_t * dst_p = dst;
+        for(uint32_t i = 0; i < i1_row_byte_count; i++) {
+            /*From MSB to LSB (pixel 0 to pixel 7 in a byte)*/
+            for(int32_t bit = 7; bit >= 0; bit--) {
+                *dst_p++ = ((src[i] >> bit) & 1) ? index1_color : index0_color;
+            }
+        }
+        src += buf_i1_stride;
+        dst += buf_argb8888_stride / 4;
+    }
+}
+
 void lv_draw_sw_rgb565_swap(void * buf, uint32_t buf_size_px)
 {
     if(LV_DRAW_SW_RGB565_SWAP(buf, buf_size_px) == LV_RESULT_OK) return;
 
-    uint32_t u32_cnt = buf_size_px / 2;
     uint16_t * buf16 = buf;
-    uint32_t * buf32 = buf;
+
+    /*2 pixels will be processed later, so handle 1 pixel alignment*/
+    if((lv_uintptr_t)buf16 & 0x2) {
+        buf16[0] = ((buf16[0] & 0xff00) >> 8) | ((buf16[0] & 0x00ff) << 8);
+        buf16++;
+        buf_size_px--;
+    }
+
+    uint32_t * buf32 = (uint32_t *)buf16;
+    uint32_t u32_cnt = buf_size_px / 2;
 
     while(u32_cnt >= 8) {
         buf32[0] = ((buf32[0] & 0xff00ff00) >> 8) | ((buf32[0] & 0x00ff00ff) << 8);
@@ -153,6 +181,7 @@ void lv_draw_sw_rgb565_swap(void * buf, uint32_t buf_size_px)
         u32_cnt--;
     }
 
+    /*Process the last pixel if needed*/
     if(buf_size_px & 0x1) {
         uint32_t e = buf_size_px - 1;
         buf16[e] = ((buf16[e] & 0xff00) >> 8) | ((buf16[e] & 0x00ff) << 8);
@@ -197,7 +226,7 @@ void lv_draw_sw_i1_convert_to_vtiled(const void * buf, uint32_t buf_size, uint32
 {
     LV_ASSERT(buf && out_buf);
     LV_ASSERT(width % 8 == 0 && height % 8 == 0);
-    LV_ASSERT(buf_size == (width / 8) * height);
+    LV_ASSERT(buf_size >= (width / 8) * height);
     LV_ASSERT(out_buf_size >= buf_size);
 
     lv_memset(out_buf, 0, out_buf_size);
@@ -324,7 +353,7 @@ static void rotate270_argb8888(const uint32_t * src, uint32_t * dst, int32_t src
                                int32_t src_stride,
                                int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_ARGB8888(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_ARGB8888(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
@@ -364,7 +393,7 @@ static void rotate180_argb8888(const uint32_t * src, uint32_t * dst, int32_t wid
 static void rotate90_argb8888(const uint32_t * src, uint32_t * dst, int32_t src_width, int32_t src_height,
                               int32_t src_stride, int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_ARGB8888(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_ARGB8888(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
@@ -448,7 +477,7 @@ static void rotate270_rgb565(const uint16_t * src, uint16_t * dst, int32_t src_w
                              int32_t src_stride,
                              int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_RGB565(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_RGB565(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
@@ -488,7 +517,7 @@ static void rotate90_rgb565(const uint16_t * src, uint16_t * dst, int32_t src_wi
                             int32_t src_stride,
                             int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_RGB565(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_RGB565(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
@@ -514,7 +543,7 @@ static void rotate90_l8(const uint8_t * src, uint8_t * dst, int32_t src_width, i
                         int32_t src_stride,
                         int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_L8(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_L8(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
@@ -548,7 +577,7 @@ static void rotate270_l8(const uint8_t * src, uint8_t * dst, int32_t src_width, 
                          int32_t src_stride,
                          int32_t dst_stride)
 {
-    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE90_L8(src, dst, src_width, src_height, src_stride, dst_stride)) {
+    if(LV_RESULT_OK == LV_DRAW_SW_ROTATE270_L8(src, dst, src_width, src_height, src_stride, dst_stride)) {
         return ;
     }
 
