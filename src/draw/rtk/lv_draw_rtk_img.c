@@ -51,7 +51,7 @@ typedef struct
  *  STATIC PROTOTYPES
  **********************/
 
-static void img_draw_core(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t * draw_dsc,
+static void img_draw_core(lv_draw_task_t * t, const lv_draw_image_dsc_t * draw_dsc,
                           const lv_image_decoder_dsc_t * decoder_dsc, lv_draw_image_sup_t * sup,
                           const lv_area_t * img_coords, const lv_area_t * clipped_img_area);
 
@@ -68,13 +68,13 @@ static void img_draw_core(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t 
  *   GLOBAL FUNCTIONS
  **********************/
 
-void lv_draw_rtk_image(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t * draw_dsc,
+void lv_draw_rtk_image(lv_draw_task_t * t, const lv_draw_image_dsc_t * draw_dsc,
                        const lv_area_t * coords)
 {
-    lv_draw_image_normal_helper(draw_unit, draw_dsc, coords, img_draw_core);
+    lv_draw_image_normal_helper(t, draw_dsc, coords, img_draw_core);
 }
 
-void lv_draw_rtk_layer(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t * draw_dsc,
+void lv_draw_rtk_layer(lv_draw_task_t * t, const lv_draw_image_dsc_t * draw_dsc,
                       const lv_area_t * coords)
 {
     lv_layer_t * layer_to_draw = (lv_layer_t *)draw_dsc->src;
@@ -83,9 +83,11 @@ void lv_draw_rtk_layer(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t * d
      *In this case just return. */
     if(layer_to_draw->draw_buf == NULL) return;
 
+    /*The source should be a draw_buf, not a layer*/
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_rtk_image(draw_unit, &new_draw_dsc, coords);
+
+    lv_draw_rtk_image(t, &new_draw_dsc, coords);
 }
 /**********************
  *   STATIC FUNCTIONS
@@ -249,7 +251,7 @@ static void do_raster_pixel(const gui_raster_params_t *params)
                         target_red, target_green, target_blue, target_alpha);
 }
 
-static void img_draw_core(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t * draw_dsc,
+static void img_draw_core(lv_draw_task_t * t, const lv_draw_image_dsc_t * draw_dsc,
                           const lv_image_decoder_dsc_t * decoder_dsc, lv_draw_image_sup_t * sup,
                           const lv_area_t * img_coords, const lv_area_t * clipped_img_area)
 {
@@ -257,7 +259,7 @@ static void img_draw_core(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t 
     const uint8_t * src_buf = decoded->data;
     const lv_image_header_t * header = &decoded->header;
     lv_color_format_t cf = decoded->header.cf;
-    lv_layer_t * layer = draw_unit->target_layer;
+    lv_layer_t * layer = t->target_layer;
 
 #if LV_DRAW_TRANSFORM_USE_MATRIX
     lv_matrix_t matrix;
@@ -270,11 +272,11 @@ static void img_draw_core(lv_draw_unit_t * draw_unit, const lv_draw_image_dsc_t 
     lv_area_t matrix_area = lv_matrix_transform_area(&matrix, &img_area);
 
     lv_area_t constraint_area;
-    if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, &matrix_area))
+    if (!lv_area_intersect(&constraint_area, &layer->buf_area, &matrix_area))
     {
         return;
     }
-    if (!lv_area_intersect(&constraint_area, &constraint_area, &draw_unit->target_layer->phy_clip_area))
+    if (!lv_area_intersect(&constraint_area, &constraint_area, &layer->phy_clip_area))
     {
         return;
     }

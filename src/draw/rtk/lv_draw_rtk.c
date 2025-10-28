@@ -15,7 +15,7 @@
 #include "../../stdlib/lv_string.h"
 #include "../../core/lv_global.h"
 
-#include "../font/lv_font_fmt_txt.h"
+#include "../../font/lv_font_fmt_txt.h"
 /*********************
  *      DEFINES
  *********************/
@@ -32,7 +32,7 @@
 static void render_thread_cb(void *ptr);
 #endif
 
-static void execute_drawing(lv_draw_rtk_unit_t *u);
+static void execute_drawing(lv_draw_task_t * t);
 
 static int32_t rtk_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer);
 static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task);
@@ -55,13 +55,7 @@ void lv_draw_rtk_init(void)
     lv_draw_rtk_unit_t *draw_rtk_unit = lv_draw_create_unit(sizeof(lv_draw_rtk_unit_t));
     draw_rtk_unit->base_unit.dispatch_cb = rtk_dispatch;
     draw_rtk_unit->base_unit.evaluate_cb = rtk_evaluate;
-    draw_rtk_unit->idx = 0;
-    draw_rtk_unit->base_unit.delete_cb = LV_USE_OS ? lv_draw_rtk_delete : NULL;
     draw_rtk_unit->base_unit.name = "RTK";
-#if LV_USE_OS
-    lv_thread_init(&draw_rtk_unit->thread, LV_THREAD_PRIO_HIGH, render_thread_cb,
-                   LV_DRAW_THREAD_STACK_SIZE, draw_rtk_unit);
-#endif
 }
 
 void lv_draw_rtk_deinit(void)
@@ -91,16 +85,6 @@ static int32_t lv_draw_rtk_delete(lv_draw_unit_t *draw_unit)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static inline void execute_drawing_unit(lv_draw_rtk_unit_t *u)
-{
-    execute_drawing(u);
-
-    u->task_act->state = LV_DRAW_TASK_STATE_READY;
-    u->task_act = NULL;
-
-    /*The draw unit is free now. Request a new dispatching as it can get a new task*/
-    lv_draw_dispatch_request();
-}
 
 static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
 {
@@ -108,21 +92,15 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
 
     switch (task->type)
     {
-    case LV_DRAW_TASK_TYPE_FILL:
-
-        break;
-    case LV_DRAW_TASK_TYPE_BORDER:
-
-        break;
-    case LV_DRAW_TASK_TYPE_BOX_SHADOW:
-
-        break;
     case LV_DRAW_TASK_TYPE_LABEL:
         {
             lv_draw_label_dsc_t *dsc = (lv_draw_label_dsc_t *)task->draw_dsc;
             const lv_font_t *font = dsc->font;
             const lv_font_fmt_txt_dsc_t *fdsc = font->dsc;
-            if (fdsc->bitmap_format == LV_FONT_FMT_PLAIN_ALIGNED)
+
+            if (!fdsc->stride) return 0;
+            if (dsc->rotation % 3600 != 0) return 0;
+            if (fdsc->bpp == 1 || fdsc->bpp == 2 || fdsc->bpp == 4 || fdsc->bpp == 8)
             {
                 task->preference_score = 85;
                 task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
@@ -130,6 +108,7 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
         }
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
+    case LV_DRAW_TASK_TYPE_LAYER:
         {
 #if LV_DRAW_TRANSFORM_USE_MATRIX
             lv_draw_image_dsc_t * draw_dsc = task->draw_dsc;
@@ -160,56 +139,7 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
 #endif
         }
         break;
-    case LV_DRAW_TASK_TYPE_ARC:
 
-        break;
-    case LV_DRAW_TASK_TYPE_LINE:
-
-        break;
-    case LV_DRAW_TASK_TYPE_TRIANGLE:
-
-        break;
-    case LV_DRAW_TASK_TYPE_LAYER:
-        {
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-            lv_draw_image_dsc_t * draw_dsc = task->draw_dsc;
-            lv_layer_t *layer = (lv_layer_t *)draw_dsc->src;
-            lv_image_dsc_t *img_dsc = (lv_image_dsc_t *)layer->draw_buf;
-
-            bool matrix_tidentify = task->matrix.m[0][0] == 1.0f
-                                && task->matrix.m[0][1] == 0.0f
-                                && task->matrix.m[0][2] == 0.0f
-                                && task->matrix.m[1][0] == 0.0f
-                                && task->matrix.m[1][1] == 1.0f
-                                && task->matrix.m[1][2] == 0.0f
-                                && task->matrix.m[2][0] == 0.0f
-                                && task->matrix.m[2][1] == 0.0f
-                                && task->matrix.m[2][2] == 1.0f;
-
-            if(matrix_tidentify) return 0;
-            if(draw_dsc->tile) return 0;
-            if(draw_dsc->bitmap_mask_src) return 0;
-            if(draw_dsc->recolor_opa) return 0;
-
-            lv_color_format_t cf = img_dsc->header.cf;
-            if (cf == LV_COLOR_FORMAT_ARGB8888
-             || cf == LV_COLOR_FORMAT_RGB565
-             || cf == LV_COLOR_FORMAT_RGB888)
-            {
-                task->preference_score = 85;
-                task->preferred_draw_unit_id = DRAW_UNIT_ID_RTK;
-            }
-#endif
-        }
-        break;
-    case LV_DRAW_TASK_TYPE_MASK_RECTANGLE:
-
-        break;
-#if LV_USE_VECTOR_GRAPHIC && LV_USE_THORVG
-    case LV_DRAW_TASK_TYPE_VECTOR:
-
-        break;
-#endif
     default:
 
         break;
@@ -231,7 +161,7 @@ static int32_t rtk_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer)
     }
 
     lv_draw_task_t *t = NULL;
-    t = lv_draw_get_next_available_task(layer, NULL, DRAW_UNIT_ID_RTK);
+    t = lv_draw_get_available_task(layer, NULL, DRAW_UNIT_ID_RTK);
     if (t == NULL)
     {
         LV_PROFILER_DRAW_END;
@@ -246,62 +176,34 @@ static int32_t rtk_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer)
     }
 
     t->state = LV_DRAW_TASK_STATE_IN_PROGRESS;
-    draw_rtk_unit->base_unit.target_layer = layer;
-    draw_rtk_unit->base_unit.clip_area = &t->clip_area;
     draw_rtk_unit->task_act = t;
 
-#if LV_USE_OS
-    /*Let the render thread work*/
-    if (draw_rtk_unit->inited) { lv_thread_sync_signal(&draw_rtk_unit->sync); }
-#else
-    execute_drawing_unit(draw_rtk_unit);
-#endif
+    execute_drawing(t);
+    draw_rtk_unit->task_act->state = LV_DRAW_TASK_STATE_FINISHED;
+    draw_rtk_unit->task_act = NULL;
+
+    /*The draw unit is free now. Request a new dispatching as it can get a new task*/
+    lv_draw_dispatch_request();
+
     LV_PROFILER_DRAW_END;
     return 1;
 }
 
-static void execute_drawing(lv_draw_rtk_unit_t *u)
+static void execute_drawing(lv_draw_task_t * t)
 {
     LV_PROFILER_DRAW_BEGIN;
     /*Render the draw task*/
-    lv_draw_task_t *t = u->task_act;
     switch (t->type)
     {
-    case LV_DRAW_TASK_TYPE_FILL:
-
-        break;
-    case LV_DRAW_TASK_TYPE_BORDER:
-
-        break;
-    case LV_DRAW_TASK_TYPE_BOX_SHADOW:
-
-        break;
     case LV_DRAW_TASK_TYPE_LABEL:
-        lv_draw_rtk_label((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_rtk_label(t, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
-        lv_draw_rtk_image((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
-        break;
-    case LV_DRAW_TASK_TYPE_ARC:
-
-        break;
-    case LV_DRAW_TASK_TYPE_LINE:
-
-        break;
-    case LV_DRAW_TASK_TYPE_TRIANGLE:
-
+        lv_draw_rtk_image(t, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_LAYER:
-        lv_draw_rtk_layer((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_rtk_layer(t, t->draw_dsc, &t->area);
         break;
-    case LV_DRAW_TASK_TYPE_MASK_RECTANGLE:
-
-        break;
-#if LV_USE_VECTOR_GRAPHIC && LV_USE_THORVG
-    case LV_DRAW_TASK_TYPE_VECTOR:
-
-        break;
-#endif
     default:
         break;
     }

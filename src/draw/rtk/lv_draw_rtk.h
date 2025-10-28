@@ -47,29 +47,29 @@ void lv_draw_rtk_deinit(void);
 
 /**
  * Draw a label with RTK render.
- * @param draw_unit     pointer to a draw unit
+ * @param t             draw task
  * @param dsc           the draw descriptor
  * @param coords        the coordinates of the label
  */
-void lv_draw_rtk_label(lv_draw_unit_t *draw_unit, const lv_draw_label_dsc_t *dsc,
+void lv_draw_rtk_label(lv_draw_task_t * t, const lv_draw_label_dsc_t *dsc,
                        const lv_area_t *coords);
 
 /**
  * Draw an image with RTK render.
- * @param draw_unit     pointer to a draw unit
+ * @param t             draw task
  * @param dsc           the draw descriptor
  * @param coords        the coordinates of the image
  */
-void lv_draw_rtk_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dsc,
+void lv_draw_rtk_image(lv_draw_task_t * t, const lv_draw_image_dsc_t *dsc,
                        const lv_area_t *coords);
 
 /**
  * Draw a layer with RTK render.
- * @param draw_unit     pointer to a draw unit
+ * @param t             draw task
  * @param dsc           the draw descriptor
  * @param coords        the coordinates of the layer
  */
-void lv_draw_rtk_layer(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dsc,
+void lv_draw_rtk_layer(lv_draw_task_t * t, const lv_draw_image_dsc_t *dsc,
                        const lv_area_t *coords);
 
 
