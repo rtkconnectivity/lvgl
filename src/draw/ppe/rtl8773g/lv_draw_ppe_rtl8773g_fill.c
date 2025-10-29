@@ -12,7 +12,6 @@
 #include "../../sw/lv_draw_sw_mask_private.h"
 #include "lv_draw_ppe_rtl8773g.h"
 #include "../../sw/blend/lv_draw_sw_blend_private.h"
-#include "../../sw/lv_draw_sw_gradient_private.h"
 #include "../../../misc/lv_math.h"
 #include "../../../misc/lv_text_ap.h"
 #include "../../../core/lv_refr.h"
@@ -34,7 +33,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_dsc_t *blend_dsc,
+static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *blend_dsc,
                               PPE_PIXEL_FORMAT format);
 
 /**********************
@@ -48,17 +47,17 @@ static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const lv_area_t *coords)
+void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_t *coords)
 {
     if (dsc->opa <= LV_OPA_MIN) { return; }
     lv_area_t bg_coords;
     lv_area_copy(&bg_coords, coords);
 
     lv_area_t clipped_coords;
-    if (!lv_area_intersect(&clipped_coords, &bg_coords, draw_unit->clip_area)) { return; }
+    if (!lv_area_intersect(&clipped_coords, &bg_coords, &t->clip_area)) { return; }
 
     PPE_PIXEL_FORMAT cf = PPE_ABGR8888;
-    switch (draw_unit->target_layer->color_format)
+    switch (t->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
         cf = PPE_RGB565;
@@ -73,10 +72,10 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
         cf = PPE_XRGB8888;
         break;
     default:
-        lv_draw_sw_fill(draw_unit, dsc, coords);
+        lv_draw_sw_fill(t, dsc, coords);
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-        lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
-                           draw_unit->target_layer->draw_buf->data_size);
+        lv_ppe_clean_cache(t->target_layer->draw_buf->data,
+                           t->target_layer->draw_buf->data_size);
 #endif
         return;
     }
@@ -89,7 +88,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
     {
         blend_dsc.blend_area = &bg_coords;
         blend_dsc.opa = dsc->opa;
-        lv_draw_ppe_blend(draw_unit, &blend_dsc, cf);
+        lv_draw_ppe_blend(t, &blend_dsc, cf);
         return;
     }
     else
@@ -126,7 +125,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
     blend_dsc.blend_area = &blend_area;
     blend_dsc.opa = opa;
     blend_dsc.mask_buf = NULL;
-    lv_draw_ppe_blend(draw_unit, &blend_dsc, cf);
+    lv_draw_ppe_blend(t, &blend_dsc, cf);
 
     void *mask_list[2] = {NULL, NULL};
 
@@ -142,7 +141,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 
     if (rout > 0)
     {
-        if (lv_ppe_use_entire(draw_unit, lv_display_get_default()))
+        if (lv_ppe_use_entire(t, lv_display_get_default()))
         {
             mask_buf = lv_malloc(clipped_w * rout);
             lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_coords, rout, false);
@@ -180,16 +179,16 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 
             ppe_buffer_t target;
             memset(&target, 0, sizeof(ppe_buffer_t));
-            target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-            target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-            target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+            target.address = (uint32_t)t->target_layer->draw_buf->data;
+            target.width = lv_area_get_width(&t->target_layer->buf_area);
+            target.height = lv_area_get_height(&t->target_layer->buf_area);
             target.stride = target.width;
             target.format = cf;
             target.opacity = 0xFF;
             if (lv_area_intersect(&top_draw, &blend_area, &clipped_coords))
             {
-                lv_area_move(&top_draw, -draw_unit->target_layer->buf_area.x1,
-                             -draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&top_draw, -t->target_layer->buf_area.x1,
+                             -t->target_layer->buf_area.y1);
 
                 source.win_x_min = top_draw.x1;
                 source.win_x_max = top_draw.x2;
@@ -198,8 +197,8 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 
                 ppe_matrix_t inv;
                 ppe_get_identity(&inv);
-                inv.m[0][2] = draw_unit->target_layer->buf_area.x1 - clipped_coords.x1;
-                inv.m[1][2] = draw_unit->target_layer->buf_area.y1 - bg_coords.y1;
+                inv.m[0][2] = t->target_layer->buf_area.x1 - clipped_coords.x1;
+                inv.m[1][2] = t->target_layer->buf_area.y1 - bg_coords.y1;
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&top_draw,
                                                PPE_BLEND_PREMULTIPLY);
@@ -209,8 +208,8 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
             lv_area_t bottom_draw;
             if (lv_area_intersect(&bottom_draw, &blend_area, &clipped_coords))
             {
-                lv_area_move(&bottom_draw, -draw_unit->target_layer->buf_area.x1,
-                             -draw_unit->target_layer->buf_area.y1);
+                lv_area_move(&bottom_draw, -t->target_layer->buf_area.x1,
+                             -t->target_layer->buf_area.y1);
                 source.win_x_min = bottom_draw.x1;
                 source.win_x_max = bottom_draw.x2;
                 source.win_y_min = bottom_draw.y1;
@@ -220,8 +219,8 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                 ppe_get_identity(&inv);
                 inv.m[1][2] = rout - 1;
                 ppe_reflect(false, true, &inv);
-                ppe_translate(draw_unit->target_layer->buf_area.x1 - clipped_coords.x1, \
-                              draw_unit->target_layer->buf_area.y1 - bg_coords.y2 + rout - 1, &inv);
+                ppe_translate(t->target_layer->buf_area.x1 - clipped_coords.x1, \
+                              t->target_layer->buf_area.y1 - bg_coords.y2 + rout - 1, &inv);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&bottom_draw,
                                                PPE_BLEND_PREMULTIPLY);
@@ -250,19 +249,19 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
                 {
                     blend_area.y1 = top_y;
                     blend_area.y2 = top_y;
-                    lv_draw_sw_blend(draw_unit, &blend_dsc);
+                    lv_draw_sw_blend(t, &blend_dsc);
                 }
 
                 if (bottom_y <= clipped_coords.y2)
                 {
                     blend_area.y1 = bottom_y;
                     blend_area.y2 = bottom_y;
-                    lv_draw_sw_blend(draw_unit, &blend_dsc);
+                    lv_draw_sw_blend(t, &blend_dsc);
                 }
             }
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-            lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
-                               draw_unit->target_layer->draw_buf->data_size);
+            lv_ppe_clean_cache(t->target_layer->draw_buf->data,
+                               t->target_layer->draw_buf->data_size);
 #endif
         }
     }
@@ -281,20 +280,20 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 #endif
 }
 
-static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_dsc_t *blend_dsc,
+static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *blend_dsc,
                               PPE_PIXEL_FORMAT format)
 {
     lv_area_t blend_area;
-    if (!lv_area_intersect(&blend_area, blend_dsc->blend_area, draw_unit->clip_area)) { return; }
+    if (!lv_area_intersect(&blend_area, blend_dsc->blend_area, &t->clip_area)) { return; }
 
     LV_PROFILER_DRAW_BEGIN;
-    lv_layer_t *layer = draw_unit->target_layer;
+    lv_layer_t *layer = t->target_layer;
 
     ppe_buffer_t target;
     memset(&target, 0, sizeof(ppe_buffer_t));
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.format = format;
     target.win_x_min = 0;

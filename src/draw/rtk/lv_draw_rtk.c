@@ -98,8 +98,10 @@ static int32_t rtk_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             const lv_font_t *font = dsc->font;
             const lv_font_fmt_txt_dsc_t *fdsc = font->dsc;
 
+            if (!font->static_bitmap) return 0;
             if (!fdsc->stride) return 0;
             if (dsc->rotation % 3600 != 0) return 0;
+            if (fdsc->bitmap_format == LV_FONT_FMT_TXT_COMPRESSED) return 0;
             if (fdsc->bpp == 1 || fdsc->bpp == 2 || fdsc->bpp == 4 || fdsc->bpp == 8)
             {
                 task->preference_score = 85;

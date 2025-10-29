@@ -75,10 +75,10 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
         .x2 = image->img_target_x + image->img_target_w - 1,
         .y2 = image->img_target_y + image->img_target_h - 1,
     };
-    lv_draw_unit_t draw_unit =
+    lv_draw_task_t t =
     {
         .target_layer = &layer,
-        .clip_area =  &clip_area,
+        .clip_area =  clip_area,
     };
 
     layer.phy_clip_area = clip_area;
@@ -136,7 +136,7 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
 
     lv_matrix_t *matrix = (lv_matrix_t *)image->matrix.u.m;
 
-    lv_draw_ppe_image_use_matrix(&draw_unit, &draw_dsc, &coords, matrix, image->blend_mode);
+    lv_draw_ppe_image_use_matrix(&t, &draw_dsc, &coords, matrix, image->blend_mode);
 }
 
 #endif

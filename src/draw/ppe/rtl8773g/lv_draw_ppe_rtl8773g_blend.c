@@ -35,7 +35,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_dsc_t *blend_dsc,
+static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *blend_dsc,
                               PPE_PIXEL_FORMAT format);
 
 /**********************

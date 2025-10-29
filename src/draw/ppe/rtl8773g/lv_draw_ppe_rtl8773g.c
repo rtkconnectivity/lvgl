@@ -28,11 +28,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-#if LV_USE_OS
-static void render_thread_cb(void *ptr);
-#endif
-
-static void execute_drawing(lv_draw_ppe_unit_t *u);
+static void execute_drawing(lv_draw_task_t *t);
 
 static int32_t ppe_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer);
 static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task);
@@ -56,53 +52,19 @@ void lv_draw_ppe_init(void)
     lv_draw_ppe_unit_t *draw_ppe_unit = lv_draw_create_unit(sizeof(lv_draw_ppe_unit_t));
     draw_ppe_unit->base_unit.dispatch_cb = ppe_dispatch;
     draw_ppe_unit->base_unit.evaluate_cb = ppe_evaluate;
-    draw_ppe_unit->idx = 0;
-    draw_ppe_unit->base_unit.delete_cb = LV_USE_OS ? lv_draw_ppe_delete : NULL;
     draw_ppe_unit->base_unit.name = "PPE";
     lv_acc_dma_channel_init();
     RCC_PeriphClockCmd(APBPeriph_PPE, APBPeriph_PPE_CLOCK, ENABLE);
-#if LV_USE_OS
-    lv_thread_init(&draw_ppe_unit->thread, LV_THREAD_PRIO_HIGH, render_thread_cb,
-                   LV_DRAW_THREAD_STACK_SIZE, draw_ppe_unit);
-#endif
 }
 
 void lv_draw_ppe_deinit(void)
 {
 }
 
-static int32_t lv_draw_ppe_delete(lv_draw_unit_t *draw_unit)
-{
-#if LV_USE_OS
-    lv_draw_ppe_unit_t *draw_ppe_unit = (lv_draw_ppe_unit_t *) draw_unit;
 
-    LV_LOG_INFO("cancel software rendering thread");
-    draw_ppe_unit->exit_status = true;
-
-    if (draw_ppe_unit->inited)
-    {
-        lv_thread_sync_signal(&draw_ppe_unit->sync);
-    }
-
-    return lv_thread_delete(&draw_ppe_unit->thread);
-#else
-    LV_UNUSED(draw_unit);
-    return 0;
-#endif
-}
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static inline void execute_drawing_unit(lv_draw_ppe_unit_t *u)
-{
-    execute_drawing(u);
-
-    u->task_act->state = LV_DRAW_TASK_STATE_READY;
-    u->task_act = NULL;
-
-    /*The draw unit is free now. Request a new dispatching as it can get a new task*/
-    lv_draw_dispatch_request();
-}
 
 static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
 {
@@ -145,8 +107,8 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             lv_draw_label_dsc_t *dsc = (lv_draw_label_dsc_t *)task->draw_dsc;
             const lv_font_t *font = dsc->font;
             const lv_font_fmt_txt_dsc_t *fdsc = font->dsc;
-
-            if (fdsc->bitmap_format == LV_FONT_FMT_PLAIN_ALIGNED)
+            if(!fdsc->stride) return 0;
+            if (fdsc->bpp == 8 || fdsc->bitmap_format == 3)
             {
                 if (task->preference_score > 80)
                 {
@@ -259,7 +221,7 @@ static int32_t ppe_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer)
     }
 
     lv_draw_task_t *t = NULL;
-    t = lv_draw_get_next_available_task(layer, NULL, DRAW_UNIT_ID_PPE);
+    t = lv_draw_get_available_task(layer, NULL, DRAW_UNIT_ID_PPE);
     if (t == NULL)
     {
         LV_PROFILER_DRAW_END;
@@ -274,53 +236,51 @@ static int32_t ppe_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer)
     }
 
     t->state = LV_DRAW_TASK_STATE_IN_PROGRESS;
-    draw_ppe_unit->base_unit.target_layer = layer;
-    draw_ppe_unit->base_unit.clip_area = &t->clip_area;
     draw_ppe_unit->task_act = t;
 
-#if LV_USE_OS
-    /*Let the render thread work*/
-    if (draw_ppe_unit->inited) { lv_thread_sync_signal(&draw_ppe_unit->sync); }
-#else
-    execute_drawing_unit(draw_ppe_unit);
-#endif
+    execute_drawing(t);
+    draw_ppe_unit->task_act->state = LV_DRAW_TASK_STATE_FINISHED;
+    draw_ppe_unit->task_act = NULL;
+
+    /*The draw unit is free now. Request a new dispatching as it can get a new task*/
+    lv_draw_dispatch_request();
+
     LV_PROFILER_DRAW_END;
     return 1;
 }
 
 #include "trace.h"
-static void execute_drawing(lv_draw_ppe_unit_t *u)
+static void execute_drawing(lv_draw_task_t *t)
 {
     LV_PROFILER_DRAW_BEGIN;
     /*Render the draw task*/
-    lv_draw_task_t *t = u->task_act;
     switch (t->type)
     {
     case LV_DRAW_TASK_TYPE_FILL:
-        lv_draw_ppe_fill((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_fill(t, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_IMAGE:
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-        lv_draw_ppe_image_use_matrix((lv_draw_unit_t *)u, t->draw_dsc, &t->area, &t->matrix, 0);
+        lv_draw_ppe_image_use_matrix(t, t->draw_dsc, &t->area, &t->matrix, 0);
 #else
-        lv_draw_ppe_image((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_image(t, t->draw_dsc, &t->area);
 #endif
         break;
     case LV_DRAW_TASK_TYPE_LAYER:
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-        lv_draw_ppe_layer_use_matrix((lv_draw_unit_t *)u, t->draw_dsc, &t->area, &t->matrix);
+        lv_draw_ppe_layer_use_matrix(t, t->draw_dsc, &t->area, &t->matrix);
 #else
-        lv_draw_ppe_layer((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_layer(t, t->draw_dsc, &t->area);
 #endif
         break;
     case LV_DRAW_TASK_TYPE_BOX_SHADOW:
-        lv_draw_ppe_box_shadow((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_box_shadow(t, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_LABEL:
-        lv_draw_ppe_label((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_label(t, t->draw_dsc, &t->area);
         break;
     case LV_DRAW_TASK_TYPE_MASK_RECTANGLE:
-        lv_draw_ppe_mask_rect((lv_draw_unit_t *)u, t->draw_dsc, &t->area);
+        lv_draw_ppe_mask_rect(t, t->draw_dsc, &t->area);
         break;
     default:
         break;

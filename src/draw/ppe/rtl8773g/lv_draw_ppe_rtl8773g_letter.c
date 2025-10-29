@@ -59,8 +59,7 @@ typedef struct font_glyph
  *  STATIC PROTOTYPES
  **********************/
 
-static void /* LV_ATTRIBUTE_FAST_MEM */ draw_letter_cb(lv_draw_unit_t *draw_unit,
-                                                       lv_draw_glyph_dsc_t *glyph_draw_dsc,
+static void /* LV_ATTRIBUTE_FAST_MEM */ draw_letter_cb(lv_draw_task_t *t, lv_draw_glyph_dsc_t *glyph_draw_dsc,
                                                        lv_draw_fill_dsc_t *fill_draw_dsc, const lv_area_t *fill_area);
 
 /**********************
@@ -79,13 +78,22 @@ static void /* LV_ATTRIBUTE_FAST_MEM */ draw_letter_cb(lv_draw_unit_t *draw_unit
  *   GLOBAL FUNCTIONS
  **********************/
 #include "trace.h"
-void lv_draw_ppe_label(lv_draw_unit_t *draw_unit, const lv_draw_label_dsc_t *dsc,
+void lv_draw_ppe_label(lv_draw_task_t *t, const lv_draw_label_dsc_t *dsc,
                        const lv_area_t *coords)
 {
     if (dsc->opa <= LV_OPA_MIN) { return; }
 
     LV_PROFILER_DRAW_BEGIN;
-    lv_draw_label_iterate_characters(draw_unit, dsc, coords, draw_letter_cb);
+
+#if LV_USE_FREETYPE && LV_USE_VECTOR_GRAPHIC && LV_USE_THORVG
+    static bool is_init = false;
+    if(!is_init) {
+        lv_freetype_outline_add_event(freetype_outline_event_cb, LV_EVENT_ALL, t);
+        is_init = true;
+    }
+#endif
+
+    lv_draw_label_iterate_characters(t, dsc, coords, draw_letter_cb);
     LV_PROFILER_DRAW_END;
 }
 
@@ -168,8 +176,7 @@ static void hw_blit_font(local_draw_font_t *font, local_font_glyph_t *glyph)
     }
 }
 
-static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_unit_t *draw_unit,
-                                                 lv_draw_glyph_dsc_t *glyph_draw_dsc,
+static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyph_dsc_t *glyph_draw_dsc,
                                                  lv_draw_fill_dsc_t *fill_draw_dsc, const lv_area_t *fill_area)
 {
     if (glyph_draw_dsc)
@@ -177,124 +184,112 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_unit_t *draw_unit,
         switch (glyph_draw_dsc->format)
         {
         case LV_FONT_GLYPH_FORMAT_NONE:
-            {
-#if LV_USE_FONT_PLACEHOLDER
-                /* Draw a placeholder rectangle*/
-                lv_draw_border_dsc_t border_draw_dsc;
-                lv_draw_border_dsc_init(&border_draw_dsc);
-                border_draw_dsc.opa = glyph_draw_dsc->opa;
-                border_draw_dsc.color = glyph_draw_dsc->color;
-                border_draw_dsc.width = 1;
-                lv_draw_sw_border(draw_unit, &border_draw_dsc, glyph_draw_dsc->bg_coords);
-#endif
-            }
+        case LV_FONT_GLYPH_FORMAT_A3:
             break;
+
         case LV_FONT_GLYPH_FORMAT_A1:
         case LV_FONT_GLYPH_FORMAT_A2:
         case LV_FONT_GLYPH_FORMAT_A4:
         case LV_FONT_GLYPH_FORMAT_A8:
+        case LV_FONT_GLYPH_FORMAT_IMAGE:
             {
-                glyph_draw_dsc->glyph_data = lv_font_get_glyph_bitmap(glyph_draw_dsc->g, glyph_draw_dsc->_draw_buf);
-                lv_area_t mask_area = *glyph_draw_dsc->letter_coords;
-                mask_area.x2 = mask_area.x1 + lv_draw_buf_width_to_stride(lv_area_get_width(&mask_area),
-                                                                          LV_COLOR_FORMAT_A8) - 1;
-                lv_draw_sw_blend_dsc_t blend_dsc;
-                lv_memzero(&blend_dsc, sizeof(blend_dsc));
-                blend_dsc.color = glyph_draw_dsc->color;
-                blend_dsc.opa = glyph_draw_dsc->opa;
-                const lv_draw_buf_t *draw_buf = glyph_draw_dsc->glyph_data;
-                blend_dsc.mask_buf = draw_buf->data;
-                blend_dsc.mask_area = &mask_area;
-                blend_dsc.mask_stride = draw_buf->header.stride;
-                blend_dsc.blend_area = glyph_draw_dsc->letter_coords;
-                blend_dsc.mask_res = LV_DRAW_SW_MASK_RES_CHANGED;
-                lv_draw_sw_blend(draw_unit, &blend_dsc);
+                if(glyph_draw_dsc->rotation % 3600 == 0 && glyph_draw_dsc->format != LV_FONT_GLYPH_FORMAT_IMAGE)
+                {
+                    if(lv_font_has_static_bitmap(glyph_draw_dsc->g->resolved_font))
+                    {
+        //                DBG_DIRECT("ppe blit align font at %08x", t->target_layer->draw_buf->data);
+                        lv_font_glyph_dsc_t *g_dsc = glyph_draw_dsc->g;
+                        uint32_t gid = g_dsc->gid.index;
+                        if (!gid) { return; }
+                        const lv_font_t *font = g_dsc->resolved_font;
+                        lv_font_fmt_txt_dsc_t *fdsc = (lv_font_fmt_txt_dsc_t *)font->dsc;
+                        const lv_font_fmt_txt_glyph_dsc_t *gdsc = &fdsc->glyph_dsc[gid];
+                        const uint8_t *bitmap_in = &fdsc->glyph_bitmap[gdsc->bitmap_index];
+                        uint32_t font_color = lv_ppe_get_color(glyph_draw_dsc->color, glyph_draw_dsc->opa);
+
+                        lv_area_t blend_area;
+                        if (!lv_area_intersect(&blend_area, glyph_draw_dsc->letter_coords, &t->clip_area)) { return; }
+
+                        local_draw_font_t df =
+                        {
+                            .color = font_color,
+                            .render_mode = fdsc->bpp,
+                            .target_buf = t->target_layer->draw_buf->data,
+                            .target_format = t->target_layer->color_format,
+                            .target_buf_stride = t->target_layer->draw_buf->header.stride,
+                            .clip_rect = blend_area,
+                            .target_rect = t->target_layer->buf_area
+                        };
+
+                        local_font_glyph_t glyph =
+                        {
+                            .data = (uint8_t *)bitmap_in,
+                            .pos_x = glyph_draw_dsc->letter_coords->x1,
+                            .pos_y = glyph_draw_dsc->letter_coords->y1,
+                            .width = gdsc->box_w,
+                            .height = gdsc->box_h,
+                            .stride = g_dsc->stride * 8 / df.render_mode,
+                        };
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-                lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
-                                   draw_unit->target_layer->draw_buf->data_size);
+                        lv_display_t *disp_drv = lv_display_get_default();
+                        if (t->target_layer->draw_buf != disp_drv->buf_1 &&
+                            t->target_layer->draw_buf != disp_drv->buf_2)
+                        {
+                            lv_ppe_clean_cache(t->target_layer->draw_buf->data,
+                                            t->target_layer->draw_buf->data_size);
+                        }
 #endif
-            }
-            break;
-        case LV_FONT_GLYPH_FORMAT_A1_ALIGNED:
-        case LV_FONT_GLYPH_FORMAT_A2_ALIGNED:
-        case LV_FONT_GLYPH_FORMAT_A4_ALIGNED:
-        case LV_FONT_GLYPH_FORMAT_A8_ALIGNED:
-            {
-//                DBG_DIRECT("ppe blit align font at %08x", draw_unit->target_layer->draw_buf->data);
-                lv_font_glyph_dsc_t *g_dsc = glyph_draw_dsc->g;
-                uint32_t gid = g_dsc->gid.index;
-                if (!gid) { return; }
-                const lv_font_t *font = g_dsc->resolved_font;
-                lv_font_fmt_txt_dsc_t *fdsc = (lv_font_fmt_txt_dsc_t *)font->dsc;
-                const lv_font_fmt_txt_glyph_dsc_t *gdsc = &fdsc->glyph_dsc[gid];
-                const uint8_t *bitmap_in = &fdsc->glyph_bitmap[gdsc->bitmap_index];
-                uint32_t font_color = lv_ppe_get_color(glyph_draw_dsc->color, glyph_draw_dsc->opa);
-
-                lv_area_t blend_area;
-                if (!lv_area_intersect(&blend_area, glyph_draw_dsc->letter_coords, draw_unit->clip_area)) { return; }
-
-                local_draw_font_t df =
-                {
-                    .color = font_color,
-                    .render_mode = fdsc->bpp,
-                    .target_buf = draw_unit->target_layer->draw_buf->data,
-                    .target_format = draw_unit->target_layer->color_format,
-                    .target_buf_stride = draw_unit->target_layer->draw_buf->header.stride,
-                    .clip_rect = blend_area,
-                    .target_rect = draw_unit->target_layer->buf_area
-                };
-
-                local_font_glyph_t glyph =
-                {
-                    .data = (uint8_t *)bitmap_in,
-                    .pos_x = glyph_draw_dsc->letter_coords->x1,
-                    .pos_y = glyph_draw_dsc->letter_coords->y1,
-                    .width = gdsc->box_w,
-                    .height = gdsc->box_h,
-                };
-                uint32_t align = 8 / fdsc->bpp;
-                if (glyph.width % align)
-                {
-                    glyph.stride = glyph.width + align - (glyph.width % align);
+                        hw_blit_font(&df, &glyph);
+                    }
+                    else
+                    {
+                        glyph_draw_dsc->glyph_data = lv_font_get_glyph_bitmap(glyph_draw_dsc->g, glyph_draw_dsc->_draw_buf);
+                        if(glyph_draw_dsc->glyph_data == NULL) {
+                            LV_LOG_WARN("Couldn't get the bitmap of a glyph");
+                            break;
+                        }
+                        lv_area_t mask_area = *glyph_draw_dsc->letter_coords;
+                        mask_area.x2 = mask_area.x1 + lv_draw_buf_width_to_stride(lv_area_get_width(&mask_area), LV_COLOR_FORMAT_A8) - 1;
+                        lv_draw_sw_blend_dsc_t blend_dsc;
+                        lv_memzero(&blend_dsc, sizeof(blend_dsc));
+                        blend_dsc.color = glyph_draw_dsc->color;
+                        blend_dsc.opa = glyph_draw_dsc->opa;
+                        const lv_draw_buf_t * draw_buf = glyph_draw_dsc->glyph_data;
+                        blend_dsc.mask_buf = draw_buf->data;
+                        blend_dsc.mask_area = &mask_area;
+                        blend_dsc.mask_stride = draw_buf->header.stride;
+                        blend_dsc.blend_area = glyph_draw_dsc->letter_coords;
+                        blend_dsc.mask_res = LV_DRAW_SW_MASK_RES_CHANGED;
+                        lv_draw_sw_blend(t, &blend_dsc);
+                    }
                 }
                 else
                 {
-                    glyph.stride = glyph.width + align;
+                    glyph_draw_dsc->glyph_data = lv_font_get_glyph_bitmap(glyph_draw_dsc->g, glyph_draw_dsc->_draw_buf);
+                    lv_draw_image_dsc_t img_dsc;
+                    lv_draw_image_dsc_init(&img_dsc);
+                    img_dsc.rotation = glyph_draw_dsc->rotation;
+                    img_dsc.scale_x = LV_SCALE_NONE;
+                    img_dsc.scale_y = LV_SCALE_NONE;
+                    img_dsc.opa = glyph_draw_dsc->opa;
+                    img_dsc.src = glyph_draw_dsc->glyph_data;
+                    img_dsc.recolor = glyph_draw_dsc->color;
+                    img_dsc.pivot = (lv_point_t) {
+                        .x = glyph_draw_dsc->pivot.x,
+                        .y = glyph_draw_dsc->g->box_h + glyph_draw_dsc->g->ofs_y
+                    };
+                    lv_draw_sw_image(t, &img_dsc, glyph_draw_dsc->letter_coords);
                 }
-#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-                lv_display_t *disp_drv = lv_display_get_default();
-                if (draw_unit->target_layer->draw_buf != disp_drv->buf_1 &&
-                    draw_unit->target_layer->draw_buf != disp_drv->buf_2)
-                {
-                    lv_ppe_clean_cache(draw_unit->target_layer->draw_buf->data,
-                                       draw_unit->target_layer->draw_buf->data_size);
                 }
-#endif
-                hw_blit_font(&df, &glyph);
-            }
-            break;
-        case LV_FONT_GLYPH_FORMAT_IMAGE:
-            {
-                glyph_draw_dsc->glyph_data = lv_font_get_glyph_bitmap(glyph_draw_dsc->g, glyph_draw_dsc->_draw_buf);
-                lv_draw_image_dsc_t img_dsc;
-                lv_draw_image_dsc_init(&img_dsc);
-                img_dsc.rotation = 0;
-                img_dsc.scale_x = LV_SCALE_NONE;
-                img_dsc.scale_y = LV_SCALE_NONE;
-                img_dsc.opa = glyph_draw_dsc->opa;
-                img_dsc.src = glyph_draw_dsc->glyph_data;
-                lv_draw_ppe_image(draw_unit, &img_dsc, glyph_draw_dsc->letter_coords);
-            }
             break;
         default:
             break;
         }
-
     }
 
     if (fill_draw_dsc && fill_area)
     {
-        lv_draw_sw_fill(draw_unit, fill_draw_dsc, fill_area);
+        lv_draw_sw_fill(t, fill_draw_dsc, fill_area);
     }
 }
 

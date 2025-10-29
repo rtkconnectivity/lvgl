@@ -70,7 +70,7 @@ void lv_acc_dma_copy(uint32_t length, uint32_t height, uint32_t src_stride,
 void subtract_intersection(const lv_area_t *area, const lv_area_t *intersection,
                            lv_area_t *result, int *result_area_count);
 
-bool lv_ppe_use_entire(lv_draw_unit_t *draw_unit, lv_display_t *disp);
+bool lv_ppe_use_entire(lv_draw_task_t *t, lv_display_t *disp);
 
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
 void lv_ppe_clean_cache(void *addr, int32_t size);

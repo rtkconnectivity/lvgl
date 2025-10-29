@@ -45,18 +45,18 @@
 #include "trace.h"
 #include "rtl_ppe.h"
 #include "string.h"
-void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_dsc_t *dsc,
+void lv_draw_ppe_mask_rect(lv_draw_task_t *t, const lv_draw_mask_rect_dsc_t *dsc,
                            const lv_area_t *coords)
 {
     LV_UNUSED(coords);
 
     lv_area_t draw_area;
-    if (!lv_area_intersect(&draw_area, &dsc->area, draw_unit->clip_area))
+    if (!lv_area_intersect(&draw_area, &dsc->area, &t->clip_area))
     {
         return;
     }
 
-    lv_layer_t *target_layer = draw_unit->target_layer;
+    lv_layer_t *target_layer = t->target_layer;
     lv_area_t *buf_area = &target_layer->buf_area;
     lv_area_t clear_area;
 
@@ -64,9 +64,9 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
     ppe_buffer_t target, source;
     memset(&target, 0, sizeof(ppe_buffer_t));
     memset(&source, 0, sizeof(ppe_buffer_t));
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.win_x_min = 0;
     target.win_x_max = target.width - 1;
@@ -74,27 +74,27 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
     target.win_y_max = target.height - 1;
     target.format = PPE_RGB565;
     /*Clear the top part*/
-    lv_area_set(&clear_area, draw_unit->clip_area->x1, draw_unit->clip_area->y1,
-                draw_unit->clip_area->x2,
+    lv_area_set(&clear_area, t->clip_area.x1, t->clip_area.y1,
+                t->clip_area.x2,
                 dsc->area.y1 - 1);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
 
     /*Clear the bottom part*/
-    lv_area_set(&clear_area, draw_unit->clip_area->x1, dsc->area.y2 + 1, draw_unit->clip_area->x2,
-                draw_unit->clip_area->y2);
+    lv_area_set(&clear_area, t->clip_area.x1, dsc->area.y2 + 1, t->clip_area.x2,
+                t->clip_area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
     /*Clear the left part*/
-    lv_area_set(&clear_area, draw_unit->clip_area->x1, dsc->area.y1, dsc->area.x1 - 1, dsc->area.y2);
+    lv_area_set(&clear_area, t->clip_area.x1, dsc->area.y1, dsc->area.x1 - 1, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
 
     /*Clear the right part*/
-    lv_area_set(&clear_area, dsc->area.x2 + 1, dsc->area.y1, draw_unit->clip_area->x2, dsc->area.y2);
+    lv_area_set(&clear_area, dsc->area.x2 + 1, dsc->area.y1, t->clip_area.x2, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
     PPE_Finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
@@ -160,10 +160,10 @@ void lv_draw_ppe_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_ds
 
 #else /*LV_DRAW_SW_COMPLEX*/
 
-void lv_draw_sw_mask_rect(lv_draw_unit_t *draw_unit, const lv_draw_mask_rect_dsc_t *dsc,
+void lv_draw_sw_mask_rect(lv_draw_task_t *t, const lv_draw_mask_rect_dsc_t *dsc,
                           const lv_area_t *coords)
 {
-    LV_UNUSED(draw_unit);
+    LV_UNUSED(t);
     LV_UNUSED(dsc);
     LV_UNUSED(coords);
 

@@ -616,12 +616,12 @@ void subtract_intersection(const lv_area_t *area, const lv_area_t *intersection,
     }
 }
 
-bool lv_ppe_use_entire(lv_draw_unit_t *draw_unit, lv_display_t *disp)
+bool lv_ppe_use_entire(lv_draw_task_t * t, lv_display_t *disp)
 {
     return (lv_display_get_horizontal_resolution(disp) == lv_area_get_width(
-                &draw_unit->target_layer->buf_area)) && \
+                &t->target_layer->buf_area)) && \
            (lv_display_get_vertical_resolution(disp) == lv_area_get_height(
-                &draw_unit->target_layer->buf_area));
+                &t->target_layer->buf_area));
 }
 
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
