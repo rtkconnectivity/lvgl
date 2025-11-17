@@ -8,6 +8,7 @@
  *********************/
 #include "lv_custom_tile_slide.h"
 
+#if LV_BUILD_DEMOS
 
 /*********************
  *      DEFINES
@@ -677,4 +678,4 @@ static void reset_slide_effect(lv_obj_t *obj, SLIDE_EFFECT effect)
         break;
     }
 }
-
+#endif /* LV_BUILD_DEMOS */

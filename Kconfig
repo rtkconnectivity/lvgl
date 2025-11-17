@@ -39,6 +39,10 @@ menu "LVGL configuration"
 					bool "GUI 410_502 LVGL demo"
 			endchoice
 
+			config REALTEK_BUILD_LVGL_RTK_DEMO
+				bool "Enable RTK demo"
+				default n
+
 			config REALTEK_BUILD_LVGL_LITE3D
 				bool "Enable Lite3D Library"
 				default n

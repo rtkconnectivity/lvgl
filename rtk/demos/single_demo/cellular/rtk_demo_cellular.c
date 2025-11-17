@@ -5,6 +5,8 @@
 
 #include "lvgl.h"
 
+#if LV_BUILD_DEMOS
+
 static void enter_app_cb(lv_event_t *e)
 {
     LV_LOG_INFO("Enter app cellular");
@@ -52,5 +54,4 @@ void rtk_demo_cellular(void)
                                                       calculator_icon.header.w, img_data, array_size, enter_app_cb_list);
 }
 
-
-
+#endif /* LV_BUILD_DEMOS */

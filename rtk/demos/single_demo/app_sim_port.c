@@ -150,7 +150,8 @@ static void *lvgl_demo_run(void *arg)
     lv_port_indev_init();
     // lv_port_fs_init();
 
-    single_demo_ui_init();
+    app_ui_entry();
+
     while (true)
     {
         // lv_obj_invalidate(lv_screen_active());

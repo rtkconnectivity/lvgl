@@ -3,6 +3,8 @@
  *
  */
 #include "lvgl.h"
+
+#if LV_BUILD_DEMOS
 #include "desc_disc.h"
 #include "desc_disc_cube.h"
 
@@ -120,4 +122,4 @@ void rtk_demo_lite3d_disc(void)
     lv_lite3d_set_click_cb(lite3d_disc_cube, disc_click_cb);
     lv_timer_t *timer = lv_timer_create(update_disc_animation, 16, lite3d_disc);
 }
-
+#endif /* LV_BUILD_DEMOS */

@@ -50,21 +50,17 @@ if GetDepend('CONFIG_REALTEK_BUILD_LVGL_EXAMPLES'):
     lvgl_src_cwd = lvgl_cwd + 'examples/'
     inc = inc + [lvgl_src_cwd]
     for root, dirs, files in os.walk(lvgl_src_cwd):
-        for dir in dirs:
-            current_path = os.path.join(root, dir)
-            src = src + Glob(os.path.join(current_path,'*.c'))
-            if check_h_hpp_exists(current_path):
-                inc = inc + [current_path]
+        src = src + Glob(os.path.join(root, '*.c'))
+        if check_h_hpp_exists(root):
+            inc = inc + [root]
 
 if GetDepend('CONFIG_REALTEK_BUILD_LVGL_DEMO_APP'):
     lvgl_src_cwd = lvgl_cwd + 'demos/'
     inc = inc + [lvgl_src_cwd]
     for root, dirs, files in os.walk(lvgl_src_cwd):
-        for dir in dirs:
-            current_path = os.path.join(root, dir)
-            src = src + Glob(os.path.join(current_path,'*.c'))
-            if check_h_hpp_exists(current_path):
-                inc = inc + [current_path]
+        src = src + Glob(os.path.join(root, '*.c'))
+        if check_h_hpp_exists(root):
+            inc = inc + [root]
 
 lite3d_src = []
 lite3d_inc = []

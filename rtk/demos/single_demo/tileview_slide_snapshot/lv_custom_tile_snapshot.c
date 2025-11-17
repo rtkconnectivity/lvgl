@@ -7,6 +7,9 @@
  *      INCLUDES
  *********************/
 #include "lv_custom_tile_snapshot.h"
+
+#if LV_BUILD_DEMOS
+
 /*********************
  *      DEFINES
  *********************/
@@ -277,3 +280,4 @@ static void snapshot_custom_cb_create(lv_event_t *e)
     }
     create_snapshot_normal(widget, img_snapshot);
 }
+#endif /* LV_BUILD_DEMOS */

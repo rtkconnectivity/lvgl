@@ -15,18 +15,18 @@ extern "C" {
  *********************/
 
 #include "lvgl.h"
-#include "lv_demos.h"
+#include "../../../demos/lv_demos.h"
 
-#include "rtk_demo_card.h"
-#include "rtk_demo_cellular.h"
-#include "rtk_demo_tileview_slide.h"
-#include "rtk_demo_lite3d_disc.h"
+#include "./card/rtk_demo_card.h"
+#include "./cellular/rtk_demo_cellular.h"
+#include "./tileview_slide_snapshot/rtk_demo_tileview_slide.h"
+#include "./lite3d/rtk_demo_lite3d_disc.h"
 
 /*********************
  *      DEFINES
  *********************/
 
-void single_demo_ui_init(void);
+void app_ui_entry(void);
 
 /**********************
  *      TYPEDEFS

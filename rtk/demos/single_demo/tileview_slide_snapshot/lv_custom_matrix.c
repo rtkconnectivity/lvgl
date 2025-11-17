@@ -9,6 +9,7 @@
 #include "lv_custom_matrix.h"
 #include "math.h"
 
+#if LV_BUILD_DEMOS
 #if LV_USE_MATRIX
 
 /*********************
@@ -206,4 +207,4 @@ static bool getPerspectiveTransform(lv_point2f_t *src, lv_point2f_t *dst, float 
 }
 
 #endif /*LV_USE_MATRIX*/
-
+#endif /* LV_BUILD_DEMOS */

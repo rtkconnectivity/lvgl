@@ -8,6 +8,8 @@
 #include "lv_custom_tile_slide.h"
 #include "lv_custom_tile_snapshot.h"
 
+#if LV_BUILD_DEMOS
+
 tileview_slide_t slide_info;
 SLIDE_EFFECT center_effect = CLASSIC;
 SLIDE_EFFECT top_effect = FADE;
@@ -188,3 +190,4 @@ void rtk_demo_tileview_slide_snapshot(void)
 #endif
 
 }
+#endif /* LV_BUILD_DEMOS */

@@ -4,6 +4,8 @@
  */
 #include "lvgl.h"
 
+#if LV_BUILD_DEMOS
+
 /**
  * @brief example card design
  *
@@ -46,3 +48,4 @@ void rtk_demo_card(void)
 #endif
 }
 
+#endif /* LV_BUILD_DEMOS */

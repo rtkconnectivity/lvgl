@@ -203,7 +203,8 @@ static void lvgl_demo_run(void *p)
 
     DBG_DIRECT("LVGL start \n");
 
-    single_demo_ui_init();
+    app_ui_entry();
+
     while (1)
     {
         // lv_obj_invalidate(lv_screen_active());
