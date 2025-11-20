@@ -21,10 +21,10 @@ extern "C" {
 #include "../../core/lv_obj_class.h"
 #include LV_STDBOOL_INCLUDE
 #include LV_STDINT_INCLUDE
-#if LV_USE_AVI
 
 #include "avidec.h"
 
+#if LV_USE_AVI || LV_AVI_DEBUG_VIEW
 /*********************
  *      DEFINES
  *********************/

@@ -2,7 +2,8 @@
 #include "../../misc/lv_log.h"
 #include "../../stdlib/lv_mem.h"
 #include "../../misc/lv_color.h"
-#if LV_USE_AVI
+
+#if LV_USE_AVI || LV_AVI_DEBUG_VIEW
 
 #include <stdlib.h>
 #include <string.h>
@@ -149,16 +150,15 @@ static ad_AVI * avi_open(ad_AVI * avi_base)
 
     AVIStreamHeader_t stream_hdr;
     f_avi_read(avi_base, &stream_hdr, sizeof(AVIStreamHeader_t));
-    f_avi_seek(avi_base, chunk_size - sizeof(AVIStreamHeader_t), LV_FS_SEEK_CUR);
 
     /* Stream format */
-    f_avi_read(avi_base, id, 4);
+    memcpy(id, &stream_hdr.stream_format, 4);
     if(memcmp(id, "strf", 4) != 0) 
     {
         LV_LOG_WARN("invalid header %s", id);
         goto fail;
     } 
-    chunk_size = read_num_32(avi_base); 
+    chunk_size = stream_hdr.length_format;
 
     BitMapInfoHeader_t stream_format;
     f_avi_read(avi_base, &stream_format, sizeof(BitMapInfoHeader_t));
@@ -284,7 +284,7 @@ int ad_get_frame(ad_AVI * avi)
                     avi->framedata_raw = lv_malloc(avi->cur_frame_size + 7);
                     if(avi->framedata_raw)
                     {
-                        avi->framedata = (uint8_t*)(((uint32_t)(avi->framedata_raw + 7) >> 3)  << 3);
+                        avi->framedata = (uint8_t*)(((uintptr_t)(avi->framedata_raw + 7) >> 3)  << 3);
                         f_avi_read(avi, avi->framedata, avi->cur_frame_size);
                     }
                     else

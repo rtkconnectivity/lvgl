@@ -7,9 +7,10 @@
  *      INCLUDES
  *********************/
 #include "lv_avi_private.h"
-#if LV_USE_AVI
+
+#if LV_USE_AVI || LV_AVI_DEBUG_VIEW
 #include "../../misc/lv_timer_private.h"
-#include "../../misc/cache/lv_image_cache.h"
+#include "../../misc/cache/instance/lv_image_cache.h"
 #include "../../core/lv_obj_class_private.h"
 
 #include "avidec.h"

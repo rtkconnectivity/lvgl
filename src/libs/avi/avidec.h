@@ -7,7 +7,9 @@ extern "C" {
 
 #include "../../misc/lv_fs.h"
 
-#if LV_USE_AVI
+// #define LV_AVI_DEBUG_VIEW 1
+
+#if LV_USE_AVI || LV_AVI_DEBUG_VIEW
 #include <stdint.h>
 
 #pragma pack(1)

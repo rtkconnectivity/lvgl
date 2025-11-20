@@ -19,7 +19,7 @@
 /*********************
  *      DEFINES
  *********************/
-#define LV_ROOT_PATH "..\\demos\\screen_base\\root"
+#define LV_ROOT_PATH "..\\demos\\screen_410_502_lvgl\\root_image_lvgl\\root"
 
 /**********************
  *      TYPEDEFS
@@ -75,6 +75,7 @@ void lv_port_fs_init(void)
 
     /*Set up fields...*/
     fs_drv.letter = 'F';
+    fs_drv.cache_size = 0;
     fs_drv.open_cb = fs_open;
     fs_drv.close_cb = fs_close;
     fs_drv.read_cb = fs_read;
