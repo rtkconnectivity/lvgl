@@ -31,6 +31,7 @@ if(CONFIG_REALTEK_BUILD_FREETYPE_SRC)
         ${FREETYPE_DIR}/src/base/ftmm.c
         ${FREETYPE_DIR}/src/base/ftglyph.c
         ${FREETYPE_DIR}/src/base/ftbitmap.c
+        ${FREETYPE_DIR}/src/base/ftstroke.c
         ${FREETYPE_DIR}/src/truetype/truetype.c
         ${FREETYPE_DIR}/src/type1/type1.c
         ${FREETYPE_DIR}/src/cid/type1cid.c
