@@ -2,62 +2,134 @@
 
 ### Code Base
 
-#### Version: 9.3
+#### Version: Release v9.4.0
+
+<https://github.com/lvgl/lvgl/releases/tag/v9.4.0>
 
 #### github commit link
 
-<https://github.com/lvgl/lvgl/commit/8c2289f87feee210e354c8d5311a36e85e63891c>
+<https://github.com/lvgl/lvgl/commit/c016f72d4c125098287be5e83c0f1abed4706ee5>
 
 ---
 
-#### Date: 2025-04-10
+### `src\lv_init.c`
 
-#### Author: [luke_sun]
+**Change Type**: Code Modification
+**Author**: [luke_sun]
+**Change Reason**: add PPE/IDU/RTK init into lvgl_init
+**Modified APIs**: `void lv_init(void)`
+**Description**: Add module initialization during LVGL initialization, depending on the macros in the config file.
 
-- **Change Reason**: fix image draw wtih matrix by ppe.
-- **Modified Files**:
-  - `src\misc\lv_matrix.c`
-- **Modified APIs**:
-  - `lv_point_precise_t lv_matrix_transform_precise_point(const lv_matrix_t * matrix, const lv_point_precise_t * point)`
+### `lvgl.h`
 
-#### Description
+**Change Type**: Code Modification
+**Author**: [luke_sun]
+**Change Reason**: Add new widget header file into lvgl.h
+**Description**:
 
-Use homogeneous coordinates to transform point.
-PR: <https://github.com/lvgl/lvgl/pull/7960>
-
----
-
-#### Date: 2025-04-14
-
-#### Author: [astor_zhang, wenjing_jiang, luke_sun]
-
-- **Change Reason**: add PPE/IDU init into lvgl_init.
-- **Modified Files**:
-  - `src\lv_init.c`
-- **Modified APIs**:
-  - `void lv_init(void)`
-
-#### Description
-
-Add PPE initialization and SW IDU decoder initialization during LVGL initialization, depending on the macros in the config file.
+``` C
+  #include "src/widgets/cardview/lv_cardview.h"
+  #include "src/widgets/cellular/lv_cellular.h"
+  #include "src/widgets/3d/lv_lite3d.h"
+  #include "src/widgets/snapshot/lv_snapshot_widgets.h"
+```
 
 ---
 
-#### Date: 2025-09-10
+### `libs\freetype`
 
-#### Author: [luke_sun, sienna_shen]
+**Change Type**: New File
+**Author**: [luke_sun]
+**Change Reason**: Add support for building and compiling freetype.
+**Description**: Add cmake support for freetype, and readme file.
 
-- **Change Reason**: add new widget header file into lvgl.h.
-- **Modified Files**:
-  - `lv_init.h`
+### `env_support\cmake\zephyr.cmake`
 
-#### Description
+**Change Type**: Code Modification
+**Author**: [luke_sun]
+**Change Reason**: Support for RTL series chips in the Zephyr SDK.
+**Description**: Adjust the CMake file.
 
-Add new widget
+### `env_support\cmake\custom.cmake`
 
- - lv_cardview LV_USE_CARDVIEW
- - lv_cellular LV_USE_CELLULAR
- - lv_lite3d LV_USE_LITE3D
+**Change Type**: Code Modification
+**Author**: [wenjing_jiang]
+**Change Reason**: Adapt to the SDK for RTL series chips.
+**Description**: Adjust the CMake file.
 
 ---
+
+### `src\draw\ppe`
+
+**Change Type**: New File
+**Author**: [astor_zhang]
+**Change Reason**: Add HW GPU PPE support.
+**Description**: Integrate PPE into the LVGL rendering pipeline.
+
+### `src\draw\rtk`
+
+**Change Type**: New File
+**Author**: [luke_sun]
+**Change Reason**: Add sw GPU RTK support.
+**Description**: Integrate RTK into the LVGL rendering pipeline.
+
+---
+
+### `src\libs\avi`
+
+**Change Type**: New File
+**Author**: [roy_xie]
+**Change Reason**: New feature.
+**Description**: Decode avi file.
+
+### `src\libs\jpu`
+
+**Change Type**: New File
+**Author**: [roy_xie]
+**Change Reason**: Add HW JPU support.
+**Description**: Decode jpeg file.
+
+### `src\libs\Lite3D`
+
+**Change Type**: New File
+**Author**: [sienna_shen]
+**Change Reason**: New feature.
+**Description**: Add Lite3D support.
+
+### `src\libs\rle`
+
+**Change Type**: New File
+**Author**: [wenjing_jiang]
+**Change Reason**: Add HW IDU support.
+**Description**: Decode rle file as a decoder.
+
+---
+
+### `src\widgets\3d`
+
+**Change Type**: New File
+**Author**: [sienna_shen]
+**Change Reason**: New widget.
+**Description**: Add Lite3D widget.
+
+### `src\widgets\cardview`
+
+**Change Type**: New File
+**Author**: [luke_sun]
+**Change Reason**: New widget.
+**Description**: Add cardview widget.
+
+### `src\widgets\cellular`
+
+**Change Type**: New File
+**Author**: [luke_sun]
+**Change Reason**: New widget.
+**Description**: Add cellular widget.
+
+### `src\widgets\snapshot`
+
+**Change Type**: New File
+**Author**: [luke_sun]
+**Change Reason**: New widget.
+**Description**: Add snapshot widget.
 
