@@ -1039,6 +1039,60 @@
     #endif /*LV_USE_VG_LITE_THORVG*/
 #endif
 
+/** Use Realtek RTL8773G PPE (Pixel Processing Engine) */
+#ifndef LV_USE_DRAW_PPE_RTL8773G
+    #ifdef CONFIG_LV_USE_DRAW_PPE_RTL8773G
+        #define LV_USE_DRAW_PPE_RTL8773G CONFIG_LV_USE_DRAW_PPE_RTL8773G
+    #else
+        #define LV_USE_DRAW_PPE_RTL8773G 0
+    #endif
+#endif
+
+/** Use Realtek RTL8773E PPE (Pixel Processing Engine) */
+#ifndef LV_USE_DRAW_PPE_RTL8773E
+    #ifdef CONFIG_LV_USE_DRAW_PPE_RTL8773E
+        #define LV_USE_DRAW_PPE_RTL8773E CONFIG_LV_USE_DRAW_PPE_RTL8773E
+    #else
+        #define LV_USE_DRAW_PPE_RTL8773E 0
+    #endif
+#endif
+
+/** Use Realtek RTL87x2G PPE (Pixel Processing Engine) */
+#ifndef LV_USE_DRAW_PPE_RTL87x2G
+    #ifdef CONFIG_LV_USE_DRAW_PPE_RTL87x2G
+        #define LV_USE_DRAW_PPE_RTL87x2G CONFIG_LV_USE_DRAW_PPE_RTL87x2G
+    #else
+        #define LV_USE_DRAW_PPE_RTL87x2G 0
+    #endif
+#endif
+
+/** Use Realtek IDU (Image Decoding Unit) */
+#ifndef LV_USE_RTK_IDU
+    #ifdef CONFIG_LV_USE_RTK_IDU
+        #define LV_USE_RTK_IDU CONFIG_LV_USE_RTK_IDU
+    #else
+        #define LV_USE_RTK_IDU 0
+    #endif
+#endif
+
+/** Use Realtek IDU Hardware Acceleration */
+#ifndef LV_USE_RTK_IDU_HW
+    #ifdef CONFIG_LV_USE_RTK_IDU_HW
+        #define LV_USE_RTK_IDU_HW CONFIG_LV_USE_RTK_IDU_HW
+    #else
+        #define LV_USE_RTK_IDU_HW 0
+    #endif
+#endif
+
+/** Use Realtek JPU (JPEG Processing Unit) */
+#ifndef LV_USE_RTK_JPU
+    #ifdef CONFIG_LV_USE_RTK_JPU
+        #define LV_USE_RTK_JPU CONFIG_LV_USE_RTK_JPU
+    #else
+        #define LV_USE_RTK_JPU 0
+    #endif
+#endif
+
 /** Accelerate blends, fills, etc. with STM32 DMA2D */
 #ifndef LV_USE_DRAW_DMA2D
     #ifdef CONFIG_LV_USE_DRAW_DMA2D
