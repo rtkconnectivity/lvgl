@@ -570,8 +570,8 @@ void lv_draw_ppe_box_shadow(lv_draw_task_t *t, const lv_draw_box_shadow_dsc_t *d
             }
             else
             {
-                lv_area_move(&clip_area_sub, t->target_layer->buf_area.x1,
-                             t->target_layer->buf_area.y1);
+                lv_area_move(&clip_area_sub, -t->target_layer->buf_area.x1,
+                             -t->target_layer->buf_area.y1);
                 PPE_Finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&clip_area_sub,
                                                PPE_BLEND_PREMULTIPLY);
