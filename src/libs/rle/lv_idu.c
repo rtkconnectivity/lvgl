@@ -115,7 +115,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 static void idu_decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc);
 static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_stride, uint8_t *output,
                                      uint16_t width,
-                                     uint16_t height);
+                                     uint16_t height, lv_color_format_t cf);
 static lv_result_t decompress_rle_rgb565_data(const idu_file_t *file, uint8_t *img_data,
                                               uint16_t width, uint16_t height);
 static lv_result_t decompress_rle_rgb888_data(const idu_file_t *file, uint8_t *img_data,
@@ -307,7 +307,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         lv_result_t ret;
 #if LV_USE_RTK_IDU_HW
-        ret = hw_acc_idu_decode((const uint8_t *)file, stride, img_data, width, height);
+        ret = hw_acc_idu_decode((const uint8_t *)file, stride, img_data, width, height, input_type);
 
         if (ret != LV_RESULT_OK)
         {
@@ -418,14 +418,23 @@ static lv_result_t decompress_rle_data(char input_type, idu_file_t *file, uint8_
 #if LV_USE_RTK_IDU_HW
 static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_stride, uint8_t *output,
                                      uint16_t width,
-                                     uint16_t height)
+                                     uint16_t height, lv_color_format_t cf)
 {
     if (image == NULL || output == NULL)
     {
         LV_ASSERT(image != NULL && output != NULL);
         return LV_RESULT_INVALID;
     }
-
+    uint32_t *file = (uint32_t *)image;
+    if (LV_COLOR_FORMAT_IS_INDEXED(cf))
+    {
+        uint32_t clut_info = *(uint32_t *)image;
+        uint16_t clut_num = ((clut_info & 0xFFFF0000) >> 16);
+        uint16_t clut_max = (clut_info & 0x0000FFFF);
+        memcpy(output, image, (clut_num + 1) * 4);
+        output += LV_COLOR_INDEXED_PALETTE_SIZE(cf) * 4;
+        file += (clut_num + 1);
+    }
     IDU_decode_range range;
     range.start_column = 0;
     range.end_column = width - 1;
@@ -438,7 +447,7 @@ static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_strid
     dma_cfg.RX_DMA_channel_num = high_speed_dma_channel_num;
     dma_cfg.TX_DMA_channel_num = low_speed_dma_channel_num;
 
-    IDU_ERROR err = IDU_Decode((uint8_t *)image, &range, &dma_cfg);
+    IDU_ERROR err = IDU_Decode((uint8_t *)file, &range, &dma_cfg);
     if (err != IDU_SUCCESS)
     {
         return LV_RESULT_INVALID;
