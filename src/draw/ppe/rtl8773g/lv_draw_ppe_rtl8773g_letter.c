@@ -59,7 +59,8 @@ typedef struct font_glyph
  *  STATIC PROTOTYPES
  **********************/
 
-static void /* LV_ATTRIBUTE_FAST_MEM */ draw_letter_cb(lv_draw_task_t *t, lv_draw_glyph_dsc_t *glyph_draw_dsc,
+static void /* LV_ATTRIBUTE_FAST_MEM */ draw_letter_cb(lv_draw_task_t *t,
+                                                       lv_draw_glyph_dsc_t *glyph_draw_dsc,
                                                        lv_draw_fill_dsc_t *fill_draw_dsc, const lv_area_t *fill_area);
 
 /**********************
@@ -87,7 +88,8 @@ void lv_draw_ppe_label(lv_draw_task_t *t, const lv_draw_label_dsc_t *dsc,
 
 #if LV_USE_FREETYPE && LV_USE_VECTOR_GRAPHIC && LV_USE_THORVG
     static bool is_init = false;
-    if(!is_init) {
+    if (!is_init)
+    {
         lv_freetype_outline_add_event(freetype_outline_event_cb, LV_EVENT_ALL, t);
         is_init = true;
     }
@@ -168,15 +170,19 @@ static void hw_blit_font(local_draw_font_t *font, local_font_glyph_t *glyph)
     ppe_get_identity(&inverse);
     inverse.m[0][2] = font->target_rect.x1 - glyph->pos_x;
     inverse.m[1][2] = font->target_rect.y1 - glyph->pos_y;
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, &constraint,
                                    PPE_BLEND_PREMULTIPLY);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     if (err != PPE_SUCCESS)
     {
     }
 }
 
-static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyph_dsc_t *glyph_draw_dsc,
+static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t,
+                                                 lv_draw_glyph_dsc_t *glyph_draw_dsc,
                                                  lv_draw_fill_dsc_t *fill_draw_dsc, const lv_area_t *fill_area)
 {
     if (glyph_draw_dsc)
@@ -193,11 +199,10 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyp
         case LV_FONT_GLYPH_FORMAT_A8:
         case LV_FONT_GLYPH_FORMAT_IMAGE:
             {
-                if(glyph_draw_dsc->rotation % 3600 == 0 && glyph_draw_dsc->format != LV_FONT_GLYPH_FORMAT_IMAGE)
+                if (glyph_draw_dsc->rotation % 3600 == 0 && glyph_draw_dsc->format != LV_FONT_GLYPH_FORMAT_IMAGE)
                 {
-                    if(lv_font_has_static_bitmap(glyph_draw_dsc->g->resolved_font))
+                    if (lv_font_has_static_bitmap(glyph_draw_dsc->g->resolved_font))
                     {
-        //                DBG_DIRECT("ppe blit align font at %08x", t->target_layer->draw_buf->data);
                         lv_font_glyph_dsc_t *g_dsc = glyph_draw_dsc->g;
                         uint32_t gid = g_dsc->gid.index;
                         if (!gid) { return; }
@@ -236,7 +241,7 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyp
                             t->target_layer->draw_buf != disp_drv->buf_2)
                         {
                             lv_ppe_clean_cache(t->target_layer->draw_buf->data,
-                                            t->target_layer->draw_buf->data_size);
+                                               t->target_layer->draw_buf->data_size);
                         }
 #endif
                         hw_blit_font(&df, &glyph);
@@ -244,17 +249,19 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyp
                     else
                     {
                         glyph_draw_dsc->glyph_data = lv_font_get_glyph_bitmap(glyph_draw_dsc->g, glyph_draw_dsc->_draw_buf);
-                        if(glyph_draw_dsc->glyph_data == NULL) {
+                        if (glyph_draw_dsc->glyph_data == NULL)
+                        {
                             LV_LOG_WARN("Couldn't get the bitmap of a glyph");
                             break;
                         }
                         lv_area_t mask_area = *glyph_draw_dsc->letter_coords;
-                        mask_area.x2 = mask_area.x1 + lv_draw_buf_width_to_stride(lv_area_get_width(&mask_area), LV_COLOR_FORMAT_A8) - 1;
+                        mask_area.x2 = mask_area.x1 + lv_draw_buf_width_to_stride(lv_area_get_width(&mask_area),
+                                                                                  LV_COLOR_FORMAT_A8) - 1;
                         lv_draw_sw_blend_dsc_t blend_dsc;
                         lv_memzero(&blend_dsc, sizeof(blend_dsc));
                         blend_dsc.color = glyph_draw_dsc->color;
                         blend_dsc.opa = glyph_draw_dsc->opa;
-                        const lv_draw_buf_t * draw_buf = glyph_draw_dsc->glyph_data;
+                        const lv_draw_buf_t *draw_buf = glyph_draw_dsc->glyph_data;
                         blend_dsc.mask_buf = draw_buf->data;
                         blend_dsc.mask_area = &mask_area;
                         blend_dsc.mask_stride = draw_buf->header.stride;
@@ -274,13 +281,14 @@ static void LV_ATTRIBUTE_FAST_MEM draw_letter_cb(lv_draw_task_t *t, lv_draw_glyp
                     img_dsc.opa = glyph_draw_dsc->opa;
                     img_dsc.src = glyph_draw_dsc->glyph_data;
                     img_dsc.recolor = glyph_draw_dsc->color;
-                    img_dsc.pivot = (lv_point_t) {
+                    img_dsc.pivot = (lv_point_t)
+                    {
                         .x = glyph_draw_dsc->pivot.x,
-                        .y = glyph_draw_dsc->g->box_h + glyph_draw_dsc->g->ofs_y
+                         .y = glyph_draw_dsc->g->box_h + glyph_draw_dsc->g->ofs_y
                     };
                     lv_draw_sw_image(t, &img_dsc, glyph_draw_dsc->letter_coords);
                 }
-                }
+            }
             break;
         default:
             break;

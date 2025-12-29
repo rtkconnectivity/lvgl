@@ -74,7 +74,7 @@ lv_result_t lv_color_blend_to_rgb565_ppe(lv_draw_sw_blend_fill_dsc_t *dsc)
     if (!mask)
     {
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_Mask(&target, ppe_color, &draw_rect);
     }
 
@@ -99,10 +99,12 @@ lv_result_t lv_color_blend_to_rgb565_ppe(lv_draw_sw_blend_fill_dsc_t *dsc)
         ppe_matrix_t inv;
         ppe_get_identity(&inv);
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, PPE_BLEND_PREMULTIPLY);
     }
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -203,9 +205,11 @@ lv_result_t lv_blend_image_to_rgb565_ppe(lv_draw_sw_blend_image_dsc_t *dsc)
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -276,8 +280,11 @@ lv_result_t lv_blend_rgb888_image_to_rgb565_ppe(lv_draw_sw_blend_image_dsc_t *ds
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -316,7 +323,7 @@ lv_result_t lv_color_blend_to_rgb888_ppe(lv_draw_sw_blend_fill_dsc_t *dsc, const
     if (!mask)
     {
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_Mask(&target, ppe_color, &draw_rect);
     }
 
@@ -341,10 +348,12 @@ lv_result_t lv_color_blend_to_rgb888_ppe(lv_draw_sw_blend_fill_dsc_t *dsc, const
         ppe_matrix_t inv;
         ppe_get_identity(&inv);
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, PPE_BLEND_PREMULTIPLY);
     }
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -456,9 +465,11 @@ lv_result_t lv_blend_image_to_rgb888_ppe(lv_draw_sw_blend_image_dsc_t *dsc,
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -539,8 +550,11 @@ lv_result_t lv_blend_rgb888_image_to_rgb888_ppe(lv_draw_sw_blend_image_dsc_t *ds
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -568,7 +582,7 @@ lv_result_t lv_color_blend_to_argb8888_ppe(lv_draw_sw_blend_fill_dsc_t *dsc)
     if (!mask)
     {
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_Mask(&target, ppe_color, &draw_rect);
     }
 
@@ -593,10 +607,12 @@ lv_result_t lv_color_blend_to_argb8888_ppe(lv_draw_sw_blend_fill_dsc_t *dsc)
         ppe_matrix_t inv;
         ppe_get_identity(&inv);
         ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, PPE_BLEND_PREMULTIPLY);
     }
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -697,9 +713,11 @@ lv_result_t lv_blend_image_to_argb8888_ppe(lv_draw_sw_blend_image_dsc_t *dsc)
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
-    PPE_Finish();
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 
@@ -770,8 +788,11 @@ lv_result_t lv_blend_rgb888_image_to_argb8888_ppe(lv_draw_sw_blend_image_dsc_t *
     ppe_matrix_t inv;
     ppe_get_identity(&inv);
     ppe_rect_t draw_rect = {.x1 = 0, .y1 = 0, .x2 = w - 1, .y2 = h - 1};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Blit_Inverse(&target, &source, NULL, &inv, &draw_rect, method);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     return LV_RESULT_OK;
 }
 #endif

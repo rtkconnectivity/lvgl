@@ -7,6 +7,7 @@
  *      INCLUDES
  *********************/
 #include "../../lv_draw_private.h"
+#include "lv_ppe_rtl8773g_utils.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 #include "lv_draw_ppe_rtl8773g.h"
 #include "../../sw/lv_draw_sw_private.h"
@@ -76,8 +77,8 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
         {
             const lv_draw_fill_dsc_t *draw_dsc = (lv_draw_fill_dsc_t *) task->draw_dsc;
             if ((draw_dsc->grad.dir != (lv_grad_dir_t)LV_GRAD_DIR_NONE) ||
-                draw_unit->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8888\
-                || draw_unit->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8565)
+                task->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8888\
+                || task->target_layer->draw_buf->header.cf == LV_COLOR_FORMAT_ARGB8565)
             {
                 return 0;
             }
@@ -109,7 +110,7 @@ static int32_t ppe_evaluate(lv_draw_unit_t *draw_unit, lv_draw_task_t *task)
             lv_draw_label_dsc_t *dsc = (lv_draw_label_dsc_t *)task->draw_dsc;
             const lv_font_t *font = dsc->font;
             const lv_font_fmt_txt_dsc_t *fdsc = font->dsc;
-            if(!fdsc->stride) return 0;
+            if (!fdsc->stride) { return 0; }
             if (fdsc->bpp == 8 || fdsc->bitmap_format == 3)
             {
                 if (task->preference_score > 80)
@@ -251,10 +252,17 @@ static int32_t ppe_dispatch(lv_draw_unit_t *draw_unit, lv_layer_t *layer)
     return 1;
 }
 
-#include "trace.h"
 static void execute_drawing(lv_draw_task_t *t)
 {
     LV_PROFILER_DRAW_BEGIN;
+#if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
+    if (lv_is_previous_cpu())
+    {
+        lv_ppe_clean_cache(t->target_layer->draw_buf->data,
+                           t->target_layer->draw_buf->data_size);
+        lv_set_previous_cpu(false);
+    }
+#endif
     /*Render the draw task*/
     switch (t->type)
     {
@@ -285,7 +293,8 @@ static void execute_drawing(lv_draw_task_t *t)
         lv_draw_ppe_mask_rect(t, t->draw_dsc, &t->area);
         break;
     default:
-        break;
+        LV_PROFILER_DRAW_END;
+        return;
     }
     LV_PROFILER_DRAW_END;
 }

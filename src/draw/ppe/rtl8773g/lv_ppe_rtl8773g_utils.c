@@ -38,7 +38,8 @@ DSP_RAM_DATA_SECTION uint8_t cache_buffer[LV_PPE_MAX_BUFFER_SIZE];
  **********************/
 static uint8_t high_speed_channel = 0xA5;
 static uint8_t low_speed_channel = 0xA5;
-
+static bool previous_cpu = false;
+static bool previous_hw  = false;
 /**********************
  *      MACROS
  **********************/
@@ -616,7 +617,7 @@ void subtract_intersection(const lv_area_t *area, const lv_area_t *intersection,
     }
 }
 
-bool lv_ppe_use_entire(lv_draw_task_t * t, lv_display_t *disp)
+bool lv_ppe_use_entire(lv_draw_task_t *t, lv_display_t *disp)
 {
     return (lv_display_get_horizontal_resolution(disp) == lv_area_get_width(
                 &t->target_layer->buf_area)) && \
@@ -624,13 +625,77 @@ bool lv_ppe_use_entire(lv_draw_task_t * t, lv_display_t *disp)
                 &t->target_layer->buf_area));
 }
 
+#if LV_PPE_DRAW_ASYNC
+static volatile lv_image_decoder_dsc_t *decoded_dsc_cache = NULL;
+void lv_ppe_register_decoded_dsc(lv_image_decoder_dsc_t *dsc)
+{
+    if (decoded_dsc_cache)
+    {
+        lv_image_decoder_close(decoded_dsc_cache);
+    }
+    decoded_dsc_cache = dsc;
+}
+
+void lv_ppe_async_finish(void)
+{
+    PPE_Finish();
+    if (decoded_dsc_cache)
+    {
+        lv_image_decoder_close(decoded_dsc_cache);
+        decoded_dsc_cache = NULL;
+    }
+}
+#endif
+
+void lv_ppe_finish(void)
+{
+#if LV_PPE_DRAW_ASYNC
+    lv_ppe_async_finish();
+#else
+    PPE_Finish();
+#endif
+}
+
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-void lv_ppe_clean_cache(void *addr, int32_t size)
+bool lv_is_previous_cpu(void)
+{
+    return previous_cpu;
+}
+
+bool lv_is_previous_hw(void)
+{
+    return previous_hw;
+}
+
+void lv_set_previous_cpu(bool is_cpu)
+{
+    previous_cpu = is_cpu;
+}
+
+void lv_set_previous_hw(bool is_hw)
+{
+    previous_hw = is_hw;
+}
+void lv_ppe_clean_cache(void *addr, uint32_t size)
 {
 #if LV_PPE_CACHE_STRATEGY == LV_PPE_CACHE_WRITE_BACK
-    SCB_CleanInvalidateDCache_by_Addr(addr, size);
+    if (size <= 32768)
+    {
+        SCB_CleanInvalidateDCache_by_Addr(addr, size);
+    }
+    else
+    {
+        SCB_CleanInvalidateDCache();
+    }
 #else
-    SCB_InvalidateDCache_by_Addr(addr, size);
+    if (size <= 32768)
+    {
+        SCB_InvalidateDCache_by_Addr(addr, size);
+    }
+    else
+    {
+        SCB_InvalidateDCache();
+    }
 #endif
 }
 #endif

@@ -199,7 +199,7 @@ void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_
                 ppe_get_identity(&inv);
                 inv.m[0][2] = t->target_layer->buf_area.x1 - clipped_coords.x1;
                 inv.m[1][2] = t->target_layer->buf_area.y1 - bg_coords.y1;
-                PPE_Finish();
+                lv_ppe_finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&top_draw,
                                                PPE_BLEND_PREMULTIPLY);
             }
@@ -221,7 +221,7 @@ void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_
                 ppe_reflect(false, true, &inv);
                 ppe_translate(t->target_layer->buf_area.x1 - clipped_coords.x1, \
                               t->target_layer->buf_area.y1 - bg_coords.y2 + rout - 1, &inv);
-                PPE_Finish();
+                lv_ppe_finish();
                 PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&bottom_draw,
                                                PPE_BLEND_PREMULTIPLY);
             }
@@ -232,7 +232,7 @@ void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_
             lv_draw_sw_mask_radius_init(&mask_rout_param, &bg_coords, rout, false);
             mask_list[0] = &mask_rout_param;
             blend_dsc.mask_buf = mask_buf;
-            PPE_Finish();
+            lv_ppe_finish();
             for (h = 0; h < rout; h++)
             {
                 int32_t top_y = bg_coords.y1 + h;
@@ -272,7 +272,7 @@ void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_
 
     if (mask_buf)
     {
-        PPE_Finish();
+        lv_ppe_finish();
         lv_free(mask_buf);
         lv_draw_sw_mask_free_param(&mask_rout_param);
     }
@@ -304,8 +304,11 @@ static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *b
     uint32_t ppe_color = lv_ppe_get_color(blend_dsc->color, blend_dsc->opa);
     lv_area_move(&blend_area, -layer->buf_area.x1, -layer->buf_area.y1);
     ppe_rect_t draw_rect = {.x1 = blend_area.x1, .y1 = blend_area.y1, .x2 = blend_area.x2, .y2 = blend_area.y2};
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Mask(&target, ppe_color, &draw_rect);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     LV_PROFILER_DRAW_END;
 }
 

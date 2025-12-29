@@ -32,6 +32,8 @@ extern "C" {
 
 #define LV_PPE_CACHE_STRATEGY           LV_PPE_CACHE_NONE
 
+#define LV_PPE_DRAW_ASYNC               0
+
 /**********************
  *      TYPEDEFS
  **********************/
@@ -72,8 +74,18 @@ void subtract_intersection(const lv_area_t *area, const lv_area_t *intersection,
 
 bool lv_ppe_use_entire(lv_draw_task_t *t, lv_display_t *disp);
 
+void lv_ppe_finish(void);
+
+#if LV_PPE_DRAW_ASYNC
+void lv_ppe_register_decoded_dsc(lv_image_decoder_dsc_t *dsc);
+#endif
+
 #if LV_PPE_CACHE_STRATEGY != LV_PPE_CACHE_NONE
-void lv_ppe_clean_cache(void *addr, int32_t size);
+void lv_set_previous_hw(bool is_hw);
+void lv_set_previous_cpu(bool is_cpu);
+bool lv_is_previous_hw(void);
+bool lv_is_previous_cpu(void);
+void lv_ppe_clean_cache(void *addr, uint32_t size);
 #endif
 /**********************
  *      MACROS

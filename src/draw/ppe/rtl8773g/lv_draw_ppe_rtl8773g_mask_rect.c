@@ -78,25 +78,25 @@ void lv_draw_ppe_mask_rect(lv_draw_task_t *t, const lv_draw_mask_rect_dsc_t *dsc
                 t->clip_area.x2,
                 dsc->area.y1 - 1);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
 
     /*Clear the bottom part*/
     lv_area_set(&clear_area, t->clip_area.x1, dsc->area.y2 + 1, t->clip_area.x2,
                 t->clip_area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
     /*Clear the left part*/
     lv_area_set(&clear_area, t->clip_area.x1, dsc->area.y1, dsc->area.x1 - 1, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
 
     /*Clear the right part*/
     lv_area_set(&clear_area, dsc->area.x2 + 1, dsc->area.y1, t->clip_area.x2, dsc->area.y2);
     lv_area_move(&clear_area, -buf_area->x1, -buf_area->y1);
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_Clear(&target, 0, (ppe_rect_t *)&clear_area);
 
     lv_draw_sw_mask_radius_param_t param;
@@ -145,11 +145,10 @@ void lv_draw_ppe_mask_rect(lv_draw_task_t *t, const lv_draw_mask_rect_dsc_t *dsc
     inv.m[0][2] = buf_area->x1 - draw_area.x1;
     inv.m[0][2] = buf_area->y1 - draw_area.y1;
     lv_area_move(&draw_area, -buf_area->x1, -buf_area->y1);
-    PPE_Finish();
+    lv_ppe_finish();
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv, (ppe_rect_t *)&draw_area,
                                    PPE_BLEND_PREMULTIPLY);
-
-
+    lv_ppe_finish();
     lv_free(mask_buf);
     lv_draw_sw_mask_free_param(&param);
 }

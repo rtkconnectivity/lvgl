@@ -33,14 +33,22 @@
 /**********************
  *      TYPEDEFS
  **********************/
-
+typedef void (*ppe_draw_image_core_cb)(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
+                                       lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                                       lv_matrix_t *matrix,
+#endif
+                                       const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
 /**********************
  *  STATIC PROTOTYPES
  **********************/
 
-static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
-                          const lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
-                          const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
+static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
+                              lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                              lv_matrix_t *matrix,
+#endif
+                              const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
 
 static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords);
@@ -55,6 +63,9 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
  *  STATIC VARIABLES
  **********************/
 static uint8_t *cache_buffer = NULL;
+lv_image_decoder_dsc_t decoder_dsc1;
+lv_image_decoder_dsc_t decoder_dsc2;
+lv_image_decoder_dsc_t *current_decoder_dsc = &decoder_dsc1;
 /**********************
  *      MACROS
  **********************/
@@ -62,6 +73,127 @@ static uint8_t *cache_buffer = NULL;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void ppe_img_decode_and_draw(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
+                                    lv_image_decoder_dsc_t *decoder_dsc, lv_area_t *relative_decoded_area,
+                                    const lv_area_t *img_area, const lv_area_t *clipped_img_area,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                                    lv_matrix_t *matrix,
+#endif
+                                    ppe_draw_image_core_cb draw_core_cb)
+{
+    lv_draw_image_sup_t sup;
+    sup.alpha_color = draw_dsc->recolor;
+    sup.palette = decoder_dsc->palette;
+    sup.palette_size = decoder_dsc->palette_size;
+
+    /*The whole image is available, just draw it*/
+    if (decoder_dsc->decoded && (relative_decoded_area == NULL ||
+                                 relative_decoded_area->x1 == LV_COORD_MIN))
+    {
+        draw_core_cb(t, draw_dsc, decoder_dsc, &sup,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                     matrix,
+#endif
+                     img_area, clipped_img_area);
+    }
+    /*Draw in smaller pieces*/
+    else
+    {
+        lv_area_t relative_full_area_to_decode = *clipped_img_area;
+        lv_area_move(&relative_full_area_to_decode, -img_area->x1, -img_area->y1);
+        lv_area_t tmp;
+        if (relative_decoded_area == NULL) { relative_decoded_area = &tmp; }
+        relative_decoded_area->x1 = LV_COORD_MIN;
+        relative_decoded_area->y1 = LV_COORD_MIN;
+        relative_decoded_area->x2 = LV_COORD_MIN;
+        relative_decoded_area->y2 = LV_COORD_MIN;
+        lv_result_t res = LV_RESULT_OK;
+
+        while (res == LV_RESULT_OK)
+        {
+            res = lv_image_decoder_get_area(decoder_dsc, &relative_full_area_to_decode, relative_decoded_area);
+
+            lv_area_t absolute_decoded_area = *relative_decoded_area;
+            lv_area_move(&absolute_decoded_area, img_area->x1, img_area->y1);
+            if (res == LV_RESULT_OK)
+            {
+                /*Limit draw area to the current decoded area and draw the image*/
+                lv_area_t clipped_img_area_sub;
+                if (lv_area_intersect(&clipped_img_area_sub, clipped_img_area, &absolute_decoded_area))
+                {
+                    draw_core_cb(t, draw_dsc, decoder_dsc, &sup,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                                 matrix,
+#endif
+                                 &absolute_decoded_area, &clipped_img_area_sub);
+                }
+            }
+        }
+    }
+}
+
+static void lv_draw_image_ppe_helper(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                                     lv_matrix_t *matrix,
+#endif
+                                     const lv_area_t *coords, ppe_draw_image_core_cb draw_core_cb)
+{
+    if (draw_core_cb == NULL)
+    {
+        LV_LOG_WARN("draw_core_cb is NULL");
+        return;
+    }
+
+    lv_area_t draw_area;
+    lv_area_copy(&draw_area, coords);
+    if (draw_dsc->rotation || draw_dsc->scale_x != LV_SCALE_NONE || draw_dsc->scale_y != LV_SCALE_NONE)
+    {
+        int32_t w = lv_area_get_width(coords);
+        int32_t h = lv_area_get_height(coords);
+
+        lv_image_buf_get_transformed_area(&draw_area, w, h, draw_dsc->rotation, draw_dsc->scale_x,
+                                          draw_dsc->scale_y,
+                                          &draw_dsc->pivot);
+
+        draw_area.x1 += coords->x1;
+        draw_area.y1 += coords->y1;
+        draw_area.x2 += coords->x1;
+        draw_area.y2 += coords->y1;
+    }
+
+    lv_area_t clipped_img_area;
+    if (!lv_area_intersect(&clipped_img_area, &draw_area, &t->clip_area))
+    {
+        return;
+    }
+
+    if (current_decoder_dsc == &decoder_dsc1)
+    {
+        current_decoder_dsc = &decoder_dsc2;
+    }
+    else
+    {
+        current_decoder_dsc = &decoder_dsc1;
+    }
+    memset(current_decoder_dsc, 0, sizeof(lv_image_decoder_dsc_t));
+    lv_result_t res = lv_image_decoder_open(current_decoder_dsc, draw_dsc->src, NULL);
+    if (res != LV_RESULT_OK)
+    {
+        LV_LOG_ERROR("Failed to open image");
+        return;
+    }
+
+    ppe_img_decode_and_draw(t, draw_dsc, current_decoder_dsc, NULL, coords, &clipped_img_area,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                            matrix,
+#endif
+                            draw_core_cb);
+#if !LV_PPE_DRAW_ASYNC
+    lv_image_decoder_close(current_decoder_dsc);
+#endif
+}
+
+
 #if LV_DRAW_TRANSFORM_USE_MATRIX
 void lv_draw_ppe_image_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                   const lv_area_t *coords, lv_matrix_t *matrix, uint32_t mode)
@@ -71,7 +203,7 @@ void lv_draw_ppe_image_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *
         return;
     }
 
-    lv_draw_ppe_matrix(t, draw_dsc, coords, matrix, mode);
+    lv_draw_image_ppe_helper(t, draw_dsc, matrix, coords, ppe_img_draw_core);
 }
 
 void lv_draw_ppe_layer_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
@@ -89,10 +221,9 @@ void lv_draw_ppe_layer_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *
 
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_ppe_matrix(t, &new_draw_dsc, coords, matrix, 0);
+    lv_draw_ppe_image_use_matrix(t, &new_draw_dsc, coords, matrix, 0);
 }
-#endif
-
+#else
 void lv_draw_ppe_image(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                        const lv_area_t *coords)
 {
@@ -104,7 +235,7 @@ void lv_draw_ppe_image(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
     if (!draw_dsc->tile)
     {
         //lv_draw_ppe_normal(t, draw_dsc, coords);
-        lv_draw_image_normal_helper(t, draw_dsc, coords, img_draw_core);
+        lv_draw_image_ppe_helper(t, draw_dsc, coords, ppe_img_draw_core);
     }
     else
     {
@@ -124,7 +255,7 @@ void lv_draw_ppe_layer(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
     new_draw_dsc.src = layer_to_draw->draw_buf;
     lv_draw_ppe_image(t, &new_draw_dsc, coords);
 }
-
+#endif
 /**********************
  *   STATIC FUNCTIONS
  **********************/
@@ -253,7 +384,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
                 dma_cfg.output_buf = (uint32_t *)dst_addr;
                 dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
                 dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-                PPE_Finish();
+                lv_ppe_finish();
                 IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
                 if (err_code == IDU_SUCCESS)
                 {
@@ -312,7 +443,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             pic_buffer = lv_ppe_get_buffer(0);
             if (cache_buffer == pic_buffer)
             {
-                PPE_Finish();
+                lv_ppe_finish();
             }
 
         }
@@ -323,7 +454,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             {
                 if (cache_buffer != NULL)
                 {
-                    PPE_Finish();
+                    lv_ppe_finish();
                     lv_free(cache_buffer);
                     cache_buffer = NULL;
                 }
@@ -339,9 +470,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
         dma_cfg.output_buf = (uint32_t *)pic_buffer;
         dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
         dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-//        uint32_t idu1 = sys_timestamp_get_us();
         IDU_ERROR err_code = IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
-//        uint32_t idu2 = sys_timestamp_get_us();
         source.address = (uint32_t)pic_buffer;
         source.width = image_width;
         source.height = image_height;
@@ -354,18 +483,13 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
         ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1,
                       &pre_trans);
         memcpy(&inverse, &pre_trans, sizeof(float) * 9);
-//        if(err_code != IDU_SUCCESS)
-//        {
-//            DBG_DIRECT("err code %d", err_code);
-//            DBG_DIRECT("range x %d -> %d, y %d -> %d",constraint_area.x1, constraint_area.x2, constraint_area.y1, constraint_area.y2);
-//        }
     }
 
     if (draw_dsc->recolor_opa >= LV_OPA_MIN)
     {
         uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
         ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_Mask(&source, recolor_value, &recolor_rect);
     }
 
@@ -376,9 +500,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
     {
         source.high_quality = true;
     }
-//    DBG_DIRECT("%s", source.high_quality?"use AA" : "no AA");
-//    uint32_t ppe1 = sys_timestamp_get_us();
-    PPE_Finish();
+    lv_ppe_finish();
     if (cache_buffer != lv_ppe_get_buffer(0))
     {
         if (cache_buffer != NULL)
@@ -390,9 +512,9 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
 
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
                                    method);
-//    PPE_Finish();
-//    uint32_t ppe2 = sys_timestamp_get_us();
-//    DBG_DIRECT("PPE consume %d us || %d ms", ppe2 - ppe1, (ppe2 - ppe1) / 1000);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     cache_buffer = pic_buffer;
     if (err == PPE_SUCCESS)
     {
@@ -543,7 +665,7 @@ static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_
                                 dma_cfg.output_buf = (uint32_t *)dst_addr;
                                 dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
                                 dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-                                PPE_Finish();
+                                lv_ppe_finish();
                                 IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
                                 if (err_code == IDU_SUCCESS)
                                 {
@@ -606,13 +728,13 @@ static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_
                         {
                             uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
                             ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-                            PPE_Finish();
+                            lv_ppe_finish();
                             PPE_Mask(&source, recolor_value, &recolor_rect);
                         }
                     }
                     else
                     {
-                        PPE_Finish();
+                        lv_ppe_finish();
                     }
                     ppe_matrix_t inv_matrix;
                     ppe_get_identity(&inv_matrix);
@@ -628,7 +750,7 @@ static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_
                     {
                         clipped_img_area.y1 = 0;
                     }
-                    PPE_Finish();
+                    lv_ppe_finish();
                     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inv_matrix, (ppe_rect_t *)&clipped_img_area,
                                                    method);
                 }
@@ -643,13 +765,16 @@ skip_ppe:
         tile_area.x1 = tile_x_start;
         tile_area.x2 = tile_x_start + img_w - 1;
     }
-    PPE_Finish();
+    lv_ppe_finish();
     LV_PROFILER_DRAW_END;
 }
 
-static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
-                          const lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
-                          const lv_area_t *img_coords, const lv_area_t *clipped_img_area)
+static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
+                              lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+                              lv_matrix_t *matrix,
+#endif
+                              const lv_area_t *img_coords, const lv_area_t *clipped_img_area)
 {
     const lv_draw_buf_t *decoded = decoder_dsc->decoded;
     const uint8_t *src_buf = decoded->data;
@@ -662,7 +787,31 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
 
     lv_area_t constraint_area;
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+    ppe_matrix_t ppe_mat;
+    memcpy(&ppe_mat, matrix, sizeof(ppe_matrix_t));
+    if (img_coords->x1 != 0 || img_coords->y1 != 0)
+    {
+        ppe_translate(img_coords->x1, img_coords->y1, &ppe_mat);
+    }
+    ppe_rect_t src_rect = {.x1 = 0, .y1 = 0, .x2 = img_dsc->header.w - 1, .y2 = img_dsc->header.h - 1};
+    ppe_rect_t target_rect;
+    lv_ppe_get_area(&target_rect, &src_rect, &ppe_mat);
+
     bool compressed = false;
+    if (!lv_area_intersect(&constraint_area, &t->target_layer->buf_area,
+                           (lv_area_t *)&target_rect))
+    {
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    if (!lv_area_intersect(&constraint_area, &constraint_area, &t->target_layer->phy_clip_area))
+    {
+        LV_PROFILER_DRAW_END;
+        return;
+    }
+    bool transform = ppe_matrix_is_complex(&ppe_mat);
+#else
     if (!lv_area_intersect(&constraint_area, &t->target_layer->buf_area, clipped_img_area))
     {
         LV_PROFILER_DRAW_END;
@@ -670,6 +819,8 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
     }
     bool transform = (draw_dsc->scale_x != LV_SCALE_NONE || draw_dsc->scale_y != LV_SCALE_NONE\
                       || draw_dsc->rotation != 0 || draw_dsc->skew_x != 0 || draw_dsc->skew_y != 0);
+#endif
+
     ppe_buffer_t target, source;
     memset(&target, 0, sizeof(ppe_buffer_t));
     memset(&source, 0, sizeof(ppe_buffer_t));
@@ -708,7 +859,6 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
     source.format = lv_ppe_get_format(decoded->header.cf);
     uint8_t pixel_byte = PPE_Get_Pixel_Size(source.format) / PPE_BYTE_SIZE;
 
-    source.address = (uint32_t)src_buf;
     source.width = decoded->header.w;
     source.height = decoded->header.h;
     source.high_quality = false;
@@ -726,6 +876,22 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
     source.const_color = 0xFFFFFFFF;
+    if (source.format == PPE_I8)
+    {
+        PPE->CLUT_INDEX = 0;
+        uint32_t *clut = (uint32_t *)(uint32_t)src_buf;
+        uint32_t clut_info = *clut++;
+        uint16_t clut_num = ((clut_info & 0xFFFF0000) >> 16);
+        for (int i = 0; i < clut_num; i++)
+        {
+            PPE->CLUT_CONT = *clut++;
+        }
+        source.address = (uint32_t)src_buf + LV_COLOR_INDEXED_PALETTE_SIZE(decoded->header.cf) * 4;
+    }
+    else
+    {
+        source.address = (uint32_t)src_buf;
+    }
 
     if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
         draw_dsc->opa == 0xFF && draw_dsc->rotation == 0)
@@ -755,22 +921,35 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
 
         uint32_t src_addr = source.address + (source.stride * (constraint_area.y1 - img_coords->y1) +
                                               (constraint_area.x1 - img_coords->x1)) * pixel_byte;
-        PPE_Finish();
+#if LV_PPE_DRAW_ASYNC
+        DBG_DIRECT("DMA bare");
+        lv_ppe_finish();
+        lv_ppe_register_decoded_dsc(decoder_dsc);
+#endif
         lv_acc_dma_copy(length, height, src_stride, dst_stride, (uint8_t *)src_addr, (uint8_t *)dst_addr);
         LV_PROFILER_DRAW_END;
         return;
     }
-    ppe_matrix_t inverse, pre_trans;
-
+    ppe_matrix_t inverse;
+#if LV_DRAW_TRANSFORM_USE_MATRIX
+    memcpy(&inverse, &ppe_mat, sizeof(ppe_matrix_t));
+    ppe_matrix_inverse(&inverse);
+#else
     lv_ppe_get_inverse_matrix(&inverse, img_coords, draw_dsc);
+#endif
     ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1, &inverse);
 
     if (draw_dsc->recolor_opa >= LV_OPA_MIN)
     {
         uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
         ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-        PPE_Finish();
+#if LV_PPE_DRAW_ASYNC
+        lv_ppe_finish();
+#endif
         PPE_Mask(&source, recolor_value, &recolor_rect);
+#if !LV_PPE_DRAW_ASYNC
+        lv_ppe_finish();
+#endif
     }
 
     lv_area_move(&constraint_area, -t->target_layer->buf_area.x1,
@@ -780,12 +959,17 @@ static void img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc
     {
         source.high_quality = true;
     }
-    PPE_Finish();
+#if LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+    lv_ppe_register_decoded_dsc(decoder_dsc);
+#endif
     PPE_ERR err = PPE_Blit_Inverse(&target, &source, NULL, &inverse, (ppe_rect_t *)&constraint_area,
                                    method);
+#if !LV_PPE_DRAW_ASYNC
+    lv_ppe_finish();
+#endif
     if (err == PPE_SUCCESS)
     {
-
         LV_PROFILER_DRAW_END;
         return;
     }
@@ -941,7 +1125,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
                 dma_cfg.output_buf = (uint32_t *)dst_addr;
                 dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
                 dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-                PPE_Finish();
+                lv_ppe_finish();
                 IDU_ERROR err_code = IDU_Decode((uint8_t *)source.address, &range, &dma_cfg);
                 if (err_code == IDU_SUCCESS)
                 {
@@ -986,7 +1170,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             pic_buffer = lv_ppe_get_buffer(0);
             if (cache_buffer == pic_buffer)
             {
-                PPE_Finish();
+                lv_ppe_finish();
             }
 
         }
@@ -997,7 +1181,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             {
                 if (cache_buffer != NULL)
                 {
-                    PPE_Finish();
+                    lv_ppe_finish();
                     lv_free(cache_buffer);
                     cache_buffer = NULL;
                 }
@@ -1032,7 +1216,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
     {
         uint32_t recolor_value = lv_ppe_get_color(draw_dsc->recolor, draw_dsc->recolor_opa);
         ppe_rect_t recolor_rect = {.x1 = 0, .y1 = 0, .x2 = source.width - 1, .y2 = source.height - 1};
-        PPE_Finish();
+        lv_ppe_finish();
         PPE_Mask(&source, recolor_value, &recolor_rect);
     }
 
@@ -1043,7 +1227,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
     {
         source.high_quality = true;
     }
-    PPE_Finish();
+    lv_ppe_finish();
     if (cache_buffer != lv_ppe_get_buffer(0))
     {
         if (cache_buffer != NULL)
