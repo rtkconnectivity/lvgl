@@ -429,8 +429,8 @@ static lv_result_t hw_acc_idu_decode(const uint8_t *image, uint32_t buffer_strid
     if (LV_COLOR_FORMAT_IS_INDEXED(cf))
     {
         uint32_t clut_info = *(uint32_t *)image;
-        uint16_t clut_num = ((clut_info & 0xFFFF0000) >> 16);
-        uint16_t clut_max = (clut_info & 0x0000FFFF);
+        uint16_t clut_num = ((clut_info & 0x00FF0000) >> 16) + 1;
+        uint16_t clut_max = (clut_info & 0x000000FF) + 1;
         memcpy(output, image, (clut_num + 1) * 4);
         output += LV_COLOR_INDEXED_PALETTE_SIZE(cf) * 4;
         file += (clut_num + 1);

@@ -881,7 +881,7 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
         PPE->CLUT_INDEX = 0;
         uint32_t *clut = (uint32_t *)(uint32_t)src_buf;
         uint32_t clut_info = *clut++;
-        uint16_t clut_num = ((clut_info & 0xFFFF0000) >> 16);
+        uint16_t clut_num = ((clut_info & 0x00FF0000) >> 16) + 1;
         for (int i = 0; i < clut_num; i++)
         {
             PPE->CLUT_CONT = *clut++;
