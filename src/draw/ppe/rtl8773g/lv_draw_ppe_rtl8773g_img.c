@@ -26,6 +26,7 @@
 #include "lv_ppe_rtl8773g_utils.h"
 #include "rtl_idu.h"
 #include "string.h"
+
 /*********************
  *      DEFINES
  *********************/
@@ -35,9 +36,6 @@
  **********************/
 typedef void (*ppe_draw_image_core_cb)(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                        lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                                       lv_matrix_t *matrix,
-#endif
                                        const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
 /**********************
  *  STATIC PROTOTYPES
@@ -45,9 +43,6 @@ typedef void (*ppe_draw_image_core_cb)(lv_draw_task_t *t, const lv_draw_image_ds
 
 static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                               lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                              lv_matrix_t *matrix,
-#endif
                               const lv_area_t *img_coords, const lv_area_t *clipped_img_area);
 
 static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
@@ -76,9 +71,6 @@ lv_image_decoder_dsc_t *current_decoder_dsc = &decoder_dsc1;
 static void ppe_img_decode_and_draw(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                     lv_image_decoder_dsc_t *decoder_dsc, lv_area_t *relative_decoded_area,
                                     const lv_area_t *img_area, const lv_area_t *clipped_img_area,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                                    lv_matrix_t *matrix,
-#endif
                                     ppe_draw_image_core_cb draw_core_cb)
 {
     lv_draw_image_sup_t sup;
@@ -91,9 +83,6 @@ static void ppe_img_decode_and_draw(lv_draw_task_t *t, const lv_draw_image_dsc_t
                                  relative_decoded_area->x1 == LV_COORD_MIN))
     {
         draw_core_cb(t, draw_dsc, decoder_dsc, &sup,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                     matrix,
-#endif
                      img_area, clipped_img_area);
     }
     /*Draw in smaller pieces*/
@@ -122,9 +111,6 @@ static void ppe_img_decode_and_draw(lv_draw_task_t *t, const lv_draw_image_dsc_t
                 if (lv_area_intersect(&clipped_img_area_sub, clipped_img_area, &absolute_decoded_area))
                 {
                     draw_core_cb(t, draw_dsc, decoder_dsc, &sup,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                                 matrix,
-#endif
                                  &absolute_decoded_area, &clipped_img_area_sub);
                 }
             }
@@ -184,9 +170,6 @@ static void lv_draw_image_ppe_helper(lv_draw_task_t *t, const lv_draw_image_dsc_
     }
 
     ppe_img_decode_and_draw(t, draw_dsc, current_decoder_dsc, NULL, coords, &clipped_img_area,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                            matrix,
-#endif
                             draw_core_cb);
 #if !LV_PPE_DRAW_ASYNC
     lv_image_decoder_close(current_decoder_dsc);
@@ -207,7 +190,7 @@ void lv_draw_ppe_image_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *
 }
 
 void lv_draw_ppe_layer_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
-                                  const lv_area_t *coords, lv_matrix_t *matrix)
+                                  const lv_area_t *coords)
 {
     if (draw_dsc->opa <= (lv_opa_t)LV_OPA_MIN)
     {
@@ -221,7 +204,7 @@ void lv_draw_ppe_layer_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *
 
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_ppe_image_use_matrix(t, &new_draw_dsc, coords, matrix, 0);
+    lv_draw_ppe_image_use_matrix(t, &new_draw_dsc, coords, &t->matrix, 0);
 }
 #else
 void lv_draw_ppe_image(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
@@ -771,9 +754,6 @@ skip_ppe:
 
 static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                               lv_image_decoder_dsc_t *decoder_dsc, lv_draw_image_sup_t *sup,
-#if LV_DRAW_TRANSFORM_USE_MATRIX
-                              lv_matrix_t *matrix,
-#endif
                               const lv_area_t *img_coords, const lv_area_t *clipped_img_area)
 {
     const lv_draw_buf_t *decoded = decoder_dsc->decoded;
@@ -788,17 +768,14 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
 
     lv_area_t constraint_area;
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-    ppe_matrix_t ppe_mat;
-    memcpy(&ppe_mat, matrix, sizeof(ppe_matrix_t));
-    if (img_coords->x1 != 0 || img_coords->y1 != 0)
-    {
-        ppe_translate(img_coords->x1, img_coords->y1, &ppe_mat);
-    }
+    ppe_matrix_t ppe_mat, dsc_mat;
+    memcpy(&ppe_mat, &t->matrix, sizeof(ppe_matrix_t));
+    lv_ppe_get_matrix(&dsc_mat, img_coords, draw_dsc);
+    ppe_mat_multiply(&ppe_mat, &dsc_mat);
     ppe_rect_t src_rect = {.x1 = 0, .y1 = 0, .x2 = img_dsc->header.w - 1, .y2 = img_dsc->header.h - 1};
     ppe_rect_t target_rect;
     lv_ppe_get_area(&target_rect, &src_rect, &ppe_mat);
 
-    bool compressed = false;
     if (!lv_area_intersect(&constraint_area, &t->target_layer->buf_area,
                            (lv_area_t *)&target_rect))
     {
@@ -881,7 +858,7 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
         PPE->CLUT_INDEX = 0;
         uint32_t *clut = (uint32_t *)(uint32_t)src_buf;
         uint32_t clut_info = *clut++;
-        uint16_t clut_num = ((clut_info & 0x00FF0000) >> 16) + 1;
+        uint16_t clut_num = ((clut_info & 0xFFFF0000) >> 16);
         for (int i = 0; i < clut_num; i++)
         {
             PPE->CLUT_CONT = *clut++;

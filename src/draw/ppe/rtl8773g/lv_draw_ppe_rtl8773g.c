@@ -278,7 +278,7 @@ static void execute_drawing(lv_draw_task_t *t)
         break;
     case LV_DRAW_TASK_TYPE_LAYER:
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-        lv_draw_ppe_layer_use_matrix(t, t->draw_dsc, &t->area, &t->matrix);
+        lv_draw_ppe_layer_use_matrix(t, t->draw_dsc, &t->area);
 #else
         lv_draw_ppe_layer(t, t->draw_dsc, &t->area);
 #endif

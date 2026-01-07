@@ -86,6 +86,7 @@ void lv_set_previous_cpu(bool is_cpu);
 bool lv_is_previous_hw(void);
 bool lv_is_previous_cpu(void);
 void lv_ppe_clean_cache(void *addr, uint32_t size);
+void mve_arm_2d_blur(lv_draw_buf_t *buf, uint8_t blur_degree);
 #endif
 /**********************
  *      MACROS
