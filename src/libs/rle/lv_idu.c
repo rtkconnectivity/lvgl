@@ -302,6 +302,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;  // Handle error appropriately
         }
+        decoded->header.flags = image->header.flags;
         dsc->decoded = decoded;
         uint8_t *img_data = (uint8_t *)decoded->data;
 

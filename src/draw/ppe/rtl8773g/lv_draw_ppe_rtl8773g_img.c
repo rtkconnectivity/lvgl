@@ -853,6 +853,21 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
     source.win_y_min = target.win_y_min;
     source.win_y_max = target.win_y_max;
     source.const_color = 0xFFFFFFFF;
+    if (decoder_dsc->decoded->header.flags & LV_IMAGE_FLAGS_USER2)
+    {
+        source.color_key_config.key_range.B_max = 0x00;
+        source.color_key_config.key_range.B_min = 0x00;
+        source.color_key_config.key_range.G_max = 0x00;
+        source.color_key_config.key_range.G_min = 0x00;
+        source.color_key_config.key_range.R_max = 0x00;
+        source.color_key_config.key_range.R_min = 0x00;
+        source.color_key_config.key_enable.channel_en.a_en = 1;
+        source.color_key_config.key_enable.channel_en.r_en = 1;
+        source.color_key_config.key_enable.channel_en.g_en = 1;
+        source.color_key_config.key_enable.channel_en.b_en = 1;
+        source.color_key_config.key_mode = PPE_COLOR_KEY_INSIDE;
+        source.color_key_config.key_replace.key_replace = 0;
+    }
     if (source.format == PPE_I8)
     {
         PPE->CLUT_INDEX = 0;
@@ -871,7 +886,8 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
     }
 
     if ((source.format == PPE_RGB565 || source.format == PPE_RGB888) && \
-        draw_dsc->opa == 0xFF && draw_dsc->rotation == 0)
+        draw_dsc->opa == 0xFF && !transform &&
+        (decoder_dsc->decoded->header.flags & LV_IMAGE_FLAGS_USER2) == 0)
     {
         method = PPE_BLEND_BYPASS;
     }
@@ -879,6 +895,7 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
 
     uint32_t src_stride = 0;
     if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+        (decoder_dsc->decoded->header.flags & LV_IMAGE_FLAGS_USER2) == 0
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
         int16_t target_x = constraint_area.x1 - t->target_layer->buf_area.x1;
