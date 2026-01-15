@@ -21,7 +21,7 @@ cwd = GetCurrentDir() # get current dir path
 
 port_src = Glob('*.c')
 port_inc = [cwd]
-group = group + DefineGroup('LVGL-port', port_src, depend = ['CONFIG_REALTEK_BUILD_LVGL_V9'], CPPPATH = port_inc)
+group = group + DefineGroup('LVGL-port', port_src, depend = ['CONFIG_REALTEK_BUILD_LVGL'], CPPPATH = port_inc)
 
 # check if .h or .hpp files exists
 def check_h_hpp_exists(path):
@@ -46,7 +46,7 @@ for root, dirs, files in os.walk(lvgl_src_cwd):
             inc = inc + [current_path]
 
 
-if GetDepend('CONFIG_REALTEK_BUILD_LVGL_EXAMPLES'):
+if GetDepend('CONFIG_LV_BUILD_EXAMPLES'):
     lvgl_src_cwd = lvgl_cwd + 'examples/'
     inc = inc + [lvgl_src_cwd]
     for root, dirs, files in os.walk(lvgl_src_cwd):
@@ -54,7 +54,7 @@ if GetDepend('CONFIG_REALTEK_BUILD_LVGL_EXAMPLES'):
         if check_h_hpp_exists(root):
             inc = inc + [root]
 
-if GetDepend('CONFIG_REALTEK_BUILD_LVGL_DEMO_APP'):
+if GetDepend('CONFIG_LV_BUILD_DEMOS'):
     lvgl_src_cwd = lvgl_cwd + 'demos/'
     inc = inc + [lvgl_src_cwd]
     for root, dirs, files in os.walk(lvgl_src_cwd):
@@ -135,7 +135,7 @@ if PLATFORM == 'gcc' or PLATFORM == 'armclang': # GCC or Keil AC6
 elif PLATFORM == 'armcc': # Keil AC5
     LOCAL_CFLAGS += ' --c99 --gnu'
 
-group = group + DefineGroup('LVGL', src, depend = ['CONFIG_REALTEK_BUILD_LVGL_V9'], CPPPATH = inc, LOCAL_CFLAGS = LOCAL_CFLAGS)
+group = group + DefineGroup('LVGL', src, depend = ['CONFIG_REALTEK_BUILD_LVGL'], CPPPATH = inc, LOCAL_CFLAGS = LOCAL_CFLAGS)
 
 list = os.listdir(cwd)
 for d in list:

@@ -1,41 +1,30 @@
 # for module compiling
 import os
+
 Import('TOOL_ROOT')
-
-
 from building import *
 
 cwd = GetCurrentDir()
-
-
-
 
 #src = Glob('*.c')
 src = ['main.c']
 inc = ['']
 
-
 CPPDEFINES = []
-
-
-
 CPPDEFINES = ['GUI_WIN32_SIM']
-
 CPPDEFINES += ['LV_KCONFIG_IGNORE']
 CPPDEFINES += ['LV_LVGL_H_INCLUDE_SIMPLE']
 
 # CPPDEFINES += ['DRV_LCD_WIDTH=410']
 # CPPDEFINES += ['DRV_LCD_HIGHT=502']
 # CPPDEFINES += ['DRV_PIXEL_BITS=32']
-
 # CPPDEFINES += ['LV_USE_DEMO_BENCHMARK']
 # CPPDEFINES += ['LV_USE_DEMO_WIDGETS']
 
-
 objs = DefineGroup('rtk_gui', src, depend = [''], CPPPATH = inc, CPPDEFINES = CPPDEFINES)
 
-
 list = os.listdir(cwd)
+
 for d in list:
     path = os.path.join(cwd, d)
     if os.path.isfile(os.path.join(path, 'SConscript')):

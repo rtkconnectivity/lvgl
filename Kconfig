@@ -17,22 +17,12 @@ menu "LVGL configuration"
 
 		if REALTEK_BUILD_LVGL
 
-			choice LVGL_VERSION
-				prompt "LVGL version"
-				default REALTEK_BUILD_LVGL_V9
-				help
-					LVGL version to be used.
-
-				config REALTEK_BUILD_LVGL_V9
-					bool "LVGL v9.3.0"
-			endchoice
-
 			choice LVGL_DEMO
 				prompt "LVGL demo app"
 				default REALTEK_BUILD_GUI_410_502_SQUARELINE_DEMO
 
 				config REALTEK_BUILD_LVGL_SIMPLE_DEMO
-					bool "GUI LVGL Simple demo Benchmark"
+					bool "GUI LVGL Simple demo"
 				config REALTEK_BUILD_GUI_410_502_SQUARELINE_DEMO
 					bool "GUI 410_502 LVGL Squareline demo"
 				config REALTEK_BUILD_GUI_410_502_LVGL_DEMO

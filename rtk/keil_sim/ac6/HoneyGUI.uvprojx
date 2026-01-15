@@ -384,9 +384,9 @@
           <GroupName>menuconfig</GroupName>
           <Files>
             <File>
-              <FileName>menu_config.h</FileName>
+              <FileName>autoconfig.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\win32_sim\menu_config.h</FilePath>
+              <FilePath>..\..\win32_sim\autoconfig.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -38,6 +38,91 @@ Projects = []
 Rtt_Root = ''
 Env = None
 
+# ============================================================================
+# Kconfig Configuration Parser
+# ============================================================================
+
+def parse_kconfig_file(config_file):
+    """Parse .config file and return dictionary of config options"""
+    config_options = {}
+    if not os.path.exists(config_file):
+        return config_options
+    
+    with open(config_file, 'r', encoding='utf-8') as file:
+        for line in file:
+            line = line.strip()
+            # Skip comments and empty lines
+            if line.startswith('#') or not line:
+                continue
+            # Parse CONFIG_XXX=y or CONFIG_XXX="value"
+            if '=' in line:
+                key, _, value = line.partition('=')
+                key = key.strip()
+                value = value.strip()
+                # Remove quotes from string values
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                config_options[key] = value
+    return config_options
+
+def generate_autoconfig_header(config_options, output_file):
+    """Generate autoconfig.h from parsed config options"""
+    from datetime import datetime
+    
+    with open(output_file, 'w', encoding='utf-8') as file:
+        file.write("/* Automatically generated file; DO NOT EDIT. */\n")
+        file.write(f"/* Generated from .config at {datetime.now()} */\n\n")
+        file.write("#ifndef AUTOCONFIG_H__\n")
+        file.write("#define AUTOCONFIG_H__\n\n")
+        
+        for key, value in sorted(config_options.items()):
+            # Convert to C macro
+            if value == 'y':
+                file.write(f"#define {key} 1\n")
+            elif value == 'n':
+                file.write(f"/* {key} is not set */\n")
+            elif value.isdigit():
+                file.write(f"#define {key} {value}\n")
+            else:
+                # String value
+                file.write(f'#define {key} "{value}"\n')
+        
+        file.write("\n#endif /* AUTOCONFIG_H__ */\n")
+
+def ensure_autoconfig_exists(bsp_directory):
+    """Ensure autoconfig.h exists, generate from .config if needed"""
+    config_file = os.path.join(bsp_directory, '.config')
+    autoconfig_file = os.path.join(bsp_directory, 'autoconfig.h')
+    
+    # Check if .config exists
+    if not os.path.exists(config_file):
+        print("Warning: .config not found at:", config_file)
+        print("Please run 'menuconfig.bat' or 'python run_menuconfig.py' to generate configuration.")
+        return False
+    
+    # Check if autoconfig.h needs regeneration
+    need_regenerate = False
+    if not os.path.exists(autoconfig_file):
+        need_regenerate = True
+    else:
+        # Check if .config is newer than autoconfig.h
+        config_mtime = os.path.getmtime(config_file)
+        autoconfig_mtime = os.path.getmtime(autoconfig_file)
+        if config_mtime > autoconfig_mtime:
+            need_regenerate = True
+    
+    if need_regenerate:
+        print(f"Generating autoconfig.h from .config...")
+        config_options = parse_kconfig_file(config_file)
+        generate_autoconfig_header(config_options, autoconfig_file)
+        print(f"Generated: {autoconfig_file}")
+    
+    return True
+
+# ============================================================================
+# End of Kconfig Configuration Parser
+# ============================================================================
+
 # SCons PreProcessor patch
 def start_handling_includes(self, t=None):
     """
@@ -315,7 +400,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # add program path
     env.PrependENVPath('PATH', os.environ['PATH'])
-    # add menu_config.h/BSP path into Kernel group
+    # add autoconfig.h/BSP path into Kernel group
     DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
     # add library build action
@@ -323,18 +408,35 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     bld = Builder(action = act)
     Env.Append(BUILDERS = {'BuildLib': bld})
 
-    # parse menu_config.h to get used component
+    # ========================================================================
+    # Parse Kconfig configuration (autoconfig.h)
+    # ========================================================================
     PreProcessor = PatchedPreProcessor()
-
-    if os.path.exists('menu_config.h'):
-        f = open('menu_config.h', 'r', encoding='utf-8')
-    else:
-        f = open('../../win32_sim/menu_config.h', 'r', encoding='utf-8')
     
+    # Determine BSP directory
+    bsp_dir = Dir('#').abspath
+    
+    # Ensure autoconfig.h exists (generate from .config if needed)
+    if ensure_autoconfig_exists(bsp_dir):
+        config_file = os.path.join(bsp_dir, 'autoconfig.h')
+    elif os.path.exists('autoconfig.h'):
+        config_file = 'autoconfig.h'
+    elif os.path.exists('../../win32_sim/autoconfig.h'):
+        config_file = '../../win32_sim/autoconfig.h'
+        # Try to ensure it's up to date
+        ensure_autoconfig_exists(os.path.abspath('../../win32_sim'))
+    else:
+        print("Error: autoconfig.h not found!")
+        print("Please run 'menuconfig.bat' or 'python run_menuconfig.py' to generate configuration.")
+        Exit(1)
+    
+    # Parse autoconfig.h
+    f = open(config_file, 'r', encoding='utf-8')
     contents = f.read()
     f.close()
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
+    # ========================================================================
 
     if GetOption('clang-analyzer'):
         # perform what scan-build does
@@ -461,13 +563,27 @@ def PrepareModuleBuilding(env, root_directory, bsp_directory):
     Env = env
     Tool_ROOT = root_directory
 
-    # parse bsp menu_config.h to get used component
+    # ========================================================================
+    # Parse bsp autoconfig.h (Kconfig-generated) to get used component
+    # ========================================================================
     PreProcessor = PatchedPreProcessor()
-    f = open(bsp_directory + '/menu_config.h', 'r')
+    
+    # Ensure autoconfig.h exists (generate from .config if needed)
+    if ensure_autoconfig_exists(bsp_directory):
+        autoconfig_path = bsp_directory + '/autoconfig.h'
+    else:
+        autoconfig_path = bsp_directory + '/autoconfig.h'
+        if not os.path.exists(autoconfig_path):
+            print("Error: autoconfig.h not found at:", autoconfig_path)
+            print("Please run 'menuconfig.bat' or 'python run_menuconfig.py' to generate configuration.")
+            Exit(1)
+    
+    f = open(autoconfig_path, 'r')
     contents = f.read()
     f.close()
     PreProcessor.process_contents(contents)
     BuildOptions = PreProcessor.cpp_namespace
+    # ========================================================================
 
     # add build/clean library option for library checking
     AddOption('--buildlib',

@@ -1,14 +1,18 @@
-# building script for HoneyGUI
+# building script for LVGL port
 
 from building import *
+import os
 
 cwd = GetCurrentDir()
-src = Split("""
-""")
-
 src = Glob('*.c')
-CPPPATH = [cwd]
 
-group = DefineGroup('rtk_gui', src, depend = [''], CPPPATH = CPPPATH)
+# Get LVGL root path - go up from win32_sim/port/lvgl_port to lvgl_v9
+# Path: win32_sim/port/lvgl_port -> win32_sim -> rtk -> lvgl_v9
+LVGLV9_ROOT = os.path.abspath(os.path.join(cwd, '../../../../'))
+
+CPPPATH = [cwd]
+CPPPATH += [LVGLV9_ROOT]
+
+group = DefineGroup('lvgl_port', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

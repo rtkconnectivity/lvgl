@@ -1,6 +1,56 @@
+# Kconfig generated files (auto-generated, do not commit)
+config.cmake
+autoconfig.h
+cconfig.h
+*.test
+.config.old
+# Note: .config is committed as default configuration
 
-tmp/
-CMakeFiles/
+# Build directories
 build/
+.cache/
+tmp/
 
+# Compiled files and build artifacts
+*.exe
+*.bin
+*.map
+*.o
+*.obj
+*.elf
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
 
+# SCons files
+.sconsign.dblite
+.sconf_temp/
+.sconsign.tmp
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Editor and IDE files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.code-workspace.user
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Temporary and backup files
+*.tmp
+*.bak
+*.log
+*~
