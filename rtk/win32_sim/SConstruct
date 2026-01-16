@@ -39,12 +39,9 @@ if os.path.exists(config_file):
         ], check=True)
         print("Generated config.cmake")
         
-        # Generate C header
-        subprocess.run([
-            'python', 'parse_kconfig.py', 
-            config_file, 'autoconfig.h', 'header'
-        ], check=True)
-        print("Generated autoconfig.h")
+        # Note: autoconfig.h generation removed - not used in current architecture
+        # LVGL uses lv_conf.h instead of Kconfig when LV_KCONFIG_IGNORE is set
+        
     except subprocess.CalledProcessError as e:
         print(f"Warning: Failed to generate config files: {e}")
 else:
@@ -63,7 +60,7 @@ env = Environment(tools = ['mingw'],
                   CXX = menu_config.CXX, CXXFLAGS = menu_config.CXXFLAGS,
                   LINKFLAGS = menu_config.LFLAGS)
 
-# Add autoconfig.h include path
+# Add current directory to include path for generated files
 env.Append(CPPPATH = [os.getcwd()])
 
 env.Append(LIBS = ['mingw32'])

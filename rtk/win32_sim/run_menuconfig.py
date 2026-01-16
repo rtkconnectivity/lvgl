@@ -45,7 +45,7 @@ def run_kconfig_mconf():
         return False
 
 def generate_config_files():
-    """Generate config.cmake and autoconfig.h from .config"""
+    """Generate config.cmake from .config"""
     if not os.path.exists('.config'):
         print("Warning: .config file not found")
         return False
@@ -60,12 +60,8 @@ def generate_config_files():
         ], check=True)
         print("✓ Generated config.cmake")
         
-        # Generate C header
-        subprocess.run([
-            sys.executable, 'parse_kconfig.py',
-            '.config', 'autoconfig.h', 'header'
-        ], check=True)
-        print("✓ Generated autoconfig.h")
+        # Note: autoconfig.h generation removed - not used in current architecture
+        # LVGL uses lv_conf.h instead of Kconfig when LV_KCONFIG_IGNORE is set
         
         return True
     except subprocess.CalledProcessError as e:

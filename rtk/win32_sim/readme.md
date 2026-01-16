@@ -10,6 +10,19 @@ scons          # Build the project
 gui.exe        # Run the simulator
 ```
 
+## Configuration
+
+### Kconfig Menu
+```bash
+python run_menuconfig.py    # Configure build options
+```
+
+**Generated Files:**
+- `.config` - Kconfig configuration (committed as default)
+- `config.cmake` - CMake format (auto-generated, not committed)
+
+**Note:** LVGL features are configured via `port/lvgl_port/lv_conf.h`, not Kconfig.
+
 ## Demo Selection
 
 ### Method 1: Quick Switch (Recommended for Testing)
@@ -55,10 +68,7 @@ python run_menuconfig.py         # Alternative way
 5. Save and exit
 6. Rebuild: `scons`
 
-**Generated Files (auto-generated, do not edit manually):**
-- `.config` - Kconfig format configuration
-- `autoconfig.h` - C header (included via `-include` compiler flag)
-- `config.cmake` - CMake format configuration
+**Note:** This only controls which demo application to build. LVGL features (widgets, fonts, etc.) are configured in `port/lvgl_port/lv_conf.h`.
 
 ## RTK Demo Applications
 
@@ -131,10 +141,12 @@ win32_sim/
 |-- main.c                    # Entry point
 |-- port/                     # Platform abstraction layer
 |   +-- lvgl_port/           # LVGL display/input drivers
-|-- menuconfig.bat           # Kconfig configuration tool
+|       +-- lv_conf.h        # LVGL feature configuration
+|-- menuconfig.bat           # Kconfig configuration tool (deprecated)
+|-- run_menuconfig.py        # Kconfig configuration tool (recommended)
 |-- Kconfig                  # Kconfig definitions
-|-- .config                  # Generated configuration
-+-- autoconfig.h             # Generated C header
+|-- .config                  # Build configuration (committed)
++-- config.cmake             # Generated CMake config (not committed)
 
 ../lvgl_v9/rtk/
 |-- demos/

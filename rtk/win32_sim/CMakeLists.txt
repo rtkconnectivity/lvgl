@@ -24,7 +24,7 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.config")
 else()
     message(STATUS "Found .config file, parsing configuration...")
     
-    # Generate config.cmake from .config
+    # Generate CMake config from .config
     execute_process(
         COMMAND python ${CMAKE_SOURCE_DIR}/parse_kconfig.py 
                 ${CMAKE_SOURCE_DIR}/.config 
@@ -41,21 +41,8 @@ else()
         message(STATUS "Generated config.cmake from .config")
     endif()
     
-    # Generate autoconfig.h from .config
-    execute_process(
-        COMMAND python ${CMAKE_SOURCE_DIR}/parse_kconfig.py 
-                ${CMAKE_SOURCE_DIR}/.config 
-                ${CMAKE_SOURCE_DIR}/autoconfig.h
-                header
-        RESULT_VARIABLE result
-        ERROR_VARIABLE error_output
-    )
-    
-    if(result)
-        message(WARNING "Failed to generate autoconfig.h: ${error_output}")
-    else()
-        message(STATUS "Generated autoconfig.h from .config")
-    endif()
+    # Note: autoconfig.h generation removed - not used in current architecture
+    # LVGL uses lv_conf.h instead of Kconfig when LV_KCONFIG_IGNORE is set
     
     # Include generated CMake configuration
     include(${CMAKE_SOURCE_DIR}/config.cmake)
@@ -111,7 +98,7 @@ else()
     message(STATUS "Building as executable")
 endif()
 
-# Add autoconfig.h to include path
+# Add include directories
 target_include_directories(${GUI_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
 
 # ============================================================================
