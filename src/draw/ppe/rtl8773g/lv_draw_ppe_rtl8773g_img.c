@@ -895,7 +895,7 @@ static void ppe_img_draw_core(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw
 
     uint32_t src_stride = 0;
     if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
-        (decoder_dsc->decoded->header.flags & LV_IMAGE_FLAGS_USER2) == 0
+        (decoder_dsc->decoded->header.flags & LV_IMAGE_FLAGS_USER2) == 0 &&
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
         int16_t target_x = constraint_area.x1 - t->target_layer->buf_area.x1;
