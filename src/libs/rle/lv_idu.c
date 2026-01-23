@@ -292,17 +292,38 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
             return LV_RESULT_INVALID;
         }
 
+        /*Try to reserve cache space before allocating memory*/
         lv_draw_buf_t *decoded = lv_draw_buf_create_ex(image_cache_draw_buf_handlers, width, height,
                                                        dsc->header.cf,
                                                        LV_STRIDE_AUTO);
+        /*If allocation failed, try to evict cache entries and retry*/
+        if (decoded == NULL && lv_image_cache_is_enabled())
+        {
+            lv_cache_t *cache = LV_GLOBAL_DEFAULT()->img_cache;
+            int retry_count = 0;
+            const int max_retries = 10;
+            
+            while (decoded == NULL && retry_count < max_retries)
+            {
+                bool evict_res = lv_cache_evict_one(cache, NULL);
+                if (!evict_res)
+                {
+                    break;
+                }
+                decoded = lv_draw_buf_create_ex(image_cache_draw_buf_handlers, width, height,
+                                               dsc->header.cf, LV_STRIDE_AUTO);
+                retry_count++;
+            }
+        }
+        
         if (decoded == NULL)
         {
             dsc->decoded = NULL;
             LV_LOG_ERROR("Failed to create draw buffer");
             LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
-            return LV_RESULT_INVALID;  // Handle error appropriately
+            return LV_RESULT_INVALID;
         }
-        decoded->header.flags = image->header.flags;
+        decoded->header.flags |= (image->header.flags & (LV_IMAGE_FLAGS_USER1 | LV_IMAGE_FLAGS_USER2 | LV_IMAGE_FLAGS_USER3));
         dsc->decoded = decoded;
         uint8_t *img_data = (uint8_t *)decoded->data;
 
@@ -336,6 +357,9 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         if (entry == NULL)
         {
+            lv_draw_buf_destroy(decoded);
+            dsc->decoded = NULL;
+            LV_LOG_ERROR("Failed to add decoded image to cache");
             LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
@@ -349,6 +373,7 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
         if (ret != LV_RESULT_OK)
         {
             lv_draw_buf_destroy((void *)dsc->decoded);
+            dsc->decoded = NULL;
             LV_LOG_ERROR("Decompression failed for input type: %c", input_type);
             return ret;
         }
@@ -367,6 +392,9 @@ static lv_result_t idu_decoder_open(lv_image_decoder_t *decoder, lv_image_decode
 
         if (entry == NULL)
         {
+            lv_draw_buf_destroy(decoded);
+            dsc->decoded = NULL;
+            LV_LOG_ERROR("Failed to add decoded image to cache");
             LV_PROFILER_DECODER_END_TAG("lv_idu_decoder_open");
             return LV_RESULT_INVALID;
         }
@@ -385,9 +413,18 @@ static void idu_decoder_close(lv_image_decoder_t *decoder, lv_image_decoder_dsc_
 {
     LV_UNUSED(decoder);
 
+    /*Free the decoded buffer if:
+     * 1. no_cache is set, or
+     * 2. cache is disabled, or
+     * 3. cache is enabled but cache_entry is NULL (failed to add to cache)
+     */
     if (dsc->args.no_cache ||
-        !lv_image_cache_is_enabled()) { lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded); }
-    LV_LOG_INFO("Closed IDU image");
+        !lv_image_cache_is_enabled() ||
+        dsc->cache_entry == NULL) {
+        if (dsc->decoded) {
+            lv_draw_buf_destroy((lv_draw_buf_t *)dsc->decoded);
+        }
+    }
 }
 
 static lv_result_t decompress_rle_data(char input_type, idu_file_t *file, uint8_t *img_data,
