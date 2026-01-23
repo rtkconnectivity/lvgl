@@ -34,7 +34,7 @@ static const uint8_t alpha_list_4bpp[16] = {0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x6
  *============================================================================*/
 #define FONT_PIXEL_ORDER_LSB 0
 #define FONT_PIXEL_ORDER_MSB 1
-#define FONT_PIXEL_ORDER FONT_PIXEL_ORDER_MSB //[Config] Pixel order of font data.Deafult MSB for LVGL font file.
+#define FONT_PIXEL_ORDER FONT_PIXEL_ORDER_LSB //[Config] Pixel order of font data.Deafult MSB for LVGL font file.
 
 #if FONT_PIXEL_ORDER == FONT_PIXEL_ORDER_MSB
 #define FONT_BIT_OFFSET(bit_pos, ppb) ((ppb - 1) - (bit_pos))

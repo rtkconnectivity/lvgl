@@ -756,7 +756,7 @@ const lv_image_dsc_t clk02_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK02_BG_BIN + 8
+    .data = (uint8_t *)CLK02_BG_BIN
 };
 
 const lv_image_dsc_t clk02_power =
@@ -792,7 +792,7 @@ const lv_image_dsc_t clk03_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK03_BG_BIN + 8
+    .data = (uint8_t *)CLK03_BG_BIN
 };
 
 const lv_image_dsc_t clk03_slider =
@@ -816,7 +816,7 @@ const lv_image_dsc_t clk04_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK04_BG_BIN + 8
+    .data = (uint8_t *)CLK04_BG_BIN
 };
 
 const lv_image_dsc_t clk04_heart_icon =
@@ -876,7 +876,7 @@ const lv_image_dsc_t clk05_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK05_BG_BIN + 8
+    .data = (uint8_t *)CLK05_BG_BIN
 };
 
 const lv_image_dsc_t clk05_hr_icon =
@@ -960,7 +960,7 @@ const lv_image_dsc_t clk06_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK06_BG_BIN + 8
+    .data = (uint8_t *)CLK06_BG_BIN
 };
 
 const lv_image_dsc_t clk06_circle =
@@ -1056,7 +1056,7 @@ const lv_image_dsc_t clk07_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK07_BG_BIN + 8
+    .data = (uint8_t *)CLK07_BG_BIN
 };
 
 const lv_image_dsc_t clk08_bg =
@@ -1068,7 +1068,7 @@ const lv_image_dsc_t clk08_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK08_BG_BIN + 8
+    .data = (uint8_t *)CLK08_BG_BIN
 };
 
 const lv_image_dsc_t clk08_hr_prg =
@@ -1176,7 +1176,7 @@ const lv_image_dsc_t clk11_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK11_BG_BIN + 8
+    .data = (uint8_t *)CLK11_BG_BIN
 };
 
 const lv_image_dsc_t clk12_bg =
@@ -1188,7 +1188,7 @@ const lv_image_dsc_t clk12_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK12_BG_BIN + 8
+    .data = (uint8_t *)CLK12_BG_BIN
 };
 
 const lv_image_dsc_t clk12_circle =
@@ -1320,7 +1320,7 @@ const lv_image_dsc_t clk14_bg =
     .data_size = 379456,
     .header.cf = LV_COLOR_FORMAT_ARGB8888,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK14_BG_BIN + 8
+    .data = (uint8_t *)CLK14_BG_BIN
 };
 
 const lv_image_dsc_t clk14_circle_01 =
@@ -1476,7 +1476,7 @@ const lv_image_dsc_t clk15_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK15_BG_BIN + 8
+    .data = (uint8_t *)CLK15_BG_BIN
 };
 
 const lv_image_dsc_t clk15_bluetooth =
@@ -1656,7 +1656,7 @@ const lv_image_dsc_t clk17_bg =
     .data_size = 411640,
     .header.cf = LV_COLOR_FORMAT_RGB565,
     .header.flags = LV_IMAGE_FLAGS_USER1,
-    .data = (uint8_t *)CLK17_BG_BIN + 8
+    .data = (uint8_t *)CLK17_BG_BIN
 };
 
 const lv_image_dsc_t clk17_weather =
