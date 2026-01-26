@@ -355,8 +355,9 @@ static void update_icon_transform(lv_obj_t *cellular)
             scale = scale_min;
         }
         lv_obj_set_style_transform_scale(img, LV_SCALE_NONE * scale, 0);
-        float t_x = (float)cellular_data->hor_offset - (1 - scale) * (offset_X / (SCREEN_W / 2.0f)) *
-                    (icon_size / (1.5f * SCREEN_H / SCREEN_W));
+        float horiz_res = (SCREEN_W == 0.0f) ? 1.0f : SCREEN_W;
+        float t_x = (float)cellular_data->hor_offset - (1 - scale) * (offset_X / (horiz_res / 2.0f)) *
+                    (icon_size / (1.5f * SCREEN_H / horiz_res));
         float t_y = (float)cellular_data->ver_offset - (1 - scale) * (offset_Y / (SCREEN_H / 2.0f)) *
                     (icon_size / 1.5f);
         lv_obj_set_pos(img, img_data->start_x + (int16_t)(t_x), img_data->start_y + (int16_t)(t_y));

@@ -164,8 +164,8 @@ static void apply_scale_fade_effect(lv_obj_t *obj)
 {
     lv_point_t screen_center =
     {
-        .x = lv_display_get_horizontal_resolution(NULL) / 2,
-        .y = lv_display_get_vertical_resolution(NULL) / 2
+        .x = LV_MAX(1, lv_display_get_horizontal_resolution(NULL) / 2),
+        .y = LV_MAX(1, lv_display_get_vertical_resolution(NULL) / 2)
     };
 
     lv_area_t obj_coords;
@@ -176,8 +176,10 @@ static void apply_scale_fade_effect(lv_obj_t *obj)
         .y = (obj_coords.y1 + obj_coords.y2) / 2
     };
 
-    float scale_x = (float)(LV_ABS(obj_center.x - screen_center.x)) / screen_center.x;
-    float scale_y = (float)(LV_ABS(obj_center.y - screen_center.y)) / screen_center.y;
+    float scale_x = screen_center.x ? (float)(LV_ABS(obj_center.x - screen_center.x)) /
+                    screen_center.x : 0.0f;
+    float scale_y = screen_center.y ? (float)(LV_ABS(obj_center.y - screen_center.y)) /
+                    screen_center.y : 0.0f;
 
     float scale = 1 - LV_MAX(scale_x, scale_y) / 2;
     int32_t scaleint  = LV_CLAMP(128, scale * 256, 256);
@@ -213,8 +215,8 @@ static void apply_scale_effect(lv_obj_t *obj)
 {
     lv_point_t screen_center =
     {
-        .x = lv_display_get_horizontal_resolution(NULL) / 2,
-        .y = lv_display_get_vertical_resolution(NULL) / 2
+        .x = LV_MAX(1, lv_display_get_horizontal_resolution(NULL) / 2),
+        .y = LV_MAX(1, lv_display_get_vertical_resolution(NULL) / 2)
     };
 
     lv_area_t obj_coords;
@@ -225,8 +227,10 @@ static void apply_scale_effect(lv_obj_t *obj)
         .y = (obj_coords.y1 + obj_coords.y2) / 2
     };
 
-    float scale_x = (float)(LV_ABS(obj_center.x - screen_center.x)) / screen_center.x;
-    float scale_y = (float)(LV_ABS(obj_center.y - screen_center.y)) / screen_center.y;
+    float scale_x = screen_center.x ? (float)(LV_ABS(obj_center.x - screen_center.x)) /
+                    screen_center.x : 0.0f;
+    float scale_y = screen_center.y ? (float)(LV_ABS(obj_center.y - screen_center.y)) /
+                    screen_center.y : 0.0f;
 
     float scale = 1 - LV_MAX(scale_x, scale_y) / 2;
 
@@ -260,8 +264,8 @@ static void apply_fade_effect(lv_obj_t *obj)
 {
     lv_point_t screen_center =
     {
-        .x = lv_display_get_horizontal_resolution(NULL) / 2,
-        .y = lv_display_get_vertical_resolution(NULL) / 2
+        .x = LV_MAX(1, lv_display_get_horizontal_resolution(NULL) / 2),
+        .y = LV_MAX(1, lv_display_get_vertical_resolution(NULL) / 2)
     };
 
     lv_area_t obj_coords;
@@ -272,8 +276,10 @@ static void apply_fade_effect(lv_obj_t *obj)
         .y = (obj_coords.y1 + obj_coords.y2) / 2
     };
 
-    float scale_x = (float)(LV_ABS(obj_center.x - screen_center.x)) / screen_center.x;
-    float scale_y = (float)(LV_ABS(obj_center.y - screen_center.y)) / screen_center.y;
+    float scale_x = screen_center.x ? (float)(LV_ABS(obj_center.x - screen_center.x)) /
+                    screen_center.x : 0.0f;
+    float scale_y = screen_center.y ? (float)(LV_ABS(obj_center.y - screen_center.y)) /
+                    screen_center.y : 0.0f;
 
     float scale = 1 - LV_MAX(scale_x, scale_y) / 2;
     int32_t scaleint  = LV_CLAMP(128, scale * 256, 256);
@@ -437,12 +443,12 @@ static void apply_box_effect(lv_obj_t *obj)
 
     if (LV_ABS(release_x) > LV_ABS(release_y))
     {
-        rotate_degree = -90.0 * (release_x) / screen_center.x;
+        rotate_degree = screen_center.x ? -90.0 * (release_x) / screen_center.x : 0.0f;
         lv_matrix_compute_rotate(0, rotate_degree, 0, &rotate_3D);
     }
     else
     {
-        rotate_degree = 90.0 * (release_y) / screen_center.y;
+        rotate_degree = screen_center.y ? 90.0 * (release_y) / screen_center.y : 0.0f;
         lv_matrix_compute_rotate(rotate_degree, 0, 0, &rotate_3D);
     }
 
@@ -476,8 +482,8 @@ static void apply_spiral_notebook_effect(lv_obj_t *obj)
 {
     lv_point_t screen_center =
     {
-        .x = lv_display_get_horizontal_resolution(NULL) / 2,
-        .y = lv_display_get_vertical_resolution(NULL) / 2
+        .x = LV_MAX(1, lv_display_get_horizontal_resolution(NULL) / 2),
+        .y = LV_MAX(1, lv_display_get_vertical_resolution(NULL) / 2)
     };
 
     lv_area_t obj_coords;
@@ -488,8 +494,10 @@ static void apply_spiral_notebook_effect(lv_obj_t *obj)
         .y = (obj_coords.y1 + obj_coords.y2) / 2
     };
 
-    float scale_x = (float)(LV_ABS(obj_center.x - screen_center.x)) / screen_center.x;
-    float scale_y = (float)(LV_ABS(obj_center.y - screen_center.y)) / screen_center.y;
+    float scale_x = screen_center.x ? (float)(LV_ABS(obj_center.x - screen_center.x)) /
+                    screen_center.x : 0.0f;
+    float scale_y = screen_center.y ? (float)(LV_ABS(obj_center.y - screen_center.y)) /
+                    screen_center.y : 0.0f;
 
     float scale = 1 - LV_MAX(scale_x, scale_y) / 2;
     int32_t scaleint  = LV_CLAMP(128, scale * 256, 256);
@@ -550,8 +558,8 @@ static void apply_rotate_effect(lv_obj_t *obj)
     float release_y = obj_center.y - screen_center.y + 1;
     float rotate_degree_x, rotate_degree_y;
 
-    rotate_degree_y = 90.0 * (release_x) / screen_center.x;
-    rotate_degree_x = -90.0 * (release_y) / screen_center.y;
+    rotate_degree_y = screen_center.x ? 90.0 * (release_x) / screen_center.x : 0.0f;
+    rotate_degree_x = screen_center.y ? -90.0 * (release_y) / screen_center.y : 0.0f;
     lv_matrix_compute_rotate(rotate_degree_x, rotate_degree_y, 0, &rotate_3D);
 
     // LV_LOG("release_x: %f, release_y: %f\n", release_x, release_y);

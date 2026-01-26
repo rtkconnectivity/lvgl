@@ -113,11 +113,12 @@ static void *fs_open(lv_fs_drv_t *drv, const char *path, lv_fs_mode_t mode)
 {
     lv_fs_res_t res = LV_FS_RES_NOT_IMP;
     char *root_folder = LV_ROOT_PATH;
-    char *file_path = malloc(strlen(path) + strlen(root_folder) + 1);
+    size_t file_path_len = strlen(path) + strlen(root_folder) + 1;
+    char *file_path = malloc(file_path_len);
 
     void *f = NULL;
 
-    sprintf(file_path, "%s%s", root_folder, path);
+    snprintf(file_path, file_path_len, "%s%s", root_folder, path);
     if (mode == LV_FS_MODE_WR)
     {
         /*Open a file for write*/
@@ -228,9 +229,10 @@ static lv_fs_res_t fs_tell(lv_fs_drv_t *drv, void *file_p, uint32_t *pos_p)
     lv_fs_res_t res = LV_FS_RES_NOT_IMP;
 
     /*Add your code here*/
-    *pos_p = tell((int)(intptr_t)file_p);
-    if (*pos_p >= 0)
+    long pos = tell((int)(intptr_t)file_p);
+    if (pos >= 0)
     {
+        *pos_p = (uint32_t)pos;
         res = LV_FS_RES_OK;
     }
     return res;
@@ -247,9 +249,10 @@ static void *fs_dir_open(lv_fs_drv_t *drv, const char *path)
     void *dir = NULL;
     /*Add your code here*/
     char *root_folder = LV_ROOT_PATH;
-    char *file_path = malloc(strlen(path) + strlen(root_folder) + 1);
+    size_t file_path_len = strlen(path) + strlen(root_folder) + 1;
+    char *file_path = malloc(file_path_len);
 
-    sprintf(file_path, "%s%s", root_folder, path);
+    snprintf(file_path, file_path_len, "%s%s", root_folder, path);
     DIR *fsDir = opendir(file_path);
     dir = (void *)fsDir;
     free(file_path);
