@@ -1,7 +1,7 @@
 /**
  \internal
 *****************************************************************************************
-*     Copyright(c) 2017, Realtek Semiconductor Corporation. All rights reserved.
+*     Copyright(c) 2025, Realtek Semiconductor Corporation. All rights reserved.
 *****************************************************************************************
   * @file l3_common.h
   * @brief 3D transform common
@@ -11,7 +11,7 @@
   * @version 1.0
   ***************************************************************************************
     * @attention
-  * <h2><center>&copy; COPYRIGHT 2017 Realtek Semiconductor Corporation</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2025 Realtek Semiconductor Corporation</center></h2>
   ***************************************************************************************
  \endinternal
   */
@@ -32,7 +32,28 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stdint.h>
+#ifdef CONFIG_SOC_SERIES_RTL87X3G //test code add by wanghao, remove later
+#include "trace.h"
+#include "platform_utils.h"
 
+#define MEASURE_CPU_CYCLES(...) \
+    do { \
+        uint32_t _cycle_start_ = read_cpu_counter(); \
+        { \
+            __VA_ARGS__; \
+        } \
+        uint32_t _cycle_end_ = read_cpu_counter(); \
+        APP_PRINT_INFO2("line = %d, cycles = %u", __LINE__, (_cycle_end_ - _cycle_start_)); \
+    } while (0)
+
+#else
+#define MEASURE_CPU_CYCLES(...) \
+    do { \
+        { \
+            __VA_ARGS__; \
+        } \
+    } while (0)
+#endif
 
 /*============================================================================*
  *                            Macros
@@ -80,12 +101,14 @@ typedef enum
     L3_FILL_IMAGE_ARGB8888,
     L3_FILL_COLOR_RGB565,
     L3_FILL_COLOR_ARGB8888,
+    L3_FILL_COLOR_I8,
 } L3_FILL_TYPE;
 
 typedef enum
 {
     LITE_RGB565 = 0,
     LITE_ARGB8888 = 4,
+    LITE_I8 = 0x38,
 } L3_IMAGE_TYPE;
 
 typedef enum
@@ -202,60 +225,26 @@ typedef struct
     float u, v;
 } l3_texcoord_coordinate_t;
 
-typedef struct
+typedef enum
 {
-    unsigned int num_vertices;
-    unsigned int num_normals;
-    unsigned int num_texcoords;
-    unsigned int num_faces;
-    unsigned int num_face_num_verts;
-
-    int pad0;
-
-    l3_vertex_coordinate_t *vertices;
-    l3_vertex_coordinate_t *normals;
-    l3_texcoord_coordinate_t *texcoords;
-    l3_vertex_index_t *faces;
-    int *face_num_verts;
-    int *material_ids;
-} l3_attrib_t;
+    L3_MODEL_TYPE_OBJ,
+    L3_MODEL_TYPE_GLTF,
+    L3_MODEL_TYPE_UNKNOWN,
+} L3_MODEL_TYPE;
 
 typedef struct
 {
-    unsigned int face_offset;
-    unsigned int length;
-} l3_shape_t;
+    uint16_t magic;      // "3D"  = 0x3344
+    uint8_t model_type;  // 0: obj, 1: gltf
+    uint8_t version;
+    uint32_t file_size;
+    uint8_t face_type;   // 0: rect, 1: triangle, 2: other
+    uint8_t payload_offset;
+    uint8_t extension[6];
 
-typedef struct
-{
-    float ambient[3];
-    float diffuse[3];
-    float specular[3];
-    float transmittance[3];
-    float emission[3];
-    float shininess;
-    float ior;      /* index of refraction */
-    float dissolve; /* 1 == opaque; 0 == fully transparent */
-    /* illumination model (see http://www.fileformat.info/format/material/) */
-    int illum;
+} l3_desc_file_head_t;
 
-} l3_material_t;
 
-typedef struct l3_description
-{
-    L3_FACE_TYPE face_type;
-    l3_attrib_t attrib;
-
-    unsigned int num_shapes;
-    l3_shape_t *shapes;
-
-    unsigned int num_materials;
-    l3_material_t *materials;
-
-    unsigned int *texture_sizes;
-    unsigned char **textures;
-
-} l3_description_t;
 
 typedef struct l3_rect_face
 {
@@ -365,10 +354,12 @@ typedef struct l3_draw_rect_img
     l3_3x3_matrix_t matrix; //seems can remve by howie
     l3_3x3_matrix_t inverse;
     uint8_t opacity_value;
-    uint32_t blend_mode : 3;
     uint32_t checksum : 8;
+    uint32_t blend_mode : 5;
     uint32_t high_quality : 1;
-    //uint32_t color_mix; //todo for QuDai
+    uint32_t fg_color_set;  //A8 image set color
+    uint32_t bg_color_fix;  //bg color fix for A8 image
+    uint8_t alpha_mix;      //alpha mix for A8 image
     void *acc_user;
 } l3_draw_rect_img_t;
 
@@ -401,36 +392,18 @@ typedef struct l3_canvas
 } l3_canvas_t;
 
 
-typedef struct l3_model
+typedef struct
 {
-    l3_description_t *desc;
-
-    union
-    {
-        l3_rect_face_t *rect_face;
-        l3_tria_face_t *tria_face;
-    } face;
-
-    l3_draw_rect_img_t *img;          // material image
-    // l3_img_head_t *mask_img;     // mask image for light
-    l3_draw_rect_img_t *combined_img;  // sort image buffer
-
-    l3_canvas_t canvas;
-
-    L3_DRAW_TYPE draw_type;
-
-    int16_t x;
-    int16_t y;
-    float viewPortWidth;
-    float viewPortHeight;
-    l3_world_t world;
-    l3_camera_t camera;
-    l3_light_t light;
-
-    void (*global_transform_cb)(struct l3_model *this);
-    l3_4x4_matrix_t(*face_transform_cb)(struct l3_model *this, size_t face_index);
-
-} l3_model_t;
+    bool is_active;
+    float current_time;                // current animation time (s)
+    float duration;                    // total animation duration (s)
+    l3_3d_point_t impact_center;       // Click on the world coordinate of the position
+    l3_3d_point_t
+    impact_normal;       // Normal vector at the intersection point (deformation direction)
+    bool has_hit;
+    float impact_radius;
+    float max_depth;
+} l3_deformation_state_t;
 
 /*============================================================================*
  *                            Functions
@@ -449,6 +422,7 @@ void l3_3x3_matrix_identity(l3_3x3_matrix_t *m);
 void l3_3x3_matrix_translate(l3_3x3_matrix_t *m, float t_x, float t_y);
 void l3_3x3_matrix_inverse(l3_3x3_matrix_t *m);
 void l3_3x3_matrix_mul_3d_point(l3_3x3_matrix_t *m, l3_3d_point_t *p);
+void l3_3x3_matrix_mul(l3_3x3_matrix_t *input_left, l3_3x3_matrix_t *input_right);
 
 void l3_4x4_matrix_identity(l3_4x4_matrix_t *m);
 void l3_4x4_matrix_zero(l3_4x4_matrix_t *m);
@@ -457,14 +431,23 @@ void l3_4x4_matrix_rotateY(l3_4x4_matrix_t *m, float rotY);
 void l3_4x4_matrix_rotateX(l3_4x4_matrix_t *m, float rotX);
 void l3_4x4_matrix_rotateZ(l3_4x4_matrix_t *m, float rotZ);
 void l3_4x4_matrix_scale(l3_4x4_matrix_t *m, float scale_x, float scale_y, float scale_z);
+void l3_4x4_matrix_compose_trs(l3_4x4_matrix_t *m, float translation[3], float rotation[4],
+                               float scale[3]);
 
 l3_4d_point_t l3_4x4_matrix_mul_4d_point(l3_4x4_matrix_t *mat, l3_4d_point_t p);
 bool l3_4x4_matrix_mul(l3_4x4_matrix_t *input_left, l3_4x4_matrix_t *input_right,
                        l3_4x4_matrix_t *output);
 bool l3_calulate_draw_img_target_area(l3_draw_rect_img_t *img, l3_rect_t *rect);
 
-l3_description_t *l3_load_description(void *desc_addr);
 void l3_camera_build_UVN_matrix(l3_camera_t *camera);
+
+/**
+ * @brief Adjusts the winding order of a triangle's vertices to ensure correct face culling.
+ * @param p0 Pointer to the first vertex of the triangle.
+ * @param p1 Pointer to the second vertex of the triangle.
+ * @param p2 Pointer to the third vertex of the triangle.
+ */
+void l3_adjust_triangle_winding(l3_vertex_t *p0, l3_vertex_t *p1, l3_vertex_t *p2);
 
 /**
  * @brief Initializes the world matrix with translation, rotation, and scaling.
@@ -512,16 +495,17 @@ void l3_calculator_4x4_matrix(l3_4x4_matrix_t *matrix, \
                               l3_4d_point_t point, l3_4d_vector_t vector, float degrees, \
                               float scale);
 
+bool l3_ray_triangle_intersect(l3_3d_point_t *ray_origin, l3_3d_point_t *ray_dir,
+                               l3_3d_point_t *v0, l3_3d_point_t *v1, l3_3d_point_t *v2,
+                               float *t_out, l3_3d_point_t *hit_point);
 
-/**
- * @brief Draws a triangle onto a canvas using the specified vertices.
- * @param image Pointer to the triangle data to draw.
- * @param combined_image Pointer to the combined image data.
- * @param zbuffer Pointer to the z-buffer for depth testing.
- */
-void l3_draw_tria_to_canvas(l3_draw_tria_img_t *image, l3_draw_rect_img_t *combined_image,
-                            float *zbuffer);
-
+void l3_apply_deformation_to_model_vertex(l3_deformation_state_t *deformation,
+                                          l3_3d_point_t *model_pos,
+                                          l3_4x4_matrix_t *model_to_world);
+void *l3_malloc(size_t size);
+void l3_free(void *ptr);
+int l3_ftl_read(uintptr_t addr, uint8_t *buf, uint32_t len);
+uint32_t l3_get_time_ms(void);
 
 #ifdef __cplusplus
 }

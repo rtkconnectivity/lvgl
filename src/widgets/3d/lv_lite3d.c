@@ -58,7 +58,7 @@ const lv_obj_class_t lv_lite3d_class =
  *   GLOBAL FUNCTIONS
  **********************/
 
-lv_obj_t *lv_lite3d_create(lv_obj_t *parent, l3_model_t *model)
+lv_obj_t *lv_lite3d_create(lv_obj_t *parent, l3_model_base_t *model)
 {
     LV_LOG_INFO("begin");
     lv_obj_t *obj = lv_obj_class_create_obj(MY_CLASS, parent);
@@ -142,7 +142,7 @@ static void lv_lite3d_event(const lv_obj_class_t *class_p, lv_event_t *e)
 
     if (lite3d->need_refresh && code == LV_EVENT_DRAW_MAIN_BEGIN)
     {
-        l3_push(lite3d->model);
+        l3_push(lite3d->model, NULL);
         lite3d->need_refresh = false;
     }
     else if (code == LV_EVENT_DRAW_POST)
@@ -158,42 +158,11 @@ static void lv_lite3d_event(const lv_obj_class_t *class_p, lv_event_t *e)
         lv_point_t point;
         lv_indev_get_point(indev, &point);
 
-        if (lite3d->model->draw_type == L3_DRAW_FRONT_AND_SORT)
+        if (l3_model_on_click(lite3d->model, point.x, point.y))
         {
-            const int target_x = lite3d->model->combined_img->img_target_x;
-            const int target_y = lite3d->model->combined_img->img_target_y;
-            const int target_w = lite3d->model->combined_img->img_target_w;
-            const int target_h = lite3d->model->combined_img->img_target_h;
-
-            if (point.x >= target_x &&
-                point.x <= (target_x + target_w) &&
-                point.y >= target_y &&
-                point.y <= (target_y + target_h))
-            {
-                lite3d->click_callback(lite3d);
-            }
+            lite3d->click_callback(lite3d);
         }
-        else
-        {
-            const int num_face_vertices = lite3d->model->desc->attrib.num_face_num_verts;
 
-            for (int i = 0; i < num_face_vertices; ++i)
-            {
-                const int target_x = lite3d->model->img[i].img_target_x;
-                const int target_y = lite3d->model->img[i].img_target_y;
-                const int target_w = lite3d->model->img[i].img_target_w;
-                const int target_h = lite3d->model->img[i].img_target_h;
-
-                if (point.x >= target_x &&
-                    point.x <= (target_x + target_w) &&
-                    point.y >= target_y &&
-                    point.y <= (target_y + target_h))
-                {
-                    lite3d->click_callback(lite3d);
-                    break;
-                }
-            }
-        }
     }
 }
 

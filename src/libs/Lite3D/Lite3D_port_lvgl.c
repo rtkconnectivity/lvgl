@@ -141,4 +141,19 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
 
 #endif
 
-
+static bool l3_installed = false;
+int l3_init(void)
+{
+    if (l3_installed)
+    {
+        return 0;
+    }
+    l3_installed = true;
+    l3_malloc_imp = l3_port_malloc;
+    l3_free_imp = l3_port_free;
+#if LV_USE_DRAW_PPE_RTL8773G && LV_DRAW_TRANSFORM_USE_MATRIX
+    l3_draw_rect_img_to_canvas_imp = l3_port_draw_rect_img_to_canvas;
+#endif
+    lv_log("Lite3D port initialized\n");
+    return 0;
+}

@@ -29,7 +29,7 @@ typedef void (*lv_lite3d_click_cb_t)(void *obj);
 typedef struct
 {
     lv_obj_t obj; /*Base object*/
-    l3_model_t *model; /*3D model*/
+    l3_model_base_t *model; /*3D model*/
     bool need_refresh; /*Indicate whether the 3D model need refresh*/
     lv_lite3d_click_cb_t click_callback;
 } lv_lite3d_t;
@@ -48,7 +48,7 @@ LV_ATTRIBUTE_EXTERN_DATA extern const lv_obj_class_t lv_lite3d_class;
 
  * @return          pointer to the created 3dtexture
  */
-lv_obj_t *lv_lite3d_create(lv_obj_t *parent, l3_model_t *model);
+lv_obj_t *lv_lite3d_create(lv_obj_t *parent, l3_model_base_t *model);
 
 /**
  * Set click callback for the 3dtexture object

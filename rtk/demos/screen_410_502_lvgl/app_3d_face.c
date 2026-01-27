@@ -63,22 +63,22 @@ static void on_canvas_touch(lv_event_t *e)
     }
 }
 
-static void face_global_cb(l3_model_t *this)
+static void face_global_cb(l3_model_base_t *this)
 {
     l3_camera_UVN_initialize(&this->camera, l3_4d_point(0, 0, 0), l3_4d_point(0, 0, 65), 1,
                              32767,
                              90, this->viewPortWidth, this->viewPortHeight);
 
-    l3_world_initialize(&this->world, 0, 22, 65, 0, rot_angle, 0, 5);
+    l3_world_initialize(&this->world, 0, 0, 37, 0, rot_angle, 0, 5);
 
 }
 
 
 void app_3d_face(lv_obj_t *parent)
 {
-    l3_model_t *face_3d = l3_create_model(DESC_FACE_BIN, L3_DRAW_FRONT_AND_SORT, 0, 0,
-                                          FACE_MODEL_WIDTH,
-                                          FACE_MODEL_HEIGHT);
+    l3_model_base_t *face_3d = l3_create_model(DESC_FACE_BIN, L3_DRAW_FRONT_AND_SORT, 0, 0,
+                                               FACE_MODEL_WIDTH,
+                                               FACE_MODEL_HEIGHT);
     l3_set_global_transform(face_3d, (l3_global_transform_cb)face_global_cb);
 
     lv_obj_t *lite3d = lv_lite3d_create(parent, face_3d);

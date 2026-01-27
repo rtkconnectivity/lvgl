@@ -52,7 +52,7 @@ static void disc_click_cb(void *lite3d)
     lv_obj_invalidate(lite3d);
 }
 
-static void disc_global_cb(l3_model_t *this)
+static void disc_global_cb(l3_model_base_t *this)
 {
     l3_camera_UVN_initialize(&this->camera, l3_4d_point(0, 0, 0), l3_4d_point(0, 0, 50), 1, 32767,
                              90, this->viewPortWidth, this->viewPortHeight);
@@ -61,7 +61,7 @@ static void disc_global_cb(l3_model_t *this)
 
 }
 
-static l3_4x4_matrix_t disc_face_cb(l3_model_t *this, size_t face_index)
+static l3_4x4_matrix_t disc_face_cb(l3_model_base_t *this, size_t face_index)
 {
     l3_4x4_matrix_t face_matrix;
     l3_4x4_matrix_t transform_matrix;
@@ -75,7 +75,7 @@ static l3_4x4_matrix_t disc_face_cb(l3_model_t *this, size_t face_index)
 
 }
 
-static l3_4x4_matrix_t disc_cube_face_cb(l3_model_t *this, size_t face_index)
+static l3_4x4_matrix_t disc_cube_face_cb(l3_model_base_t *this, size_t face_index)
 {
     l3_4x4_matrix_t face_matrix;
     l3_4x4_matrix_t transform_matrix;
@@ -105,15 +105,16 @@ void rtk_demo_lite3d_disc(void)
     lv_obj_t *screen = lv_scr_act();
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    l3_model_t *disc_3d = l3_create_model((void *)_acdesc_disc, L3_DRAW_FRONT_ONLY, 15, 0,
-                                          DISC_MODEL_WIDTH, DISC_MODEL_HEIGHT);
+    l3_model_base_t *disc_3d = l3_create_model((void *)_acdesc_disc, L3_DRAW_FRONT_ONLY, 15, 0,
+                                               DISC_MODEL_WIDTH, DISC_MODEL_HEIGHT);
     l3_set_global_transform(disc_3d, (l3_global_transform_cb)disc_global_cb);
     l3_set_face_transform(disc_3d, (l3_face_transform_cb)disc_face_cb);
     lv_obj_t *lite3d_disc = lv_lite3d_create(screen, disc_3d);
 
-    l3_model_t *disc_cube = l3_create_model((void *)_acdesc_disc_cube, L3_DRAW_FRONT_AND_SORT, 15, 0,
-                                            DISC_MODEL_WIDTH,
-                                            DISC_MODEL_HEIGHT);
+    l3_model_base_t *disc_cube = l3_create_model((void *)_acdesc_disc_cube, L3_DRAW_FRONT_AND_SORT, 15,
+                                                 0,
+                                                 DISC_MODEL_WIDTH,
+                                                 DISC_MODEL_HEIGHT);
     l3_set_global_transform(disc_cube, (l3_global_transform_cb)disc_global_cb);
     l3_set_face_transform(disc_cube, (l3_face_transform_cb)disc_cube_face_cb);
     lv_obj_t *lite3d_disc_cube = lv_lite3d_create(screen, disc_cube);
