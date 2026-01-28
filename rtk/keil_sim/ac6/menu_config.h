@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * @Author: howie_wang
  * @Date: 2022-03-31 13:33:29
  * @LastEditTime: 2022-04-02 15:50:00

@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2026, Realtek Semiconductor Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
 # Main Kconfig for LVGL v9 Win32 Simulator
 
 mainmenu "LVGL v9 Win32 Simulator Configuration"

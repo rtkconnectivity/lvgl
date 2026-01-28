@@ -1,12 +1,7 @@
-/**
- * @file auto_test_cmd.h
- * @author howie_wang (howie_wang@realtek.com.cn)
- * @brief
- * @version 0.1
- * @date 2024-06-26
+/*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
  *
- * @copyright Copyright (c) 2024
- *
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #ifndef __GUI_TEST_CMD_H__

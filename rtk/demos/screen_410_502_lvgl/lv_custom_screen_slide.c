@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "lv_custom_screen_slide.h"
 #include "lv_img_dsc_list.h"
 

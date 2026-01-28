@@ -1,13 +1,9 @@
-/**
- * @file test_cmd.c
- * @author howie_wang (howie_wang@realtek.com.cn)
- * @brief
- * @version 0.1
- * @date 2024-05-23
+/*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
  *
- * @copyright Copyright (c) 2024
- *
+ * SPDX-License-Identifier: Apache-2.0
  */
+
 
 #include "test_cmd.h"
 

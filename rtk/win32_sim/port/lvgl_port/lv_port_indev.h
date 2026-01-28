@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 /**
  * @file lv_port_indev_templ.h

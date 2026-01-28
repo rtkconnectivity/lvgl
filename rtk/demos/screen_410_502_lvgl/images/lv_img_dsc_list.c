@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026, Realtek Semiconductor Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "lvgl.h"
 #include "lv_image_dsc.h"
 #include "lv_color.h"
