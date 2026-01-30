@@ -5,6 +5,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "./include/l3.h"
 
 
@@ -44,6 +45,14 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
         .data = (uint8_t *)dc->frame_buf,
     };
 
+    lv_area_t clip_area =
+    {
+        .x1 = image->img_target_x,
+        .y1 = image->img_target_y,
+        .x2 = image->img_target_x + image->img_target_w - 1,
+        .y2 = image->img_target_y + image->img_target_h - 1,
+    };
+
     lv_layer_t layer =
     {
         .draw_buf = &draw_buf,
@@ -54,23 +63,17 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
             .x2 = dc->section.x2,
             .y2 = dc->section.y2,
         },
+        .phy_clip_area = clip_area,
         .color_format = (dc->bit_depth == 16 ? LV_COLOR_FORMAT_RGB565 : LV_COLOR_FORMAT_ARGB8888),
     };
 
-    lv_area_t clip_area =
-    {
-        .x1 = image->img_target_x,
-        .y1 = image->img_target_y,
-        .x2 = image->img_target_x + image->img_target_w - 1,
-        .y2 = image->img_target_y + image->img_target_h - 1,
-    };
     lv_draw_task_t t =
     {
         .target_layer = &layer,
-        .clip_area =  clip_area,
+        .clip_area = clip_area,
+        .area = layer.buf_area,
     };
-
-    layer.phy_clip_area = clip_area;
+    memcpy(&t.matrix, image->matrix.u.m, sizeof(lv_matrix_t));
 
     // draw_dsc
     lv_draw_dsc_base_t draw_dsc_base =
@@ -85,15 +88,6 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
     };
 
     l3_img_head_t *image_header = (l3_img_head_t *)image->data;
-    lv_image_header_t draw_image_header =
-    {
-        .magic = LV_IMAGE_HEADER_MAGIC,
-        .w = image_header->w,
-        .h = image_header->h,
-        .cf = (image_header->type == LITE_RGB565 ? LV_COLOR_FORMAT_RGB565 : LV_COLOR_FORMAT_ARGB8888),
-        .stride = image_header->w * (image_header->type == LITE_RGB565 ? 2 : 4),
-        .flags = 0,
-    };
     lv_img_dsc_t img_dsc =
     {
         .header.magic = LV_IMAGE_HEADER_MAGIC,
@@ -102,30 +96,20 @@ void l3_port_draw_rect_img_to_canvas(l3_draw_rect_img_t *image, l3_canvas_t *dc,
         .header.stride = image_header->w * (image_header->type == LITE_RGB565 ? 2 : 4),
         .data_size = image_header->w * image_header->h * (image_header->type == LITE_RGB565 ? 2 : 4),
         .header.cf = (image_header->type == LITE_RGB565 ? LV_COLOR_FORMAT_RGB565 : LV_COLOR_FORMAT_ARGB8888),
-        .header.flags = 0,
+        .header.flags = (image->blend_mode == 1) ? LV_IMAGE_FLAGS_USER2 : 0,
         .data = (uint8_t *)image->data + sizeof(l3_img_head_t),
     };
 
-    lv_draw_image_dsc_t draw_dsc =
-    {
-        .base = draw_dsc_base,
-        .src = (uint8_t *) &img_dsc,
-        .header = draw_image_header,
-        .image_area = (lv_area_t){0, 0, image_header->w - 1, image_header->h - 1},
-        .opa = LV_OPA_MAX,
-    };
+    lv_draw_image_dsc_t draw_dsc;
+    lv_draw_image_dsc_init(&draw_dsc);
+    draw_dsc.base = draw_dsc_base;
+    draw_dsc.src = (uint8_t *) &img_dsc;
+    draw_dsc.header = img_dsc.header;
+    draw_dsc.image_area = (lv_area_t) {0, 0, image_header->w - 1, image_header->h - 1};
+    draw_dsc.opa = LV_OPA_MAX;
+    t.draw_dsc = &draw_dsc;
 
-    lv_area_t coords =
-    {
-        .x1 = 0,
-        .y1 = 0,
-        .x2 = image_header->w - 1,
-        .y2 = image_header->h - 1,
-    };
-
-    lv_matrix_t *matrix = (lv_matrix_t *)image->matrix.u.m;
-
-    lv_draw_ppe_image_use_matrix(&t, &draw_dsc, &coords, matrix, image->blend_mode);
+    lv_draw_ppe_image_use_matrix(&t, t.draw_dsc, &t.area, &t.matrix, image->blend_mode);
 }
 
 #endif
