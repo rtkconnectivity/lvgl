@@ -1,10 +1,8 @@
 {
 	"folders": [
 		{
+			"name": "LVGL Simulator",
 			"path": "."
-		},
-		{
-			"path": "../.."
 		}
 	],
 	"settings": {
@@ -14,7 +12,6 @@
 			"sdl_test_font.h": "c",
 			"sdl_thread.h": "c",
 			"pthread.h": "c",
-			"draw_img.h": "c"
 		}
 	}
 }

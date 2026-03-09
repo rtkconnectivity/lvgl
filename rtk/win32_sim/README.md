@@ -133,7 +133,11 @@ cmake --build .
 ```
 
 ### VSCode
-Open `win32_sim.code-workspace` and use the build tasks.
+Open the root-level `lvgl.code-workspace`:
+- `Ctrl+Shift+B` -- Build (runs scons automatically in `rtk/win32_sim`)
+- `F5` -- Build and start debugging (GDB), supports breakpoints for testing
+
+> **Note:** The old `win32_sim.code-workspace` is deprecated. Use `lvgl.code-workspace` at the project root instead.
 
 ## Project Structure
 ```

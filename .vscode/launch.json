@@ -5,10 +5,10 @@
             "name": "g++.exe build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\gui.exe",
+            "program": "${workspaceFolder}/rtk/win32_sim/gui.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/rtk/win32_sim",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -21,6 +21,6 @@
                 }
             ],
             "preLaunchTask": "g++.exe build active file"
-        },
+        }
     ]
 }
