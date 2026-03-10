@@ -44,12 +44,12 @@
  *  STATIC PROTOTYPES
  **********************/
 
-static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords);
-static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                              const lv_area_t *coords);
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords, lv_matrix_t *matrix);
 #endif
 
@@ -66,7 +66,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
  *   GLOBAL FUNCTIONS
  **********************/
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-void lv_draw_ppe_image_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+void lv_draw_ppe_image_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                   const lv_area_t *coords, lv_matrix_t *matrix)
 {
     if (draw_dsc->opa <= (lv_opa_t)LV_OPA_MIN)
@@ -74,10 +74,10 @@ void lv_draw_ppe_image_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image
         return;
     }
 
-    lv_draw_ppe_matrix(draw_unit, draw_dsc, coords, matrix);
+    lv_draw_ppe_matrix(t, draw_dsc, coords, matrix);
 }
 
-void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+void lv_draw_ppe_layer_use_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                   const lv_area_t *coords, lv_matrix_t *matrix)
 {
     if (draw_dsc->opa <= (lv_opa_t)LV_OPA_MIN)
@@ -92,11 +92,11 @@ void lv_draw_ppe_layer_use_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image
 
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_ppe_matrix(draw_unit, &new_draw_dsc, coords, matrix);
+    lv_draw_ppe_matrix(t, &new_draw_dsc, coords, matrix);
 }
 #endif
 
-void lv_draw_ppe_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+void lv_draw_ppe_image(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                        const lv_area_t *coords)
 {
     if (draw_dsc->opa <= (lv_opa_t)LV_OPA_MIN)
@@ -106,15 +106,15 @@ void lv_draw_ppe_image(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 
     if (!draw_dsc->tile)
     {
-        lv_draw_ppe_normal(draw_unit, draw_dsc, coords);
+        lv_draw_ppe_normal(t, draw_dsc, coords);
     }
     else
     {
-        lv_draw_ppe_tile(draw_unit, draw_dsc, coords);
+        lv_draw_ppe_tile(t, draw_dsc, coords);
     }
 }
 
-void lv_draw_ppe_layer(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+void lv_draw_ppe_layer(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                        const lv_area_t *coords)
 {
     lv_layer_t *layer_to_draw = (lv_layer_t *)draw_dsc->src;
@@ -125,24 +125,24 @@ void lv_draw_ppe_layer(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *dra
 
     lv_draw_image_dsc_t new_draw_dsc = *draw_dsc;
     new_draw_dsc.src = layer_to_draw->draw_buf;
-    lv_draw_ppe_image(draw_unit, &new_draw_dsc, coords);
+    lv_draw_ppe_image(t, &new_draw_dsc, coords);
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
-static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords)
 {
     LV_PROFILER_DRAW_BEGIN;
-    lv_layer_t *layer = draw_unit->target_layer;
+    lv_layer_t *layer = t->target_layer;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
     lv_area_t area_rot;
     lv_area_copy(&area_rot, coords);
     lv_area_t constraint_area;
     bool compressed = false;
-    if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, draw_unit->clip_area))
+    if (!lv_area_intersect(&constraint_area, &t->target_layer->buf_area, &t->clip_area))
     {
         LV_PROFILER_DRAW_END;
         return;
@@ -157,7 +157,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         compressed = true;
     }
     target.format = PPE_ABGR8888;
-    switch (draw_unit->target_layer->color_format)
+    switch (t->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
         target.format = PPE_RGB565;
@@ -172,13 +172,13 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         target.format = PPE_XRGB8888;
         break;
     default:
-        lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        lv_draw_sw_image(t, draw_dsc, coords);
         LV_PROFILER_DRAW_END;
         return;
     }
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.win_x_min = 0;
     target.win_x_max = target.width - 1;
@@ -235,8 +235,8 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
-        int16_t target_x = constraint_area.x1 - draw_unit->target_layer->buf_area.x1;
-        int16_t target_y = constraint_area.y1 - draw_unit->target_layer->buf_area.y1;
+        int16_t target_x = constraint_area.x1 - t->target_layer->buf_area.x1;
+        int16_t target_y = constraint_area.y1 - t->target_layer->buf_area.y1;
         draw_rect.x = constraint_area.x1 - coords->x1;
         draw_rect.y = constraint_area.y1 - coords->y1;
         uint32_t length = draw_rect.w * pixel_byte;
@@ -312,16 +312,16 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         pre_trans.m[0][2] = image_area.x * -1.0f;
         pre_trans.m[1][2] = image_area.y * -1.0f;
         ppe_mat_multiply(&pre_trans, &inverse);
-        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1,
+        ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1,
                       &pre_trans);
         memcpy(&inverse, &pre_trans, sizeof(float) * 9);
     }
     else
     {
-        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1, &inverse);
+        ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1, &inverse);
     }
-    lv_area_move(&constraint_area, -draw_unit->target_layer->buf_area.x1,
-                 -draw_unit->target_layer->buf_area.y1);
+    lv_area_move(&constraint_area, -t->target_layer->buf_area.x1,
+                 -t->target_layer->buf_area.y1);
     draw_rect.x = constraint_area.x1;
     draw_rect.y = constraint_area.y1;
     if (draw_dsc->antialias)
@@ -339,7 +339,7 @@ static void lv_draw_ppe_normal(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     return;
 }
 
-static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                              const lv_area_t *coords)
 {
     LV_PROFILER_DRAW_BEGIN;
@@ -381,12 +381,12 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
     }
     if (source.format == PPE_FORMAT_NOT_SUPPORT || (source.format == PPE_A8 && recolor != 0))
     {
-        lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        lv_draw_sw_image(t, draw_dsc, coords);
         LV_PROFILER_DRAW_END;
         return;
     }
     target.format = PPE_ABGR8888;
-    switch (draw_unit->target_layer->color_format)
+    switch (t->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
         target.format = PPE_RGB565;
@@ -401,7 +401,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
         target.format = PPE_XRGB8888;
         break;
     default:
-        lv_draw_sw_image(draw_unit, draw_dsc, coords);
+        lv_draw_sw_image(t, draw_dsc, coords);
         LV_PROFILER_DRAW_END;
         return;
     }
@@ -417,9 +417,9 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
         source.stride = img_dsc->header.w;
     }
     source.opacity = draw_dsc->opa;
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.win_x_min = 0;
     target.win_x_max = target.width - 1;
@@ -448,7 +448,7 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
             lv_area_t clipped_img_area;
             if (lv_area_intersect(&clipped_img_area, &tile_area, coords))
             {
-                if (lv_area_intersect(&clipped_img_area, &clipped_img_area, &draw_unit->target_layer->buf_area))
+                if (lv_area_intersect(&clipped_img_area, &clipped_img_area, &t->target_layer->buf_area))
                 {
                     uint16_t draw_w = lv_area_get_width(&clipped_img_area);
                     uint16_t draw_h = lv_area_get_height(&clipped_img_area);
@@ -510,10 +510,10 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
                     }
                     ppe_matrix_t inv_matrix;
                     ppe_get_identity(&inv_matrix);
-                    inv_matrix.m[0][2] = -(clipped_img_area.x1 - draw_unit->target_layer->buf_area.x1);
-                    inv_matrix.m[1][2] = -(clipped_img_area.y1 - draw_unit->target_layer->buf_area.y1);
-                    ppe_rect_t draw_rect = {.x = clipped_img_area.x1 - draw_unit->target_layer->buf_area.x1,
-                                            .y = clipped_img_area.y1 - draw_unit->target_layer->buf_area.y1,
+                    inv_matrix.m[0][2] = -(clipped_img_area.x1 - t->target_layer->buf_area.x1);
+                    inv_matrix.m[1][2] = -(clipped_img_area.y1 - t->target_layer->buf_area.y1);
+                    ppe_rect_t draw_rect = {.x = clipped_img_area.x1 - t->target_layer->buf_area.x1,
+                                            .y = clipped_img_area.y1 - t->target_layer->buf_area.y1,
                                             .w = draw_w,
                                             .h = draw_h
                                            };
@@ -544,11 +544,11 @@ static void lv_draw_ppe_tile(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_
 }
 
 #if LV_DRAW_TRANSFORM_USE_MATRIX
-static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_dsc_t *draw_dsc,
+static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_dsc,
                                const lv_area_t *coords, lv_matrix_t *matrix)
 {
     LV_PROFILER_DRAW_BEGIN;
-    lv_layer_t *layer = draw_unit->target_layer;
+    lv_layer_t *layer = t->target_layer;
     const lv_image_dsc_t *img_dsc = draw_dsc->src;
     lv_area_t area_rot;
     lv_area_t constraint_area;
@@ -575,7 +575,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
     area_rot.y2 = target_rect.y + target_rect.h - 1;
     bool compressed = false;
     ppe_rect_t draw_rect;
-    if (!lv_area_intersect(&constraint_area, &draw_unit->target_layer->buf_area, &area_rot))
+    if (!lv_area_intersect(&constraint_area, &t->target_layer->buf_area, &area_rot))
     {
         LV_PROFILER_DRAW_END;
         return;
@@ -594,7 +594,7 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         compressed = true;
     }
     target.format = PPE_ABGR8888;
-    switch (draw_unit->target_layer->color_format)
+    switch (t->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
         target.format = PPE_RGB565;
@@ -612,9 +612,9 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         LV_PROFILER_DRAW_END;
         return;
     }
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.win_x_min = 0;
     target.win_x_max = target.width - 1;
@@ -702,16 +702,16 @@ static void lv_draw_ppe_matrix(lv_draw_unit_t *draw_unit, const lv_draw_image_ds
         pre_trans.m[0][2] = image_area.x * -1.0f;
         pre_trans.m[1][2] = image_area.y * -1.0f;
         ppe_mat_multiply(&pre_trans, &inverse);
-        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1,
+        ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1,
                       &pre_trans);
         memcpy(&inverse, &pre_trans, sizeof(float) * 9);
     }
     else
     {
-        ppe_translate(draw_unit->target_layer->buf_area.x1, draw_unit->target_layer->buf_area.y1, &inverse);
+        ppe_translate(t->target_layer->buf_area.x1, t->target_layer->buf_area.y1, &inverse);
     }
-    lv_area_move(&constraint_area, -draw_unit->target_layer->buf_area.x1,
-                 -draw_unit->target_layer->buf_area.y1);
+    lv_area_move(&constraint_area, -t->target_layer->buf_area.x1,
+                 -t->target_layer->buf_area.y1);
     draw_rect.x = constraint_area.x1;
     draw_rect.y = constraint_area.y1;
     if (draw_dsc->antialias)

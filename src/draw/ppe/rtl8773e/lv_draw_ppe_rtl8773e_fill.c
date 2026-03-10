@@ -18,7 +18,6 @@
 #include "../../sw/lv_draw_sw_mask_private.h"
 #include "lv_draw_ppe_rtl8773e.h"
 #include "../../sw/blend/lv_draw_sw_blend_private.h"
-#include "../../sw/lv_draw_sw_gradient_private.h"
 #include "../../../misc/lv_math.h"
 #include "../../../misc/lv_text_ap.h"
 #include "../../../core/lv_refr.h"
@@ -39,7 +38,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_dsc_t *blend_dsc,
+static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *blend_dsc,
                               PPE_PIXEL_FORMAT format);
 
 /**********************
@@ -53,12 +52,12 @@ static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const lv_area_t *coords)
+void lv_draw_ppe_fill(lv_draw_task_t *t, lv_draw_fill_dsc_t *dsc, const lv_area_t *coords)
 {
     if (dsc->opa <= LV_OPA_MIN) { return; }
 
     PPE_PIXEL_FORMAT cf = PPE_ABGR8888;
-    switch (draw_unit->target_layer->color_format)
+    switch (t->target_layer->color_format)
     {
     case LV_COLOR_FORMAT_RGB565:
         cf = PPE_RGB565;
@@ -73,14 +72,14 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
         cf = PPE_XRGB8888;
         break;
     default:
-        lv_draw_sw_fill(draw_unit, dsc, coords);
+        lv_draw_sw_fill(t, dsc, coords);
         return;
     }
     lv_area_t bg_coords;
     lv_area_copy(&bg_coords, coords);
 
     lv_area_t clipped_coords;
-    if (!lv_area_intersect(&clipped_coords, &bg_coords, draw_unit->clip_area)) { return; }
+    if (!lv_area_intersect(&clipped_coords, &bg_coords, &t->clip_area)) { return; }
 
     lv_draw_sw_blend_dsc_t blend_dsc = {0};
     blend_dsc.color = dsc->color;
@@ -90,7 +89,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
     {
         blend_dsc.blend_area = &bg_coords;
         blend_dsc.opa = dsc->opa;
-        lv_draw_ppe_blend(draw_unit, &blend_dsc, cf);
+        lv_draw_ppe_blend(t, &blend_dsc, cf);
         return;
     }
     else
@@ -153,14 +152,14 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
         {
             blend_area.y1 = top_y;
             blend_area.y2 = top_y;
-            lv_draw_sw_blend(draw_unit, &blend_dsc);
+            lv_draw_sw_blend(t, &blend_dsc);
         }
 
         if (bottom_y <= clipped_coords.y2)
         {
             blend_area.y1 = bottom_y;
             blend_area.y2 = bottom_y;
-            lv_draw_sw_blend(draw_unit, &blend_dsc);
+            lv_draw_sw_blend(t, &blend_dsc);
         }
     }
     /* Draw the center of the rectangle.*/
@@ -170,7 +169,7 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
     blend_area.y2 = bg_coords.y2 - rout;
     blend_dsc.opa = opa;
     blend_dsc.mask_buf = NULL;
-    lv_draw_ppe_blend(draw_unit, &blend_dsc, cf);
+    lv_draw_ppe_blend(t, &blend_dsc, cf);
 
     if (mask_buf)
     {
@@ -181,20 +180,20 @@ void lv_draw_ppe_fill(lv_draw_unit_t *draw_unit, lv_draw_fill_dsc_t *dsc, const 
 #endif
 }
 #include "trace.h"
-static void lv_draw_ppe_blend(lv_draw_unit_t *draw_unit, const lv_draw_sw_blend_dsc_t *blend_dsc,
+static void lv_draw_ppe_blend(lv_draw_task_t *t, const lv_draw_sw_blend_dsc_t *blend_dsc,
                               PPE_PIXEL_FORMAT format)
 {
     lv_area_t blend_area;
-    if (!lv_area_intersect(&blend_area, blend_dsc->blend_area, draw_unit->clip_area)) { return; }
+    if (!lv_area_intersect(&blend_area, blend_dsc->blend_area, &t->clip_area)) { return; }
 
     LV_PROFILER_DRAW_BEGIN;
-    lv_layer_t *layer = draw_unit->target_layer;
+    lv_layer_t *layer = t->target_layer;
 
     ppe_buffer_t target;
     memset(&target, 0, sizeof(ppe_buffer_t));
-    target.address = (uint32_t)draw_unit->target_layer->draw_buf->data;
-    target.width = lv_area_get_width(&draw_unit->target_layer->buf_area);
-    target.height = lv_area_get_height(&draw_unit->target_layer->buf_area);
+    target.address = (uint32_t)t->target_layer->draw_buf->data;
+    target.width = lv_area_get_width(&t->target_layer->buf_area);
+    target.height = lv_area_get_height(&t->target_layer->buf_area);
     target.stride = target.width;
     target.format = format;
     target.win_x_min = 0;
