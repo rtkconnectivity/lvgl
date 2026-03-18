@@ -203,7 +203,11 @@ static lv_result_t idu_decoder_info(lv_image_decoder_t *decoder, lv_image_decode
             if (res != LV_FS_RES_OK) { return LV_RES_INV; }
             uint8_t headers[20];
 
-            lv_fs_read(&f, headers, sizeof(headers), NULL);
+            res = lv_fs_read(&f, headers, sizeof(headers), NULL);
+            if(res != LV_FS_RES_OK) {
+                lv_fs_close(&f);
+                return LV_RES_INV;
+            }
             uint16_t width = headers[2] | (headers[3] << 8);
             uint16_t height = headers[4] | (headers[5] << 8);
 
