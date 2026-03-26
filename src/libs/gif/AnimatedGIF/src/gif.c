@@ -1152,7 +1152,7 @@ uint16_t *pLengths;
     pImage->iYCount = pImage->iHeight; // count down the lines
     pImage->iXCount = pImage->iWidth;
     bitnum = 0;
-    pHighWater = pImage->ucLZW + LZW_HIGHWATER_TURBO;
+    pHighWater = (uint8_t *)((void *)pImage->ucLZW) + LZW_HIGHWATER_TURBO;
     pImage->iLZWOff = 0; // Offset into compressed data
     GIFGetMoreData(pImage); // Read some data to start
     codestart = pImage->ucCodeStart;
