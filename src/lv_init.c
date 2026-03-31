@@ -107,15 +107,15 @@
 #endif
 
 #if LV_USE_RTK_IDU
-    #include "libs\rle\lv_idu.h"
+    #include "libs/rle/lv_idu.h"
 #endif
 
 #if LV_USE_RTK_JPU
-#include "libs\jpu\lv_jpu.h"
+#include "libs/jpu/lv_jpu.h"
 #endif
 
 #if LV_USE_DRAW_RTK
-    #include "draw\rtk\lv_draw_rtk.h"
+    #include "draw/rtk/lv_draw_rtk.h"
 #endif
 /*********************
  *      DEFINES
