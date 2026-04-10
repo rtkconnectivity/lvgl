@@ -232,7 +232,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
         draw_rect.h = lv_area_get_height(&constraint_area);
     }
     uint32_t src_stride = 0;
-    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 &&
+    if (!transform && draw_dsc->opa >= LV_OPA_MAX && draw_dsc->recolor_opa == 0 && !compressed && 
         target.format == source.format && (target.format == PPE_RGB565 || target.format == PPE_RGB888))
     {
         int16_t target_x = constraint_area.x1 - t->target_layer->buf_area.x1;
@@ -296,7 +296,7 @@ static void lv_draw_ppe_normal(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             dma_cfg.output_buf = (uint32_t *)pic_buffer;
             dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
             dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-            IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+            IDU_Decode((uint8_t *)img_dsc->data + 8, &range, &dma_cfg);
         }
         source.width = image_area.w;
         source.height = image_area.h;
@@ -487,7 +487,7 @@ static void lv_draw_ppe_tile(lv_draw_task_t *t, const lv_draw_image_dsc_t *draw_
                             dma_cfg.output_buf = (uint32_t *)pic_buffer;
                             dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
                             dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-                            IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+                            IDU_Decode((uint8_t *)img_dsc->data + 8, &range, &dma_cfg);
                         }
                         source.width = draw_w;
                         source.height = draw_h;
@@ -686,7 +686,7 @@ static void lv_draw_ppe_matrix(lv_draw_task_t *t, const lv_draw_image_dsc_t *dra
             dma_cfg.output_buf = (uint32_t *)pic_buffer;
             dma_cfg.RX_DMA_channel_num = lv_acc_get_high_speed_channel();
             dma_cfg.TX_DMA_channel_num = lv_acc_get_low_speed_channel();
-            IDU_Decode((uint8_t *)img_dsc->data, &range, &dma_cfg);
+            IDU_Decode((uint8_t *)img_dsc->data + 8, &range, &dma_cfg);
         }
         source.width = image_area.w;
         source.height = image_area.h;
