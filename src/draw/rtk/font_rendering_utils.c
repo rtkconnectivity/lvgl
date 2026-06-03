@@ -1059,6 +1059,7 @@ void font_glyph_render(draw_font_t *font, font_glyph_t *glyph)
         case LV_COLOR_FORMAT_ARGB8565:
             font_render_1bpp_to_ARGB8565(font, glyph);
             break;
+        case LV_COLOR_FORMAT_XRGB8888:
         case LV_COLOR_FORMAT_ARGB8888:
             font_render_1bpp_to_ARGB8888(font, glyph);
             break;
@@ -1078,6 +1079,7 @@ void font_glyph_render(draw_font_t *font, font_glyph_t *glyph)
         case LV_COLOR_FORMAT_ARGB8565:
             font_render_2bpp_to_ARGB8565(font, glyph);
             break;
+        case LV_COLOR_FORMAT_XRGB8888:
         case LV_COLOR_FORMAT_ARGB8888:
             font_render_2bpp_to_ARGB8888(font, glyph);
             break;
@@ -1097,6 +1099,7 @@ void font_glyph_render(draw_font_t *font, font_glyph_t *glyph)
         case LV_COLOR_FORMAT_ARGB8565:
             font_render_4bpp_to_ARGB8565(font, glyph);
             break;
+        case LV_COLOR_FORMAT_XRGB8888:
         case LV_COLOR_FORMAT_ARGB8888:
             font_render_4bpp_to_ARGB8888(font, glyph);
             break;
@@ -1116,6 +1119,7 @@ void font_glyph_render(draw_font_t *font, font_glyph_t *glyph)
         case LV_COLOR_FORMAT_ARGB8565:
             font_render_8bpp_to_ARGB8565(font, glyph);
             break;
+        case LV_COLOR_FORMAT_XRGB8888:
         case LV_COLOR_FORMAT_ARGB8888:
             font_render_8bpp_to_ARGB8888(font, glyph);
             break;
