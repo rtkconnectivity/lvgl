@@ -1,4 +1,10 @@
 #
+# Copyright (c) 2026, Realtek Semiconductor Corporation
+#
+# SPDX-License-Identifier: LicenseRef-Realtek-5-Clause
+#
+
+#
 # File      : keil.py
 # This file is part of RT-Thread RTOS
 # COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
@@ -163,8 +169,8 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
         elif name.find('.S') != -1:
             obj_name = name.replace('.s', '.o')
         else:
-            obj_name = name		
-			
+            obj_name = name
+
         if ProjectFiles.count(obj_name):
             name = basename + '_' + name
         ProjectFiles.append(obj_name)
@@ -177,7 +183,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
 
     return group
 
-# The common part of making MDK4/5 project 
+# The common part of making MDK4/5 project
 def MDK45Project(tree, target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
@@ -228,7 +234,7 @@ def MDK45Project(tree, target, script):
             if CPPPATH:
                 CPPPATH += group['CPPPATH']
             else:
-                CPPPATH += group['CPPPATH']
+                CPPPATH = group['CPPPATH']
 
         # get each group's definitions
         if 'CPPDEFINES' in group and group['CPPDEFINES']:
@@ -337,7 +343,7 @@ def MDKProject(target, script):
             if CPPPATH:
                 CPPPATH += group['CPPPATH']
             else:
-                CPPPATH += group['CPPPATH']
+                CPPPATH = group['CPPPATH']
 
         # get each group's definitions
         if 'CPPDEFINES' in group and group['CPPDEFINES']:
@@ -421,7 +427,7 @@ def ARMCC_Version():
     stdout, stderr = child.communicate()
 
     '''
-    example stdout: 
+    example stdout:
     Product: MDK Plus 5.24
     Component: ARM Compiler 5.06 update 5 (build 528)
     Tool: armcc [4d3621]
