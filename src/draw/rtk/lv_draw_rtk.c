@@ -16,8 +16,6 @@
 #if LV_USE_DRAW_RTK
 #include "lv_draw_rtk.h"
 #include "../sw/lv_draw_sw_private.h"
-#include "../../core/lv_refr.h"
-#include "../../display/lv_display_private.h"
 #include "../../stdlib/lv_string.h"
 #include "../../core/lv_global.h"
 

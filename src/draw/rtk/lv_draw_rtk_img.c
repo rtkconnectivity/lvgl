@@ -20,16 +20,15 @@
 #if LV_USE_DRAW_RTK
 
 #include "../../display/lv_display.h"
-#include "../../display/lv_display_private.h"
 #include "../../misc/lv_log.h"
-#include "../../core/lv_refr_private.h"
 #include "../../stdlib/lv_mem.h"
 #include "../../misc/lv_math.h"
 #include "../../misc/lv_color.h"
 #include "../../misc/lv_matrix.h"
 #include "../../stdlib/lv_string.h"
-#include "../../core/lv_global.h"
+#if LV_DRAW_TRANSFORM_USE_MATRIX
 #include <math.h>
+#endif
 /*********************
  *      DEFINES
  *********************/
@@ -64,7 +63,6 @@ static void img_draw_core(lv_draw_task_t * t, const lv_draw_image_dsc_t * draw_d
 /**********************
  *  STATIC VARIABLES
  **********************/
-#define _draw_info LV_GLOBAL_DEFAULT()->draw_info
 
 /**********************
  *      MACROS

@@ -17,13 +17,11 @@
 #include "../sw/lv_draw_sw.h"
 #if LV_USE_DRAW_RTK
 
-#include "../../display/lv_display.h"
 #include "../../misc/lv_math.h"
 #include "../../misc/lv_assert.h"
 #include "../../misc/lv_area.h"
 #include "../../misc/lv_style.h"
 #include "../../font/lv_font.h"
-#include "../../core/lv_refr_private.h"
 #include "../../stdlib/lv_string.h"
 
 #include "font_rendering_utils.h"

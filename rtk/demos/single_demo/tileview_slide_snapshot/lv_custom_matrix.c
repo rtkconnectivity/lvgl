@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2026, Realtek Semiconductor Corporation
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Realtek-5-Clause
  */
 
 /**
@@ -13,10 +13,10 @@
  *      INCLUDES
  *********************/
 #include "lv_custom_matrix.h"
-#include "math.h"
 
 #if LV_BUILD_DEMOS
 #if LV_USE_MATRIX
+#include "math.h"
 
 /*********************
  *      DEFINES

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2026, Realtek Semiconductor Corporation
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: LicenseRef-Realtek-5-Clause
  */
 
 /**
@@ -23,7 +23,7 @@
 #include "lvgl.h"
 #include "lv_port_disp.h"
 #include "lv_port_indev.h"
-#include "lv_port_fs.h"
+// #include "lv_port_fs.h"
 #include "ui_init.h"
 
 /*********************
