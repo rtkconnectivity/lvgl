@@ -15,7 +15,6 @@
 
 #include "../../../core/lv_refr.h"
 #include "../../lv_draw_image_private.h"
-#include "../../../misc/lv_area_private.h"
 #include "../../lv_draw_private.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 #include "lv_ppe_rtl8773g_utils.h"

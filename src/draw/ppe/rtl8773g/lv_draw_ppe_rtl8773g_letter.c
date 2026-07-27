@@ -14,7 +14,6 @@
  *********************/
 #include "../../sw/blend/lv_draw_sw_blend_private.h"
 #include "../../lv_draw_label_private.h"
-#include "../../sw/lv_draw_sw.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 
 #include "../../../display/lv_display.h"
