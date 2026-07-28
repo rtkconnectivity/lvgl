@@ -16,7 +16,7 @@
 #include "../../lv_draw_mask_private.h"
 #if LV_USE_DRAW_PPE_RTL8773G
 #if LV_DRAW_SW_COMPLEX
-
+#include "../../lv_draw_private.h"
 #include "../../../misc/lv_math.h"
 #include "../../../misc/lv_log.h"
 #include "../../../stdlib/lv_mem.h"
